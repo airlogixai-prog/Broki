@@ -10,7 +10,10 @@
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > web/src/lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > web/src/lib/supabase/database.types.ts",
+    "db:push": "supabase db push",
+    "functions:deploy": "supabase functions deploy --use-api",
+    "functions:secrets": "supabase secrets set N8N_BASE_URL=https://n8n.airlogixai.com/webhook"
   },
   "devDependencies": {
     "supabase": "^2.106.0"
