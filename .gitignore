@@ -1,0 +1,15 @@
+.DS_Store
+*.pem
+
+# Windows metadata (WSL / descargas)
+*:Zone.Identifier
+
+# dependencies (Supabase CLI en la raíz)
+/node_modules
+
+# env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
