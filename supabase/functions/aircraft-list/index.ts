@@ -11,6 +11,6 @@ serve(async (req) => {
     const data = await n8nGetJson("envio_avion");
     return jsonResponse(req, data);
   } catch {
-    return jsonResponse(req, []);
+    return jsonResponse(req, { error: "upstream_error" }, 502);
   }
 });

@@ -8,17 +8,17 @@ serve(async (req) => {
       const data = await n8nGetJson("envio_nitro_stock", true);
       return jsonResponse(req, data);
     } catch {
-      return jsonResponse(req, null);
+      return jsonResponse(req, { error: "upstream_error" }, 502);
     }
   }
 
   if (req.method === "POST") {
     try {
       const body = await req.json();
-      const data = await n8nPostJson("envio_nitro_stock", body);
+      const data = await n8nPostJson("Inventario", body);
       return jsonResponse(req, data);
     } catch {
-      return jsonResponse(req, { ok: false }, 500);
+      return jsonResponse(req, { error: "upstream_error" }, 502);
     }
   }
 

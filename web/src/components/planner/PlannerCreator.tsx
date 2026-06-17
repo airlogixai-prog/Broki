@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Airplane,
   UserCircle,
@@ -10,6 +10,7 @@ import {
   PlusCircle,
   X,
   FloppyDisk,
+  FilePdf,
 } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
 import { useApp } from "@/context/AppContext";
@@ -27,11 +28,14 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   const [modelo, setModelo] = useState("");
   const [aerolinea, setAerolinea] = useState("");
   const [salida, setSalida] = useState("");
+  const [llegada, setLlegada] = useState("");
   const [responsable, setResponsable] = useState("");
   const [furgo, setFurgo] = useState("");
   const [selectedWorkers, setSelectedWorkers] = useState<Set<string>>(new Set());
   const [workerSearch, setWorkerSearch] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const handleAircraftChange = (reg: string) => {
     setMatricula(reg);
@@ -51,13 +55,14 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   };
 
   const filteredWorkers = personal.filter((p) =>
-    p.name.toLowerCase().includes(workerSearch.toLowerCase())
+    p.name.toLowerCase().includes(workerSearch.toLowerCase()),
   );
 
   const handleSubmit = async () => {
-    if (!matricula || !salida) return;
+    if (!matricula || !salida || !responsable || !furgo) return;
     setSaving(true);
 
+    const workers = Array.from(selectedWorkers);
     const newGroup: WorkGroup = {
       id: Date.now(),
       matricula: matricula.toUpperCase(),
@@ -66,27 +71,44 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
       salida,
       responsable,
       furgo,
-      workers: Array.from(selectedWorkers),
+      workers,
       tasks: [],
     };
 
-    const payload = {
-      action: "create",
-      id_avion: newGroup.matricula,
-      modelo: newGroup.modelo,
-      aerolinea: newGroup.aerolinea,
-      hora_salida: newGroup.salida,
-      responsable: newGroup.responsable,
-      vehiculo: newGroup.furgo,
-      timestamp: new Date().toISOString(),
-      ...Array.from(selectedWorkers).reduce(
-        (acc, w, i) => ({ ...acc, [`trabajador_${i + 1}`]: w }),
-        {} as Record<string, string>
-      ),
-    };
-
     try {
-      await brokiApi.plannerAction(payload);
+      if (pdfFile) {
+        const formData = new FormData();
+        formData.append("id_avion", newGroup.matricula);
+        formData.append("matricula", newGroup.matricula);
+        formData.append("modelo", newGroup.modelo);
+        formData.append("aerolinea", newGroup.aerolinea);
+        formData.append("vehiculo", newGroup.furgo);
+        formData.append("responsable", newGroup.responsable);
+        formData.append("hora_salida", newGroup.salida);
+        formData.append("hora_llegada", llegada);
+        formData.append("fecha_modificacion", new Date().toISOString());
+        for (let i = 1; i <= 10; i++) {
+          formData.append(`trabajador_${i}`, workers[i - 1] ?? "");
+        }
+        formData.append("file", pdfFile);
+        await brokiApi.plannerActionForm(formData);
+      } else {
+        await brokiApi.plannerAction({
+          action: "create",
+          id_avion: newGroup.matricula,
+          modelo: newGroup.modelo,
+          aerolinea: newGroup.aerolinea,
+          hora_salida: newGroup.salida,
+          hora_llegada: llegada,
+          responsable: newGroup.responsable,
+          vehiculo: newGroup.furgo,
+          timestamp: new Date().toISOString(),
+          ...workers.reduce(
+            (acc, w, i) => ({ ...acc, [`trabajador_${i + 1}`]: w }),
+            {} as Record<string, string>,
+          ),
+        });
+      }
     } catch (e) {
       console.error("[PlannerCreator] create error", e);
     }
@@ -115,7 +137,6 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
       </div>
 
       <div className="p-5 space-y-4">
-        {/* Aircraft */}
         <div>
           <label className={labelCls}>
             <span className="flex items-center gap-1">
@@ -146,7 +167,6 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           )}
         </div>
 
-        {/* Modelo / Aerolinea - readonly if from aircraft */}
         {(modelo || aerolinea) && (
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -170,7 +190,6 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           </div>
         )}
 
-        {/* Salida + Responsable */}
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={labelCls}>
@@ -188,6 +207,22 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           <div>
             <label className={labelCls}>
               <span className="flex items-center gap-1">
+                <Clock size={10} /> Hora Llegada
+              </span>
+            </label>
+            <input
+              type="time"
+              value={llegada}
+              onChange={(e) => setLlegada(e.target.value)}
+              className={fieldCls}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={labelCls}>
+              <span className="flex items-center gap-1">
                 <UserCircle size={10} /> Responsable
               </span>
             </label>
@@ -199,15 +234,14 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
               >
                 <option value="">Seleccionar...</option>
                 {personal
-                  .filter(
-                    (p) =>
-                      p.qualifications.some(
-                        (q) =>
-                          q.includes("B1") ||
-                          q.includes("B2") ||
-                          q.includes("Certificador") ||
-                          q.includes("CAT-A")
-                      )
+                  .filter((p) =>
+                    p.qualifications.some(
+                      (q) =>
+                        q.includes("B1") ||
+                        q.includes("B2") ||
+                        q.includes("Certificador") ||
+                        q.includes("CAT-A"),
+                    ),
                   )
                   .map((p) => (
                     <option key={p.id} value={p.name}>
@@ -225,30 +259,27 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
               />
             )}
           </div>
+          <div>
+            <label className={labelCls}>
+              <span className="flex items-center gap-1">
+                <Van size={10} /> Vehículo
+              </span>
+            </label>
+            <select
+              value={furgo}
+              onChange={(e) => setFurgo(e.target.value)}
+              className={fieldCls}
+            >
+              <option value="">Seleccionar vehículo...</option>
+              {furgonetas.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.id} · {f.model}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Furgoneta */}
-        <div>
-          <label className={labelCls}>
-            <span className="flex items-center gap-1">
-              <Van size={10} /> Vehículo
-            </span>
-          </label>
-          <select
-            value={furgo}
-            onChange={(e) => setFurgo(e.target.value)}
-            className={fieldCls}
-          >
-            <option value="">Seleccionar vehículo...</option>
-            {furgonetas.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.id} · {f.model}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Workers */}
         <div>
           <label className={labelCls}>
             <span className="flex items-center gap-1">
@@ -265,7 +296,7 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           <div className="max-h-40 overflow-y-auto space-y-1 border border-slate-200 dark:border-slate-700 rounded-lg p-2">
             {filteredWorkers.length === 0 && (
               <p className="text-xs text-slate-400 text-center py-2 italic">
-                Sin personal cargado. Activa refresco primero.
+                Sin personal cargado.
               </p>
             )}
             {filteredWorkers.map((p) => {
@@ -273,6 +304,7 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
               return (
                 <button
                   key={p.id}
+                  type="button"
                   onClick={() => toggleWorker(p.name)}
                   className={`w-full text-left flex items-start gap-2 px-2 py-2 rounded-lg text-xs transition-colors ${
                     selected
@@ -293,27 +325,36 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
                     <p className="font-medium text-slate-800 dark:text-slate-200 truncate">
                       {p.name}
                     </p>
-                    {p.qualifications.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {p.qualifications.slice(0, 4).map((q, i) => (
-                          <span
-                            key={i}
-                            className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded text-[9px] font-bold border border-blue-200 dark:border-blue-800"
-                          >
-                            {q}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </button>
               );
             })}
           </div>
         </div>
+
+        <div>
+          <label className={labelCls}>Hoja de Trabajo (PDF)</label>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={(e) => setPdfFile(e.target.files?.[0] ?? null)}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 text-center hover:border-brand-400 transition-colors"
+          >
+            <FilePdf size={32} className="mx-auto text-slate-400 mb-2" />
+            <p className="text-xs text-slate-500 font-medium">
+              {pdfFile ? pdfFile.name : "Arrastra la Hoja de Trabajo (PDF)"}
+            </p>
+            <span className="text-[10px] text-slate-400">o haz clic para subir</span>
+          </button>
+        </div>
       </div>
 
-      {/* Footer */}
       <div className="flex gap-2 justify-end px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
         <button
           onClick={onCancel}
@@ -323,7 +364,7 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
         </button>
         <button
           onClick={handleSubmit}
-          disabled={saving || !matricula || !salida}
+          disabled={saving || !matricula || !salida || !responsable || !furgo}
           className="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 disabled:opacity-50 shadow-sm flex items-center gap-2 transition-colors"
         >
           {saving ? (

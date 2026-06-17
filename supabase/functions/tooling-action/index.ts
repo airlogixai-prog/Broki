@@ -9,9 +9,12 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
+    if (!body?.action) {
+      return jsonResponse(req, { error: "missing action" }, 400);
+    }
     const data = await n8nPostJson("registro_tooling", body);
     return jsonResponse(req, data);
   } catch {
-    return jsonResponse(req, { ok: false }, 500);
+    return jsonResponse(req, { error: "upstream_error" }, 502);
   }
 });

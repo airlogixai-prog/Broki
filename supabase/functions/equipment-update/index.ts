@@ -9,6 +9,9 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
+    if (!body?.item_id) {
+      return jsonResponse(req, { error: "missing item_id" }, 400);
+    }
     const data = await n8nPostJson("Inventario", body);
     return jsonResponse(req, data);
   } catch {

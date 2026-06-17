@@ -1,0 +1,50 @@
+---
+description: Metodología de construcción de Broki. Separación estricta front/back y buenas prácticas. Complementa ponytail.
+globs:
+alwaysApply: true
+---
+
+# Metodología Broki
+
+Primero aplica `ponytail` (la solución más simple que funcione). Esta regla añade **dónde** vive el código y **cómo** se construye. Si las dos chocan, gana ponytail en cantidad de código y esta regla en ubicación/capas.
+
+## Arquitectura del repo
+
+```
+web/         → Frontend. Next.js + cliente Supabase. SOLO UI y lectura de datos.
+supabase/    → Backend. Edge Functions (Deno), migraciones, base de datos.
+```
+
+El frontend y el backend son dos mundos separados. No se mezclan.
+
+## Separación front / back (regla dura)
+
+- **El front NUNCA contiene lógica de backend.** Nada de secretos, service-role keys, conexiones directas a DB, llamadas a n8n, ni reglas de negocio sensibles en `web/`.
+- El front habla con el back **solo** vía Edge Functions (`/functions/v1/<nombre>`) o el cliente Supabase con la `anon key` + RLS. Nunca con la `service_role key`.
+- Toda lógica que toque datos privados, terceros (n8n, APIs externas) o que deba ser de confianza vive en `supabase/functions/`.
+- El front asume que el back puede fallar: maneja estados de carga, error y vacío. No esconde fallos.
+- Validación en ambos lados con propósito distinto: en el front para UX, en el back para seguridad (frontera de confianza). La del back es la que manda.
+
+## Backend (Edge Functions)
+
+- Una function = una responsabilidad. Nombre claro en kebab-case (`aircraft-list`, `tooling-action`).
+- Reutiliza `_shared/` (`cors.ts`, `handler.ts`, `response.ts`, `n8n.ts`). No dupliques CORS, parseo ni formato de respuesta.
+- Config y secretos vía `Deno.env.get(...)` con default sano cuando aplique. Nunca hardcodear claves.
+- Respuestas con forma consistente (usa los helpers de `response.ts`). Errores con código HTTP correcto, no `200` con un error dentro.
+- Valida el input al entrar. Si llega basura, responde 400, no la propagues.
+
+## Frontend (Next.js)
+
+- Llamadas al back centralizadas en `web/src/lib/api/`. Los componentes no hacen `fetch` sueltos.
+- Estado global compartido en el contexto existente (`AppContext`), no reinventes stores.
+- Componentes presentacionales tontos; la obtención de datos vive en la capa de datos/hooks, no incrustada en el JSX.
+- Tipos compartidos con la DB vienen de `database.types.ts` (regenerar con `npm run db:types`). No reescribas tipos a mano.
+- Accesibilidad y estados de error/carga no son opcionales.
+
+## Reglas transversales
+
+- Sigue el patrón del código que ya existe antes de inventar uno nuevo.
+- No crees capas, abstracciones ni carpetas que nadie pidió (ponytail).
+- Borrar antes que añadir. Menos archivos.
+- Cambios pequeños y enfocados. No mezcles refactor con feature en el mismo paso.
+- Si una pieza de lógica no es trivial, deja **una** comprobación ejecutable que falle si se rompe.

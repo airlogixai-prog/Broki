@@ -14,6 +14,8 @@ import {
 } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
+import { NotificationsBell } from "@/components/notifications/NotificationsBell";
+import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
 import type { Theme } from "@/lib/types/equipment";
 
 const THEMES: { id: Theme; label: string; desc: string; colors: string[] }[] = [
@@ -112,6 +114,9 @@ export function Topbar({ onMenuToggle }: Props) {
       </div>
 
       <div className="flex items-center gap-2 ml-auto">
+        <PwaInstallButton />
+        <NotificationsBell />
+
         {/* Update indicator */}
         {lastUpdate && (
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300">

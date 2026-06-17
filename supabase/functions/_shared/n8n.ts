@@ -36,6 +36,7 @@ export async function n8nGetJson(
   cacheBust = false,
 ): Promise<unknown> {
   const res = await n8nGet(path, cacheBust);
+  if (!res.ok) throw new Error(`n8n ${res.status}`);
   return res.json();
 }
 
@@ -52,5 +53,15 @@ export async function n8nPost(path: string, body: unknown): Promise<Response> {
 
 export async function n8nPostJson(path: string, body: unknown): Promise<unknown> {
   const res = await n8nPost(path, body);
+  if (!res.ok) throw new Error(`n8n ${res.status}`);
+  return res.json().catch(() => ({}));
+}
+
+export async function n8nPostForm(path: string, formData: FormData): Promise<unknown> {
+  const res = await fetchWithTimeout(webhookUrl(path), {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`n8n ${res.status}`);
   return res.json().catch(() => ({}));
 }

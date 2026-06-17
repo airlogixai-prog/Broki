@@ -18,18 +18,18 @@ import {
 } from "@phosphor-icons/react";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", Icon: SquaresFour },
-  { href: "/mapa", label: "Mapa en Vivo", Icon: MapTrifold },
-  { href: "/furgonetas", label: "Furgonetas", Icon: Van },
-  { href: "/gse", label: "Equipos GSE", Icon: Wrench },
-  { href: "/aviones", label: "Por Avión", Icon: Airplane },
-  { href: "/incidencias", label: "Incidencias", Icon: WarningOctagon },
-  { href: "/analytics", label: "Analítica", Icon: ChartPieSlice },
-  { href: "/planner", label: "Planificador", Icon: ClipboardText },
-  { href: "/roster", label: "Horario", Icon: Calendar },
-  { href: "/fleet", label: "Flota / Relevos", Icon: AirplaneTilt },
-  { href: "/stock", label: "Stock Nitrógeno", Icon: Cylinder },
-  { href: "/tooling", label: "Tooling", Icon: Toolbox },
+  { href: "/broki", label: "Dashboard", Icon: SquaresFour },
+  { href: "/broki/mapa", label: "Mapa en Vivo", Icon: MapTrifold },
+  { href: "/broki/furgonetas", label: "Furgonetas", Icon: Van },
+  { href: "/broki/gse", label: "Equipos GSE", Icon: Wrench },
+  { href: "/broki/aviones", label: "Por Avión", Icon: Airplane },
+  { href: "/broki/incidencias", label: "Incidencias", Icon: WarningOctagon },
+  { href: "/broki/analytics", label: "Analítica", Icon: ChartPieSlice },
+  { href: "/broki/planner", label: "Planificador", Icon: ClipboardText },
+  { href: "/broki/roster", label: "Horario", Icon: Calendar },
+  { href: "/broki/fleet", label: "Flota / Relevos", Icon: AirplaneTilt },
+  { href: "/broki/stock", label: "Stock Nitrógeno", Icon: Cylinder },
+  { href: "/broki/tooling", label: "Tooling", Icon: Toolbox },
 ];
 
 interface Props {
@@ -44,9 +44,11 @@ export function Sidebar({ onClose }: Props) {
       {/* Logo */}
       <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center shadow-sm">
-            <span className="text-white font-black text-sm">B</span>
-          </div>
+          <img
+            src="/assets/icon.jpg"
+            alt="BROKI"
+            className="w-10 h-10 rounded-xl object-cover shadow-sm"
+          />
           <h1 className="font-bold text-xl tracking-tight text-orange-500">BROKI</h1>
         </div>
         {onClose && (
@@ -62,7 +64,10 @@ export function Sidebar({ onClose }: Props) {
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map(({ href, label, Icon }) => {
-          const isActive = pathname === href;
+          const isActive =
+            href === "/broki"
+              ? pathname === "/broki"
+              : pathname === href || pathname.startsWith(`${href}/`);
           return (
             <Link
               key={href}

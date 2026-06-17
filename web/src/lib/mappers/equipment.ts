@@ -1,12 +1,12 @@
 import type { Equipment, Personnel, Aircraft, StatusCategory } from "@/lib/types/equipment";
 
 const uc = (s: unknown): string => String(s ?? "").trim();
-const toNumber = (n: unknown, fallback = 0): number => {
+export function toNumber(n: unknown, fallback = 0): number {
   if (n == null || n === "") return fallback;
   if (typeof n === "number") return n;
   const v = parseFloat(String(n).replace("%", "").replace(",", ".").trim());
   return isNaN(v) ? fallback : v;
-};
+}
 
 // Mirrors getFamily() from broki.html ~L1620
 export function getFamily(item: Pick<Equipment, "model" | "id" | "type">): string {

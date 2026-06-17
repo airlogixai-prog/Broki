@@ -14,6 +14,6 @@ serve(async (req) => {
     ]);
     return jsonResponse(req, { catalog, movements });
   } catch {
-    return jsonResponse(req, { catalog: [], movements: [] });
+    return jsonResponse(req, { error: "upstream_error" }, 502);
   }
 });

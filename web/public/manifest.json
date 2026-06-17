@@ -1,0 +1,26 @@
+{
+  "name": "BROKI - AirLogix Dashboard",
+  "short_name": "BROKI",
+  "description": "Sistema de gestión y monitoreo de flota en tiempo real",
+  "start_url": "/broki",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/icon.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "screenshots": []
+}

@@ -418,6 +418,12 @@ verify_jwt = true
 [functions.tooling-action]
 verify_jwt = true
 
+[functions.weather]
+verify_jwt = true
+
+[functions.roster-upload]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327

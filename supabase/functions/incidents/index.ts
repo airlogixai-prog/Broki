@@ -8,13 +8,16 @@ serve(async (req) => {
       const data = await n8nGetJson("envio_incidencias");
       return jsonResponse(req, data);
     } catch {
-      return jsonResponse(req, []);
+      return jsonResponse(req, { error: "upstream_error" }, 502);
     }
   }
 
   if (req.method === "POST") {
     try {
       const body = await req.json();
+      if (!body?.action || !body?.item_id) {
+        return jsonResponse(req, { error: "missing action or item_id" }, 400);
+      }
       const data = await n8nPostJson("incidencias", body);
       return jsonResponse(req, data);
     } catch {

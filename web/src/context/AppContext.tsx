@@ -37,6 +37,7 @@ interface AppState {
   aircraft: Aircraft[];
   incidentsMemory: Record<string, IncidentState>;
   loading: boolean;
+  fetchError: string | null;
   lastUpdate: Date | null;
   filter: string;
   avionFilter: string;
@@ -56,6 +57,7 @@ interface AppContextValue extends AppState {
   setTheme: (t: Theme) => void;
   setDarkMode: (v: boolean) => void;
   setLoading: (v: boolean) => void;
+  setFetchError: (v: string | null) => void;
   setInventory: (
     data: Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">
   ) => void;
@@ -78,7 +80,42 @@ function getInitialCompact(): boolean {
   return localStorage.getItem("broki_compact_mode") === "true";
 }
 
+function getInitialFilters() {
+  if (typeof window === "undefined") {
+    return { filter: "", avionFilter: "all", statusFilter: "all", familyFilter: "all" };
+  }
+  try {
+    const saved = JSON.parse(localStorage.getItem("broki_filters") || "{}");
+    return {
+      filter: saved.search ?? "",
+      avionFilter: saved.avion ?? "all",
+      statusFilter: saved.status ?? "all",
+      familyFilter: saved.family ?? "all",
+    };
+  } catch {
+    return { filter: "", avionFilter: "all", statusFilter: "all", familyFilter: "all" };
+  }
+}
+
+function saveFilters(filters: {
+  filter: string;
+  avionFilter: string;
+  statusFilter: string;
+  familyFilter: string;
+}) {
+  localStorage.setItem(
+    "broki_filters",
+    JSON.stringify({
+      search: filters.filter,
+      status: filters.statusFilter,
+      avion: filters.avionFilter,
+      family: filters.familyFilter,
+    }),
+  );
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
+  const initialFilters = getInitialFilters();
   const [state, setState] = useState<AppState>({
     furgonetas: [],
     gse: [],
@@ -86,11 +123,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     aircraft: [],
     incidentsMemory: {},
     loading: false,
+    fetchError: null,
     lastUpdate: null,
-    filter: "",
-    avionFilter: "all",
-    statusFilter: "all",
-    familyFilter: "all",
+    filter: initialFilters.filter,
+    avionFilter: initialFilters.avionFilter,
+    statusFilter: initialFilters.statusFilter,
+    familyFilter: initialFilters.familyFilter,
     compactMode: getInitialCompact(),
     theme: getInitialTheme(),
     darkMode: getInitialDark(),
@@ -98,19 +136,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const refreshRef = useRef<(() => void) | null>(null);
 
-  const setFilter = useCallback((v: string) => setState((s) => ({ ...s, filter: v })), []);
-  const setAvionFilter = useCallback(
-    (v: string) => setState((s) => ({ ...s, avionFilter: v })),
-    []
-  );
-  const setStatusFilter = useCallback(
-    (v: string) => setState((s) => ({ ...s, statusFilter: v })),
-    []
-  );
-  const setFamilyFilter = useCallback(
-    (v: string) => setState((s) => ({ ...s, familyFilter: v })),
-    []
-  );
+  const setFilter = useCallback((v: string) => {
+    setState((s) => {
+      saveFilters({ ...s, filter: v });
+      return { ...s, filter: v };
+    });
+  }, []);
+  const setAvionFilter = useCallback((v: string) => {
+    setState((s) => {
+      saveFilters({ ...s, avionFilter: v });
+      return { ...s, avionFilter: v };
+    });
+  }, []);
+  const setStatusFilter = useCallback((v: string) => {
+    setState((s) => {
+      saveFilters({ ...s, statusFilter: v });
+      return { ...s, statusFilter: v };
+    });
+  }, []);
+  const setFamilyFilter = useCallback((v: string) => {
+    setState((s) => {
+      saveFilters({ ...s, familyFilter: v });
+      return { ...s, familyFilter: v };
+    });
+  }, []);
   const setCompactMode = useCallback((v: boolean) => {
     localStorage.setItem("broki_compact_mode", String(v));
     setState((s) => ({ ...s, compactMode: v }));
@@ -127,6 +176,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
   const setLoading = useCallback(
     (v: boolean) => setState((s) => ({ ...s, loading: v })),
+    []
+  );
+  const setFetchError = useCallback(
+    (v: string | null) => setState((s) => ({ ...s, fetchError: v })),
     []
   );
   const setInventory = useCallback(
@@ -152,6 +205,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setTheme,
         setDarkMode,
         setLoading,
+        setFetchError,
         setInventory,
         setIncidentsMemory,
         refreshRef,

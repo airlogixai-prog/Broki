@@ -9,20 +9,43 @@ import type { IncidentState } from "@/lib/types/equipment";
 
 const REFRESH_MS = 30_000;
 
+function errMsg(reason: unknown): string {
+  if (reason instanceof Error) return reason.message;
+  return String(reason);
+}
+
 export function useEquipment() {
-  const { setInventory, setIncidentsMemory, setLoading, refreshRef } = useApp();
+  const { setInventory, setIncidentsMemory, setLoading, setFetchError, refreshRef } =
+    useApp();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAll = useCallback(
     async (manual = false) => {
       if (manual) setLoading(true);
       try {
-        const [resInv, resP, resIncidents, resAircraft] = await Promise.all([
-          brokiApi.fetchInventory().catch(() => []),
-          brokiApi.fetchPersonnel().catch(() => []),
-          brokiApi.fetchIncidents().catch(() => []),
-          brokiApi.fetchAircraft().catch(() => []),
+        const [invR, persR, incR, acR] = await Promise.allSettled([
+          brokiApi.fetchInventory(),
+          brokiApi.fetchPersonnel(),
+          brokiApi.fetchIncidents(),
+          brokiApi.fetchAircraft(),
         ]);
+
+        const failures = [invR, persR, incR, acR].filter(
+          (r): r is PromiseRejectedResult => r.status === "rejected",
+        );
+        if (failures.length > 0) {
+          setFetchError(
+            failures.map((r) => errMsg(r.reason)).join(" · ") ||
+              "Error al cargar datos",
+          );
+        } else {
+          setFetchError(null);
+        }
+
+        const resInv = invR.status === "fulfilled" ? invR.value : [];
+        const resP = persR.status === "fulfilled" ? persR.value : [];
+        const resIncidents = incR.status === "fulfilled" ? incR.value : [];
+        const resAircraft = acR.status === "fulfilled" ? acR.value : [];
 
         const rows = Array.isArray(resInv)
           ? resInv
@@ -37,7 +60,6 @@ export function useEquipment() {
 
         setInventory({ furgonetas, gse, personal, aircraft });
 
-        // Process incidents
         const incidentsMemory: Record<string, IncidentState> = {};
         (Array.isArray(resIncidents) ? resIncidents : []).forEach(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,24 +91,23 @@ export function useEquipment() {
               status === "open";
             if (isOpen) incidentsMemory[itemId].current = obj;
             else incidentsMemory[itemId].history.push(obj);
-          }
+          },
         );
         setIncidentsMemory(incidentsMemory);
       } catch (err) {
         console.error("[useEquipment] fetch error", err);
+        setFetchError(errMsg(err));
       } finally {
         if (manual) setLoading(false);
       }
     },
-    [setInventory, setIncidentsMemory, setLoading]
+    [setInventory, setIncidentsMemory, setLoading, setFetchError],
   );
 
-  // Expose manual refresh via context ref
   useEffect(() => {
     refreshRef.current = () => fetchAll(true);
   }, [fetchAll, refreshRef]);
 
-  // Initial load + auto-refresh
   useEffect(() => {
     fetchAll(true);
     timerRef.current = setInterval(() => fetchAll(), REFRESH_MS);

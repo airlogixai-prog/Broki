@@ -5,6 +5,8 @@ export const metadata: Metadata = {
   title: "BROKI Dashboard | GSE & Furgonetas",
   description: "Gestión de equipos GSE, furgonetas y operaciones aeroportuarias",
   manifest: "/manifest.json",
+  icons: { icon: "/images/favicon.png", apple: "/assets/icon.jpg" },
+  themeColor: "#f97316",
 };
 
 export default function RootLayout({

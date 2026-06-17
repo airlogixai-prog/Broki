@@ -6,8 +6,8 @@ import { Eye, EyeSlash, Lock, EnvelopeSimple, WarningCircle } from "@phosphor-ic
 import { createClient } from "@/lib/supabase/client";
 
 function safeRedirectPath(path: string | null) {
-  if (!path || !path.startsWith("/") || path.startsWith("//")) return "/";
-  if (path === "/login") return "/";
+  if (!path || !path.startsWith("/") || path.startsWith("//")) return "/broki";
+  if (path === "/login") return "/broki";
   return path;
 }
 
@@ -47,8 +47,8 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/25 mb-4">
-            <span className="text-white font-black text-xl">B</span>
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl shadow-lg shadow-brand-500/25 mb-4 overflow-hidden">
+            <img src="/assets/icon.jpg" alt="BROKI" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             BROKI Dashboard
