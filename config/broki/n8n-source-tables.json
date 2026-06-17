@@ -1,0 +1,25 @@
+{
+  "source_system": "n8n_postgres_pro",
+  "schema": "pro",
+  "tables": [
+    "personal",
+    "inventario",
+    "incidencias",
+    "grupo_trabajo",
+    "tareas",
+    "aviones",
+    "tooling",
+    "tool_control",
+    "furgonetas",
+    "gse",
+    "registro_comunicaciones",
+    "n8n_chat_histories",
+    "no_existe_telefono"
+  ],
+  "n8nDataTables": [
+    {
+      "name": "nitro_stock",
+      "description": "Stock de nitrógeno en DataTable interna de n8n"
+    }
+  ]
+}
