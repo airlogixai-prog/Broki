@@ -5,9 +5,12 @@ import { useApp } from "@/context/AppContext";
 import { brokiApi } from "@/lib/api/broki";
 import { splitInventory } from "@/lib/mappers/equipment";
 import { normalizePersonnel, normalizeAircraft } from "@/lib/mappers/equipment";
+import { createClient } from "@/lib/supabase/client";
 import type { IncidentState } from "@/lib/types/equipment";
 
 const REFRESH_MS = 30_000;
+// Tables that trigger a full refresh when they change via Realtime.
+const REALTIME_TABLES = ["broki_assets", "broki_incidents", "broki_nitro_stock", "broki_tooling_movements"] as const;
 
 function errMsg(reason: unknown): string {
   if (reason instanceof Error) return reason.message;
@@ -113,6 +116,39 @@ export function useEquipment() {
     timerRef.current = setInterval(() => fetchAll(), REFRESH_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [fetchAll]);
+
+  // Realtime: refresh on any change to operational tables.
+  // ponytail: v1 — full refresh on change; v2 upgrade = patch local state per event
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("broki-realtime-refresh")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: REALTIME_TABLES[0] },
+        () => fetchAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: REALTIME_TABLES[1] },
+        () => fetchAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: REALTIME_TABLES[2] },
+        () => fetchAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: REALTIME_TABLES[3] },
+        () => fetchAll(),
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
   }, [fetchAll]);
 }
