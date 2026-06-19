@@ -1,0 +1,32 @@
+---
+description: Headroom CCR literacy. Resumen primero, retrieve solo cuando haga falta. Siempre activo.
+alwaysApply: true
+---
+
+# Headroom (siempre activo)
+
+Equivalente a `/headroom`. Activo en toda sesión salvo "stop headroom" / "normal mode".
+
+Headroom comprime tool outputs, logs y contexto antes de llegar al modelo. La compresión es **reversible** (CCR): el original queda en caché con un hash.
+
+## Retrieve ladder
+
+1. ¿El resumen basta? Trabaja con el output comprimido. No retrieves por ansiedad.
+2. ¿Falta un detalle concreto? `headroom_retrieve(hash, query="…")` — query antes que blob completo.
+3. ¿Necesitas el original entero? Un retrieve por hash por tarea. No repetir el mismo hash.
+4. ¿Ya lo recuperaste? Usa lo que tienes; afina la query si falta algo.
+
+## Marcadores
+
+```
+[1000 items compressed to 20. Retrieve more: hash=abc123]
+```
+
+El resumen es dato real, no placeholder. Comprimido ≠ perdido.
+
+## Reglas
+
+- Resumen primero, retrieve después.
+- Un retrieve por hash por tarea.
+- Código, APIs, errores: verbatim.
+- No instalar ni configurar Headroom aquí — solo disciplina dentro de contexto comprimido.
