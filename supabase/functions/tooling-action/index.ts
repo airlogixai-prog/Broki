@@ -1,9 +1,7 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nPostJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { movementToLegacyRow } from "../_shared/legacy-tooling.ts";
 
 serve(async (req) => {
   if (req.method !== "POST") {
@@ -21,16 +19,6 @@ serve(async (req) => {
     return jsonResponse(req, { error: "missing action" }, 400);
   }
 
-  // ponytail: remove TOOLING_USE_N8N flag after PR5 validated in staging
-  if (Deno.env.get("TOOLING_USE_N8N") === "true") {
-    try {
-      const data = await n8nPostJson("registro_tooling", body);
-      return jsonResponse(req, data);
-    } catch {
-      return jsonResponse(req, { error: "upstream_error" }, 502);
-    }
-  }
-
   const action = String(body.action);
   const supabase = createServiceClient();
 
@@ -40,7 +28,6 @@ serve(async (req) => {
         return jsonResponse(req, { error: "missing bac_bact or tma_out" }, 400);
       }
 
-      // Resolve tool FK (optional, no hard fail)
       const { data: tool } = await supabase
         .from("broki_tooling_catalog")
         .select("id")
@@ -74,7 +61,7 @@ serve(async (req) => {
         tma_out: body.tma_out,
       });
 
-      return jsonResponse(req, movementToLegacyRow(inserted));
+      return jsonResponse(req, inserted);
     }
 
     if (action === "checkin") {
@@ -82,7 +69,6 @@ serve(async (req) => {
         return jsonResponse(req, { error: "missing tma_in" }, 400);
       }
 
-      // Find movement by id or bac_bact where date_in is null
       let movementQuery = supabase
         .from("broki_tooling_movements")
         .select("*")
@@ -136,7 +122,7 @@ serve(async (req) => {
         tma_in: body.tma_in,
       });
 
-      return jsonResponse(req, movementToLegacyRow(updated));
+      return jsonResponse(req, updated);
     }
 
     return jsonResponse(req, { error: `unknown action: ${action}` }, 400);

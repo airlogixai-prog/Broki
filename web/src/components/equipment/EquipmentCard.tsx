@@ -1,7 +1,7 @@
 "use client";
 
 import { Airplane, MapPin, User, GasPump, Wrench, Van, Warning } from "@phosphor-icons/react";
-import { getStatusClass, getStatusCategory } from "@/lib/mappers/equipment";
+import { getStatusClass } from "@/lib/mappers/equipment";
 import type { Equipment } from "@/lib/types/equipment";
 import { useApp } from "@/context/AppContext";
 
@@ -92,9 +92,15 @@ export function EquipmentCard({ item, onClick }: Props) {
   const statusClass = getStatusClass(item.status);
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onClick?.(item)}
-      className={`group card-hoverable equipment-card bg-white dark:bg-slate-800 rounded-xl p-4 border ${borderClass} shadow-sm flex flex-col h-full relative overflow-hidden cursor-pointer hover:border-brand-300 dark:hover:border-brand-500 transition-colors`}
+      disabled={!onClick}
+      className={`group card-hoverable equipment-card bg-white dark:bg-slate-800 rounded-xl p-4 border ${borderClass} shadow-sm flex flex-col h-full relative overflow-hidden text-left w-full ${
+        onClick
+          ? "cursor-pointer hover:border-brand-300 dark:hover:border-brand-500"
+          : "cursor-default"
+      } transition-colors`}
     >
       {hasIncident && (
         <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-bl-lg z-20 animate-pulse" />
@@ -165,6 +171,6 @@ export function EquipmentCard({ item, onClick }: Props) {
       {item.family === "Nitrógeno" && item.pressures.length > 0 && (
         <NitrogenBottles pressures={item.pressures} />
       )}
-    </div>
+    </button>
   );
 }

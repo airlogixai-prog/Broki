@@ -1,0 +1,2391 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Registro Profesional | AIRLOGIX AI - Brok-Air Aviation Group</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="color-scheme" content="dark">
+  <style>
+    :root{
+      --bg-primary: #0a1628;
+      --bg-secondary: #0d1b2e;
+      --bg-card: #111d33;
+      --brand-cyan: #22e6c3;
+      --brand-cyan-dark: #1ac4a6;
+      --text-primary: #ffffff;
+      --text-muted: rgba(255,255,255,0.7);
+      --border-subtle: rgba(255,255,255,0.08);
+      --border-medium: rgba(255,255,255,0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .page-wrapper {
+      background: linear-gradient(135deg, #0a1628 0%, #0d1b2e 50%, #0a1628 100%);
+      min-height: 100vh;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-placeholder {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-dark) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #001418;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .logo-text h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .logo-text p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    .form-header {
+      background: linear-gradient(135deg, rgba(34, 230, 195, 0.1) 0%, rgba(34, 230, 195, 0.03) 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      border-radius: 24px 24px 0 0;
+      padding: 2rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(34, 230, 195, 0.1);
+      border: 1px solid rgba(34, 230, 195, 0.3);
+      border-radius: 100px;
+      color: var(--brand-cyan);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .client-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 100px;
+      color: #60a5fa;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-label {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .input-label .required {
+      color: var(--brand-cyan);
+      margin-left: 0.25rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid var(--border-medium);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      background: rgba(255,255,255,0.06);
+      border-color: var(--brand-cyan);
+      box-shadow: 0 0 0 3px rgba(34, 230, 195, 0.1);
+    }
+
+    .input-field::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    .form-section {
+      padding: 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .form-section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .chip {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .chip input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chip-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border-medium);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.25s ease;
+      min-height: 56px;
+    }
+
+    .chip-dot {
+      width: 10px;
+      height: 10px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .chip:hover .chip-label {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(34, 230, 195, 0.3);
+    }
+
+    .chip input:checked + .chip-label {
+      background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-dark) 100%);
+      border-color: transparent;
+      color: #001418;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(34, 230, 195, 0.3);
+    }
+
+    .chip input:checked + .chip-label .chip-dot {
+      background: #001418;
+      border-color: #001418;
+    }
+
+    .chip input:focus-visible + .chip-label {
+      outline: 2px solid var(--brand-cyan);
+      outline-offset: 2px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .privacy-box {
+      background: rgba(34, 230, 195, 0.05);
+      border: 1px solid rgba(34, 230, 195, 0.2);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+    
+    .privacy-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .privacy-box::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+    
+    .privacy-box::-webkit-scrollbar-thumb {
+      background: var(--brand-cyan);
+      border-radius: 4px;
+    }
+    
+    .privacy-box::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-cyan-dark);
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+      cursor: pointer;
+      accent-color: var(--brand-cyan);
+    }
+
+    .privacy-text {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .privacy-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .privacy-link {
+      color: var(--brand-cyan);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .privacy-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 2.5rem;
+      background: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-dark) 100%);
+      color: #001418;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(34, 230, 195, 0.3);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(34, 230, 195, 0.4);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .feedback-message {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-left: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feedback-message.show {
+      opacity: 1;
+    }
+
+    .feedback-message.success {
+      background: rgba(34, 230, 195, 0.1);
+      color: var(--brand-cyan);
+      border: 1px solid rgba(34, 230, 195, 0.3);
+    }
+
+    .feedback-message.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+    }
+
+    /* Campo condicional BAC */
+    .bac-field {
+      display: none;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .bac-field.show {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 8px;
+      color: #60a5fa;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    /* NUEVO: Estilos para certificaciones por aeronave */
+    .aeronave-cert-container {
+      display: none;
+      margin-top: 1rem;
+      padding: 1.5rem;
+      background: rgba(34, 230, 195, 0.05);
+      border: 1px solid rgba(34, 230, 195, 0.2);
+      border-radius: 12px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .aeronave-cert-container.show {
+      display: block;
+    }
+
+    .aeronave-cert-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--brand-cyan);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cert-options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .mini-chip {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .mini-chip input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mini-chip-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border-medium);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.25s ease;
+    }
+
+    .mini-chip-dot {
+      width: 8px;
+      height: 8px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      transition: all 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .mini-chip:hover .mini-chip-label {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(34, 230, 195, 0.3);
+    }
+
+    .mini-chip input:checked + .mini-chip-label {
+      background: linear-gradient(135deg, rgba(34, 230, 195, 0.3) 0%, rgba(34, 230, 195, 0.2) 100%);
+      border-color: var(--brand-cyan);
+      color: var(--brand-cyan);
+      font-weight: 600;
+    }
+
+    .mini-chip input:checked + .mini-chip-label .mini-chip-dot {
+      background: var(--brand-cyan);
+      border-color: var(--brand-cyan);
+    }
+
+    .warning-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 8px;
+      color: #fbbf24;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .footer {
+      margin-top: 3rem;
+      padding: 2rem;
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-section h3 {
+      color: var(--brand-cyan);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-section p {
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: var(--border-subtle);
+      margin: 1.5rem 0;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--brand-cyan);
+    }
+
+    @media (max-width: 768px) {
+      .form-header {
+        padding: 1.5rem;
+      }
+
+      .form-section {
+        padding: 1.5rem;
+      }
+
+      .chips-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .feedback-message {
+        margin-left: 0;
+        margin-top: 1rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .client-badge {
+        margin-left: 0;
+        margin-top: 0.5rem;
+      }
+
+      .cert-options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <main style="max-width: 1000px; margin: 0 auto; padding: 3rem 1.5rem;">
+      
+      <div class="card">
+        <!-- Header -->
+        <div class="form-header">
+          <div class="logo-container">
+            <div class="logo-placeholder">AI</div>
+            <div class="logo-text">
+              <h2>AIRLOGIX AI</h2>
+              <p>Brok-Node System</p>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+            <span class="badge">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Registro Profesional
+            </span>
+            <span class="client-badge">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Brok-Air Aviation Group
+            </span>
+          </div>
+
+          <h1 style="font-size: 2rem; font-weight: 700; margin: 0 0 0.5rem 0; line-height: 1.2;">
+            Registro de Personal Técnico
+          </h1>
+          <p style="color: var(--text-muted); font-size: 1rem;">
+            Complete sus datos profesionales y certificaciones aeronáuticas para su integración en el sistema Broky de gestión y optimización de recursos para Brok-Air Aviation Group. Toda la información es confidencial y tratada según RGPD.
+          </p>
+        </div>
+
+        <form id="registroForm">
+          <!-- Sección: Datos Personales -->
+          <div class="form-section">
+            <h2 class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Datos Personales
+            </h2>
+            <p class="section-subtitle">Información básica de identificación para Brok-Air Aviation Group</p>
+
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label">
+                  Nombre Completo<span class="required">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="nombre" 
+                  class="input-field" 
+                  placeholder="Ej: Juan García López"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label">
+                  Teléfono de Contacto<span class="required">*</span>
+                </label>
+                <input 
+                  type="tel" 
+                  name="telefono" 
+                  class="input-field" 
+                  placeholder="+34 6XX XXX XXX"
+                  pattern="^\+?[0-9\s\-]{9,20}$"
+                  required
+                  autocomplete="tel"
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label">
+                  Email Corporativo<span class="required">*</span>
+                </label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  class="input-field" 
+                  placeholder="nombre@brok-air.com"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label">
+                  Código de Empleado AENA<span class="required">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="codigo_empleado" 
+                  class="input-field" 
+                  placeholder="Código de la tarjeta AENA"
+                  required
+                />
+                <span class="info-badge">
+                  <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Código que aparece en tu tarjeta de identificación AENA
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Departamento -->
+          <div class="form-section">
+            <h2 class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              Departamento
+            </h2>
+            <p class="section-subtitle">Seleccione su área de trabajo en Brok-Air Aviation Group<span style="color: var(--brand-cyan);">*</span></p>
+
+            <div class="chips-grid">
+              <label class="chip">
+                <input type="radio" name="departamento" value="Mantenimiento" required />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Mantenimiento</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="radio" name="departamento" value="Logística" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Logística</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="radio" name="departamento" value="Administración" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Administración</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Sección: Certificaciones -->
+          <div class="form-section">
+            <h2 class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Certificaciones Aeronáuticas
+            </h2>
+            <p class="section-subtitle">Seleccione todas sus certificaciones vigentes<span style="color: var(--brand-cyan);">*</span> (puede seleccionar múltiples)</p>
+
+            <div class="chips-grid">
+              <label class="chip">
+                <input type="checkbox" name="certificacion" value="Helper" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Helper</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" name="certificacion" value="Categoría A" class="cert-trigger" data-cert="CAT A" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Categoría A</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" name="certificacion" value="B1" class="cert-trigger" data-cert="B1" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>B1 (Mecánico)</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" name="certificacion" value="B2" class="cert-trigger" data-cert="B2" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>B2 (Aviónica)</span>
+                </span>
+              </label>
+
+              <label class="chip">
+                <input type="checkbox" name="certificacion" value="Certificador" class="cert-trigger" data-cert="Certificador" />
+                <span class="chip-label">
+                  <span class="chip-dot"></span>
+                  <span>Certificador</span>
+                </span>
+              </label>
+            </div>
+
+            <!-- Campo BAC -->
+            <div class="bac-field" id="bacField">
+              <div class="input-group" style="margin-top: 2rem;">
+                <label class="input-label">
+                  Número BAC (Basic Authorization Certificate)<span class="required">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="numero_bac" 
+                  id="numeroBac"
+                  class="input-field" 
+                  placeholder="Ej: BAC-12345-A"
+                />
+                <span class="info-badge">
+                  <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Número de autorización para firmar trabajos de mantenimiento (obligatorio para Certificadores, CAT-A, B1 y B2)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Modelos de Aeronaves -->
+          <div class="form-section">
+            <h2 class="section-title">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>
+              Modelos Autorizados para Firmar
+            </h2>
+            <p class="section-subtitle">Seleccione los modelos de aeronaves que está autorizado a firmar (opcional - solo aplica para B1, B2, CAT-A y Certificadores)</p>
+            
+            <span class="info-badge" style="display: block; margin-bottom: 1rem;">
+              <svg class="icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Si es Helper, puede omitir esta sección. Si selecciona una aeronave, debe indicar con qué certificaciones está habilitado
+            </span>
+
+            <div id="aeronavesContainer">
+              <!-- A320 Family -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Airbus A320 Family" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>A320 Family</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Airbus A320 Family">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para A320 Family
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A320_Family" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A320_Family" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A320_Family" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- A330 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Airbus A330" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Airbus A330</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Airbus A330">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Airbus A330
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A330" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A330" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A330" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- A350 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Airbus A350" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Airbus A350</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Airbus A350">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Airbus A350
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A350" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A350" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_A350" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Boeing 737 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Boeing 737" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Boeing 737</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Boeing 737">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Boeing 737
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_737" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_737" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_737" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Boeing 787 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Boeing 787" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Boeing 787</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Boeing 787">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Boeing 787
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_787" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_787" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_787" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Boeing 777 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Boeing 777" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Boeing 777</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Boeing 777">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Boeing 777
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_777" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_777" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_777" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ATR 42/72 -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="ATR 42/72" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>ATR 42/72</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="ATR 42/72">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para ATR 42/72
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_ATR" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_ATR" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_ATR" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Embraer E-Jet -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Embraer E-Jet" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Embraer E-Jet</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Embraer E-Jet">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Embraer E-Jet
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Embraer" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Embraer" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Embraer" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bombardier CRJ -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Bombardier CRJ" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Bombardier CRJ</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Bombardier CRJ">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Bombardier CRJ
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_CRJ" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_CRJ" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_CRJ" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Otros -->
+              <div class="aeronave-item">
+                <div class="chips-grid" style="margin-top: 1rem;">
+                  <label class="chip">
+                    <input type="checkbox" class="aeronave-checkbox" data-aeronave="Otros" />
+                    <span class="chip-label">
+                      <span class="chip-dot"></span>
+                      <span>Otros</span>
+                    </span>
+                  </label>
+                </div>
+                <div class="aeronave-cert-container" data-aeronave="Otros">
+                  <div class="aeronave-cert-title">
+                    <svg class="icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="9 11 12 14 22 4"></polyline>
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    Certificaciones habilitantes para Otros modelos
+                  </div>
+                  <div class="cert-options-grid">
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Otros" value="CAT A" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>CAT A</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Otros" value="B1" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B1</span>
+                      </span>
+                    </label>
+                    <label class="mini-chip">
+                      <input type="checkbox" name="aeronave_cert_Otros" value="B2" />
+                      <span class="mini-chip-label">
+                        <span class="mini-chip-dot"></span>
+                        <span>B2</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Política de Privacidad -->
+          <div class="form-section" style="border-bottom: none;">
+            <div class="privacy-box">
+              <div class="checkbox-wrapper">
+                <input 
+                  type="checkbox" 
+                  id="privacidad" 
+                  name="privacidad" 
+                  class="custom-checkbox"
+                  required
+                />
+                <label for="privacidad" class="privacy-text">
+                  <strong>CONSENTIMIENTO INFORMADO PARA EL TRATAMIENTO DE DATOS PERSONALES</strong>
+                  <br><br>
+                  En cumplimiento del Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016, relativo a la protección de las personas físicas en lo que respecta al tratamiento de datos personales y a la libre circulación de estos datos (RGPD), y de la Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD), se le informa de lo siguiente:
+                  <br><br>
+                  
+                  <strong>1. RESPONSABLE DEL TRATAMIENTO</strong><br>
+                  <strong>Identidad:</strong> Airlogix AI, S.L.<br>
+                  <strong>CIF:</strong> B23908213<br>
+                  <strong>Domicilio social:</strong> Calle Amaltea, 10, 7º B, 28045 Madrid, España<br>
+                  <strong>Inscripción registral:</strong> Registro Mercantil de Madrid, Tomo 41472, Folio 99, Sección 8, Hoja M-867737, Inscripción 1ª<br>
+                  <strong>Correo electrónico de contacto:</strong> info@airlogixai.com<br>
+                  <strong>Teléfono:</strong> [Número de contacto si disponible]<br>
+                  <strong>Representante legal:</strong> Jesús García Sánchez-Bayton, en calidad de Administrador Único<br>
+                  <strong>Actividad principal:</strong> Actividades de programación informática (CNAE 6201)<br>
+                  <br>
+                  
+                  <strong>2. DELEGADO DE PROTECCIÓN DE DATOS</strong><br>
+                  En caso de que se designe un Delegado de Protección de Datos (DPO), puede contactar con él en: [email DPO si aplica, o indicar que no es obligatorio por tamaño de empresa]<br>
+                  <br>
+                  
+                  <strong>3. FINALIDADES DEL TRATAMIENTO Y BASE JURÍDICA</strong><br>
+                  Los datos personales recogidos en este formulario serán tratados con las siguientes finalidades específicas para el proyecto <strong>Brok-Node</strong> de <strong>Brok-Air Aviation Group</strong>:<br><br>
+                  
+                  <strong>a) Finalidades principales:</strong><br>
+                  • Gestión del alta y registro de personal técnico aeronáutico en el sistema Brok-Node<br>
+                  • Administración y optimización de recursos humanos mediante la herramienta Broky<br>
+                  • Asignación y distribución optimizada de tareas laborales en función de certificaciones aeronáuticas, cualificaciones profesionales, disponibilidad y ubicación<br>
+                  • Consulta y seguimiento en tiempo real de la disponibilidad, certificaciones y competencias de equipos técnicos<br>
+                  • Planificación y control de necesidades de mantenimiento de aeronaves y asignación de personal cualificado<br>
+                  • Verificación del cumplimiento de requisitos regulatorios aeronáuticos (certificaciones EASA, licencias B1/B2/CAT-A, números BAC)<br>
+                  • Validación de identificaciones corporativas (códigos de empleado AENA)<br>
+                  • Gestión de comunicaciones técnicas, operativas y de seguridad relacionadas con el desempeño profesional<br>
+                  • Mejora de la productividad operativa y eficiencia interna de Brok-Air Aviation Group<br>
+                  • Generación de estadísticas agregadas y análisis de rendimiento operativo (datos anonimizados)<br>
+                  • Facilitación de herramientas tecnológicas que optimicen el trabajo del personal técnico<br>
+                  • Cumplimiento de obligaciones legales en materia de seguridad aeronáutica y prevención de riesgos laborales<br>
+                  <br>
+                  
+                  <strong>b) Bases jurídicas del tratamiento (Art. 6 RGPD):</strong><br>
+                  • <strong>Consentimiento explícito del interesado</strong> (Art. 6.1.a RGPD): Para el tratamiento de datos personales con las finalidades descritas<br>
+                  • <strong>Ejecución de un contrato o medidas precontractuales</strong> (Art. 6.1.b RGPD): Relación laboral o profesional con Brok-Air Aviation Group<br>
+                  • <strong>Interés legítimo del responsable</strong> (Art. 6.1.f RGPD): Optimización organizativa, gestión eficiente de recursos y mejora de procesos operativos<br>
+                  • <strong>Cumplimiento de obligaciones legales</strong> (Art. 6.1.c RGPD): Normativa aeronáutica aplicable (Reglamento (UE) 1321/2014 sobre aeronavegabilidad, EASA Part-145, etc.), normativa laboral y de prevención de riesgos laborales<br>
+                  <br>
+                  
+                  <strong>4. CATEGORÍAS DE DATOS TRATADOS</strong><br>
+                  Se tratarán las siguientes categorías de datos personales:<br>
+                  • <strong>Datos identificativos:</strong> Nombre completo, DNI/NIE (si se solicita), código de empleado AENA<br>
+                  • <strong>Datos de contacto:</strong> Teléfono móvil, correo electrónico corporativo<br>
+                  • <strong>Datos profesionales y cualificaciones:</strong> Departamento, certificaciones aeronáuticas (Helper, CAT-A, B1, B2, Certificador), número BAC (Basic Authorization Certificate), modelos de aeronaves autorizados para firmar<br>
+                  • <strong>Datos de geolocalización y disponibilidad:</strong> Ubicación laboral, disponibilidad horaria (en su caso)<br>
+                  • <strong>Datos técnicos de navegación:</strong> Dirección IP (si es facilitada por el servidor), user-agent, timestamp de registro<br>
+                  <br>
+                  <strong>Nota importante:</strong> No se tratarán categorías especiales de datos (Art. 9 RGPD) como datos de salud, origen racial o étnico, opiniones políticas, creencias religiosas o filosóficas, afiliación sindical, datos genéticos, datos biométricos dirigidos a identificar de manera unívoca a una persona física, datos relativos a la vida sexual o a la orientación sexual.<br>
+                  <br>
+                  
+                  <strong>5. DESTINATARIOS Y COMUNICACIONES DE DATOS</strong><br>
+                  Sus datos personales podrán ser comunicados a los siguientes destinatarios:<br><br>
+                  
+                  <strong>a) Entidad cliente:</strong><br>
+                  • <strong>Brok-Air Aviation Group</strong>, como entidad cliente del proyecto Brok-Node, para las finalidades operativas descritas<br>
+                  <br>
+                  
+                  <strong>b) Encargados del tratamiento:</strong><br>
+                  Proveedores de servicios tecnológicos que actúan bajo instrucciones del responsable y con contrato de encargo de tratamiento (Art. 28 RGPD):<br>
+                  • Proveedores de alojamiento web y servicios cloud<br>
+                  • Plataformas de automatización de flujos de trabajo (n8n o similares)<br>
+                  • Servicios de mensajería y comunicaciones corporativas<br>
+                  • Proveedores de almacenamiento de datos (Google Workspace, Microsoft 365 o similares)<br>
+                  • Servicios de analítica y monitorización de sistemas<br>
+                  <br>
+                  
+                  <strong>c) Transferencias internacionales:</strong><br>
+                  En caso de que algún encargado del tratamiento esté ubicado fuera del Espacio Económico Europeo (EEE), las transferencias se realizarán garantizando un nivel de protección adecuado mediante:<br>
+                  • Decisiones de adecuación de la Comisión Europea (Art. 45 RGPD)<br>
+                  • Cláusulas contractuales tipo aprobadas por la Comisión Europea (Art. 46.2.c RGPD)<br>
+                  • Mecanismos de certificación aprobados (Art. 46.2.f RGPD)<br>
+                  <br>
+                  
+                  <strong>d) Obligaciones legales:</strong><br>
+                  Sus datos podrán ser comunicados a organismos públicos, autoridades aeronáuticas (AESA - Agencia Estatal de Seguridad Aérea), fuerzas y cuerpos de seguridad, tribunales de justicia, y otras autoridades competentes, cuando exista una obligación legal de hacerlo.<br>
+                  <br>
+                  
+                  <strong>6. PLAZO DE CONSERVACIÓN DE LOS DATOS</strong><br>
+                  Los datos personales serán conservados durante los siguientes plazos:<br><br>
+                  
+                  <strong>a) Durante la relación activa:</strong><br>
+                  Mientras se mantenga la relación laboral o profesional con Brok-Air Aviation Group y sea necesario para la prestación del servicio Brok-Node.<br>
+                  <br>
+                  
+                  <strong>b) Tras la finalización de la relación:</strong><br>
+                  Los datos se conservarán bloqueados durante los siguientes plazos legales:<br>
+                  • <strong>6 años:</strong> En cumplimiento de las obligaciones fiscales y contables (Art. 30 Código de Comercio)<br>
+                  • <strong>4 años:</strong> Para posibles responsabilidades administrativas en materia de prevención de riesgos laborales (Art. 60 LPRL)<br>
+                  • <strong>1 año:</strong> Para la prescripción de infracciones leves en materia de protección de datos (Art. 72.1 LOPDGDD)<br>
+                  • <strong>Plazo adicional:</strong> El tiempo necesario para la atención de posibles responsabilidades legales derivadas del tratamiento<br>
+                  <br>
+                  
+                  Transcurridos dichos plazos, los datos serán suprimidos de forma segura o anonimizados para usos estadísticos que no permitan la identificación del interesado.<br>
+                  <br>
+                  
+                  <strong>7. DERECHOS DEL INTERESADO</strong><br>
+                  En virtud de los artículos 15 a 22 del RGPD y de los artículos 11 a 18 de la LOPDGDD, usted tiene derecho a:<br><br>
+                  
+                  <strong>a) Derecho de acceso (Art. 15 RGPD, Art. 13 LOPDGDD):</strong><br>
+                  Obtener del responsable confirmación de si se están tratando o no datos personales que le conciernen y, en tal caso, obtener información sobre: finalidades del tratamiento, categorías de datos, destinatarios, plazo de conservación, origen de los datos (si no se han obtenido del interesado), existencia de decisiones automatizadas, y garantías aplicadas en transferencias internacionales.<br>
+                  <br>
+                  
+                  <strong>b) Derecho de rectificación (Art. 16 RGPD, Art. 14 LOPDGDD):</strong><br>
+                  Solicitar la rectificación de los datos personales inexactos o que se completen los datos personales incompletos.<br>
+                  <br>
+                  
+                  <strong>c) Derecho de supresión ("derecho al olvido") (Art. 17 RGPD, Art. 15 LOPDGDD):</strong><br>
+                  Solicitar la supresión de sus datos personales cuando:<br>
+                  • Ya no sean necesarios para los fines para los que fueron recogidos<br>
+                  • Retire el consentimiento y no exista otra base legal para el tratamiento<br>
+                  • Se oponga al tratamiento y no prevalezcan otros motivos legítimos<br>
+                  • Los datos hayan sido tratados ilícitamente<br>
+                  • Deban suprimirse en cumplimiento de una obligación legal<br>
+                  <br>
+                  <strong>Limitaciones al derecho de supresión:</strong><br>
+                  Este derecho no será de aplicación cuando el tratamiento sea necesario para:<br>
+                  • El ejercicio de la libertad de expresión e información<br>
+                  • El cumplimiento de una obligación legal<br>
+                  • El cumplimiento de una misión realizada en interés público<br>
+                  • Fines de archivo de interés público, fines de investigación científica o histórica o fines estadísticos<br>
+                  • La formulación, el ejercicio o la defensa de reclamaciones<br>
+                  <br>
+                  
+                  <strong>d) Derecho a la limitación del tratamiento (Art. 18 RGPD, Art. 16 LOPDGDD):</strong><br>
+                  Solicitar que se limite el tratamiento de sus datos personales cuando:<br>
+                  • Impugne la exactitud de los datos (durante el plazo que permita verificar su exactitud)<br>
+                  • El tratamiento sea ilícito y se oponga a la supresión de los datos<br>
+                  • El responsable ya no necesite los datos para los fines del tratamiento pero usted los necesite para la formulación, ejercicio o defensa de reclamaciones<br>
+                  • Se haya opuesto al tratamiento mientras se verifica si los motivos legítimos del responsable prevalecen sobre los suyos<br>
+                  <br>
+                  
+                  <strong>e) Derecho a la portabilidad de los datos (Art. 20 RGPD, Art. 17 LOPDGDD):</strong><br>
+                  Recibir los datos personales que le incumban y que haya facilitado al responsable, en un formato estructurado, de uso común y lectura mecánica, y a transmitirlos a otro responsable sin que lo impida el responsable inicial, cuando:<br>
+                  • El tratamiento esté basado en el consentimiento o en un contrato<br>
+                  • El tratamiento se efectúe por medios automatizados<br>
+                  <br>
+                  
+                  <strong>f) Derecho de oposición (Art. 21 RGPD, Art. 18 LOPDGDD):</strong><br>
+                  Oponerse en cualquier momento, por motivos relacionados con su situación particular, a que datos personales que le conciernan sean objeto de un tratamiento basado en:<br>
+                  • Interés legítimo del responsable o de un tercero (Art. 6.1.f RGPD)<br>
+                  • Misión realizada en interés público o en el ejercicio de poderes públicos (Art. 6.1.e RGPD)<br>
+                  El responsable dejará de tratar los datos salvo que acredite motivos legítimos imperiosos que prevalezcan sobre sus intereses, derechos y libertades, o para la formulación, ejercicio o defensa de reclamaciones.<br>
+                  <br>
+                  
+                  <strong>Oposición específica a comunicaciones comerciales:</strong><br>
+                  En caso de que se realicen comunicaciones comerciales, puede oponerse a las mismas en cualquier momento de forma gratuita.<br>
+                  <br>
+                  
+                  <strong>g) Derecho a no ser objeto de decisiones individuales automatizadas, incluida la elaboración de perfiles (Art. 22 RGPD):</strong><br>
+                  Tiene derecho a no ser objeto de una decisión basada únicamente en el tratamiento automatizado, incluida la elaboración de perfiles, que produzca efectos jurídicos en usted o le afecte significativamente de modo similar, salvo que la decisión:<br>
+                  • Sea necesaria para la celebración o ejecución de un contrato<br>
+                  • Esté autorizada por el Derecho de la Unión o de los Estados miembros<br>
+                  • Se base en su consentimiento explícito<br>
+                  <br>
+                  
+                  <strong>h) Derecho a retirar el consentimiento (Art. 7.3 RGPD):</strong><br>
+                  Cuando el tratamiento esté basado en su consentimiento, tiene derecho a retirarlo en cualquier momento. La retirada del consentimiento no afectará a la licitud del tratamiento basada en el consentimiento previo a su retirada.<br>
+                  <br>
+                  
+                  <strong>8. EJERCICIO DE DERECHOS</strong><br>
+                  Para ejercer cualquiera de los derechos mencionados, puede dirigir una comunicación por escrito a:<br><br>
+                  
+                  <strong>Airlogix AI, S.L.</strong><br>
+                  Calle Amaltea, 10, 7º B, 28045 Madrid, España<br>
+                  Correo electrónico: <strong>info@airlogixai.com</strong><br>
+                  Asunto: "Protección de Datos - Ejercicio de Derechos RGPD - Proyecto Brok-Node"<br>
+                  <br>
+                  
+                  <strong>Requisitos para el ejercicio de derechos:</strong><br>
+                  • Identificación del interesado: Deberá acreditar su identidad mediante copia de DNI/NIE o documento identificativo equivalente<br>
+                  • Especificación del derecho: Indicar claramente el derecho o derechos que desea ejercer<br>
+                  • Dirección de contacto: Para recibir la respuesta<br>
+                  • Firma del solicitante (en caso de comunicación escrita en papel)<br>
+                  <br>
+                  
+                  <strong>Plazo de respuesta:</strong><br>
+                  El responsable atenderá su solicitud en el plazo máximo de <strong>un (1) mes</strong> desde la recepción de la misma. Dicho plazo podrá prorrogarse otros dos meses en caso necesario, teniendo en cuenta la complejidad y el número de solicitudes, informándole de dicha prórroga en el plazo de un mes desde la solicitud inicial.<br>
+                  <br>
+                  
+                  <strong>Gratuidad:</strong><br>
+                  El ejercicio de estos derechos es gratuito. No obstante, si las solicitudes son manifiestamente infundadas o excesivas, especialmente debido a su carácter repetitivo, el responsable podrá:<br>
+                  • Cobrar un canon razonable en función de los costes administrativos afrontados, o<br>
+                  • Negarse a actuar respecto de la solicitud<br>
+                  <br>
+                  
+                  <strong>9. DERECHO A PRESENTAR UNA RECLAMACIÓN ANTE LA AUTORIDAD DE CONTROL</strong><br>
+                  Sin perjuicio de cualquier otro recurso administrativo o acción judicial, usted tiene derecho a presentar una reclamación ante una autoridad de control, en particular en el Estado miembro de la Unión Europea en que tenga su residencia habitual, lugar de trabajo o lugar de la supuesta infracción, si considera que el tratamiento de datos personales que le conciernen infringe el RGPD (Art. 77 RGPD y Art. 12 LOPDGDD).<br>
+                  <br>
+                  
+                  <strong>Agencia Española de Protección de Datos (AEPD):</strong><br>
+                  Calle Jorge Juan, 6, 28001 Madrid<br>
+                  Teléfono: 901 100 099 / 912 663 517<br>
+                  Sitio web: <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer" class="privacy-link">www.aepd.es</a><br>
+                  Sede electrónica: <a href="https://sedeagpd.gob.es" target="_blank" rel="noopener noreferrer" class="privacy-link">https://sedeagpd.gob.es</a><br>
+                  <br>
+                  
+                  <strong>10. MEDIDAS DE SEGURIDAD</strong><br>
+                  Airlogix AI, S.L. ha adoptado las medidas técnicas y organizativas apropiadas para garantizar un nivel de seguridad adecuado al riesgo del tratamiento, en cumplimiento del artículo 32 del RGPD, incluyendo entre otras:<br>
+                  • <strong>Seudonimización y cifrado:</strong> De datos personales cuando sea técnicamente posible<br>
+                  • <strong>Confidencialidad:</strong> Capacidad de garantizar la confidencialidad, integridad, disponibilidad y resiliencia permanentes de los sistemas y servicios de tratamiento<br>
+                  • <strong>Disponibilidad:</strong> Capacidad de restaurar la disponibilidad y el acceso a los datos personales de forma rápida en caso de incidente físico o técnico<br>
+                  • <strong>Verificación y evaluación:</strong> Proceso de verificación, evaluación y valoración regular de la eficacia de las medidas técnicas y organizativas<br>
+                  • <strong>Control de accesos:</strong> Limitación del acceso a datos personales únicamente al personal autorizado y con necesidad de conocerlos<br>
+                  • <strong>Registro de actividades:</strong> Mantenimiento de registros de las actividades de tratamiento bajo responsabilidad (Art. 30 RGPD)<br>
+                  • <strong>Formación:</strong> Del personal con acceso a datos personales en materia de protección de datos<br>
+                  • <strong>Cifrado en tránsito:</strong> Uso de protocolos seguros (HTTPS/TLS) para la transmisión de datos<br>
+                  • <strong>Copias de seguridad:</strong> Realización periódica de copias de seguridad<br>
+                  • <strong>Gestión de incidencias:</strong> Procedimientos para la detección, análisis y respuesta ante violaciones de seguridad<br>
+                  <br>
+                  
+                  En caso de violación de la seguridad de los datos personales que entrañe un riesgo para sus derechos y libertades, se le notificará en un plazo de 72 horas desde que se tenga constancia de la misma (Art. 34 RGPD).<br>
+                  <br>
+                  
+                  <strong>11. CARÁCTER OBLIGATORIO O FACULTATIVO DE LA RECOGIDA DE DATOS</strong><br>
+                  La aportación de los datos personales marcados como obligatorios (indicados con *) es un requisito necesario para:<br>
+                  • El alta en el sistema Brok-Node<br>
+                  • La gestión de la relación laboral o profesional con Brok-Air Aviation Group<br>
+                  • El cumplimiento de obligaciones legales y regulatorias en materia aeronáutica<br>
+                  <br>
+                  
+                  <strong>Consecuencias de no facilitar los datos:</strong><br>
+                  La negativa a facilitar los datos obligatorios o la facilitación de datos inexactos o incompletos impedirá:<br>
+                  • El registro en el sistema Brok-Node<br>
+                  • La asignación de tareas y responsabilidades aeronáuticas<br>
+                  • La verificación del cumplimiento de requisitos regulatorios<br>
+                  • El desarrollo normal de la relación laboral o profesional<br>
+                  <br>
+                  
+                  Los datos no marcados como obligatorios son de carácter voluntario y su no aportación no impedirá el registro, aunque puede limitar ciertas funcionalidades del sistema.<br>
+                  <br>
+                  
+                  <strong>12. PROCEDENCIA DE LOS DATOS</strong><br>
+                  Los datos personales tratados por Airlogix AI, S.L. proceden directamente del interesado a través del presente formulario de registro. No se obtienen datos de fuentes públicas ni de terceros, salvo en caso de que sea necesario para verificar certificaciones aeronáuticas con las autoridades competentes (AESA).<br>
+                  <br>
+                  
+                  <strong>13. DECISIONES AUTOMATIZADAS Y ELABORACIÓN DE PERFILES</strong><br>
+                  El sistema Brok-Node puede utilizar algoritmos automatizados para:<br>
+                  • Optimización de asignación de tareas en función de certificaciones, disponibilidad y ubicación<br>
+                  • Generación de estadísticas agregadas de rendimiento operativo<br>
+                  • Alertas automáticas sobre vencimiento de certificaciones o requisitos de formación<br>
+                  <br>
+                  
+                  <strong>Importante:</strong> Estas decisiones automatizadas no producen efectos jurídicos significativos ni afectan de modo similar al interesado de forma sustancial. En caso de que se implementen decisiones automatizadas con efectos significativos, se solicitará consentimiento explícito adicional y se garantizará:<br>
+                  • Información específica sobre la lógica aplicada<br>
+                  • Importancia y consecuencias previstas de dicho tratamiento<br>
+                  • Derecho a obtener intervención humana<br>
+                  • Derecho a expresar su punto de vista<br>
+                  • Derecho a impugnar la decisión<br>
+                  <br>
+                  
+                  <strong>14. VERACIDAD DE LOS DATOS</strong><br>
+                  El interesado garantiza que los datos personales facilitados son veraces, exactos, completos y actualizados, siendo responsable de cualquier daño o perjuicio, directo o indirecto, que pudiera ocasionarse como consecuencia del incumplimiento de tal obligación.<br>
+                  <br>
+                  
+                  <strong>Obligación de comunicar modificaciones:</strong><br>
+                  En caso de que los datos facilitados pertenecieran a un tercero, el interesado garantiza que ha informado a dicho tercero de los aspectos contenidos en este documento y ha obtenido su autorización para facilitar sus datos al responsable para los fines señalados.<br>
+                  <br>
+                  
+                  El interesado se compromete a comunicar cualquier modificación de sus datos personales a fin de que la información tratada esté en todo momento actualizada y no contenga errores.<br>
+                  <br>
+                  
+                  <strong>15. ACEPTACIÓN Y CONSENTIMIENTO</strong><br>
+                  Mediante la aceptación del presente documento, el interesado declara:<br>
+                  • Haber sido informado de manera clara, precisa, transparente e inequívoca sobre el tratamiento de sus datos personales<br>
+                  • Haber leído y comprendido íntegramente la presente información sobre protección de datos<br>
+                  • Conocer sus derechos en materia de protección de datos personales<br>
+                  • Prestar su <strong>consentimiento libre, específico, informado e inequívoco</strong> para que Airlogix AI, S.L. trate sus datos personales conforme a las finalidades y condiciones descritas en este documento<br>
+                  <br>
+                  
+                  <strong>16. MODIFICACIONES DE LA POLÍTICA DE PRIVACIDAD</strong><br>
+                  Airlogix AI, S.L. se reserva el derecho de modificar la presente política de privacidad para adaptarla a novedades legislativas, jurisprudenciales, así como a prácticas de la industria. En caso de modificaciones sustanciales, se le notificará por correo electrónico o mediante aviso destacado en el sistema Brok-Node, solicitando nuevamente su consentimiento si fuera legalmente requerido.<br>
+                  <br>
+                  
+                  <strong>17. LEGISLACIÓN APLICABLE Y JURISDICCIÓN</strong><br>
+                  La presente política de privacidad se rige por la legislación española vigente en materia de protección de datos personales, en particular:<br>
+                  • Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo, de 27 de abril de 2016 (RGPD)<br>
+                  • Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD)<br>
+                  • Real Decreto 1720/2007, de 21 de diciembre, por el que se aprueba el Reglamento de desarrollo de la Ley Orgánica 15/1999 (en lo que no se oponga al RGPD)<br>
+                  <br>
+                  
+                  Para la resolución de cualquier controversia que pudiera derivarse del acceso, navegación o uso del presente formulario y del tratamiento de los datos personales, las partes se someten expresamente a los Juzgados y Tribunales de Madrid (España), con renuncia expresa a cualquier otro fuero que pudiera corresponderles.<br>
+                  <br>
+                  
+                  <strong>18. CONTACTO Y CONSULTAS</strong><br>
+                  Para cualquier consulta, duda o aclaración respecto al tratamiento de sus datos personales, puede contactar con:<br>
+                  <strong>Airlogix AI, S.L.</strong><br>
+                  Correo electrónico: <strong>info@airlogixai.com</strong><br>
+                  Teléfono: [Si disponible]<br>
+                  Dirección postal: Calle Amaltea, 10, 7º B, 28045 Madrid, España<br>
+                  <br>
+                  
+                  <strong>19. FECHA DE ÚLTIMA ACTUALIZACIÓN</strong><br>
+                  Esta Política de Privacidad fue actualizada por última vez el: <strong>[FECHA ACTUAL]</strong><br>
+                  Versión: 1.0<br>
+                  <br>
+                  
+                  <strong>20. DECLARACIÓN FINAL DE CONSENTIMIENTO</strong><br>
+                  <strong>DECLARO QUE:</strong><br>
+                  ☑ He leído, comprendido y acepto íntegramente la información sobre protección de datos personales aquí expuesta<br>
+                  ☑ La información facilitada en este formulario es verídica, exacta y completa<br>
+                  ☑ Autorizo expresamente a Airlogix AI, S.L. al tratamiento de mis datos personales conforme a las finalidades, bases jurídicas y condiciones establecidas<br>
+                  ☑ Consiento el tratamiento de mis datos personales para la gestión del proyecto Brok-Node de Brok-Air Aviation Group<br>
+                  ☑ He sido informado de mis derechos de acceso, rectificación, supresión, limitación, portabilidad, oposición y a no ser objeto de decisiones automatizadas<br>
+                  ☑ Conozco que puedo retirar este consentimiento en cualquier momento sin que ello afecte a la licitud del tratamiento basada en el consentimiento previo a su retirada<br>
+                  ☑ He sido informado de mi derecho a presentar una reclamación ante la Agencia Española de Protección de Datos (www.aepd.es)<br>
+                </label>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 2rem;">
+              <button type="submit" class="btn-submit" id="submitBtn">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Enviar Registro
+              </button>
+              <div id="feedbackMsg" class="feedback-message"></div>
+            </div>
+          </div>
+
+          <!-- Campos ocultos -->
+          <input type="hidden" name="timestamp" id="timestamp" />
+          <input type="hidden" name="cliente" value="Brok-Air Aviation Group" />
+          <input type="hidden" name="proyecto" value="Brok-Node" />
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h3>Airlogix AI, S.L.</h3>
+            <p><strong>CIF:</strong> B23908213</p>
+            <p><strong>Domicilio Social:</strong><br>Calle Amaltea, 10, 7º B<br>28045 Madrid, España</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Proyecto</h3>
+            <p><strong>Cliente:</strong> Brok-Air Aviation Group</p>
+            <p><strong>Sistema:</strong> Brok-Node</p>
+            <p><strong>Herramienta:</strong> Broky</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Contacto</h3>
+            <p><strong>Email:</strong> <a href="mailto:info@airlogixai.com" class="privacy-link">info@airlogixai.com</a></p>
+            <p><strong>Web:</strong> <a href="https://airlogixai.com" target="_blank" class="privacy-link">airlogixai.com</a></p>
+          </div>
+        </div>
+
+        <div class="footer-divider"></div>
+
+        <div class="footer-bottom">
+          <p>© 2025 Airlogix AI, S.L. Todos los derechos reservados.</p>
+          <div class="footer-links">
+            <span>Brok-Node System · Herramienta Broky</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    /*
+    ╔═══════════════════════════════════════════════════════════════════════════════╗
+    ║  FORMULARIO DE REGISTRO BROKY - BROK-AIR AVIATION GROUP                      ║
+    ╠═══════════════════════════════════════════════════════════════════════════════╣
+    ║  REGLAS DE VALIDACIÓN:                                                        ║
+    ║                                                                               ║
+    ║  ✅ CAMPOS OBLIGATORIOS:                                                      ║
+    ║     • Nombre completo                                                         ║
+    ║     • Teléfono de contacto                                                    ║
+    ║     • Email corporativo                                                       ║
+    ║     • Código de empleado AENA                                                 ║
+    ║     • Departamento (radio button)                                             ║
+    ║     • Al menos UNA certificación aeronáutica (Helper, CAT-A, B1, B2 o Cert.)  ║
+    ║     • Política de privacidad (checkbox)                                       ║
+    ║                                                                               ║
+    ║  🔐 CAMPO BAC (condicional):                                                  ║
+    ║     • Se muestra SOLO si se marca: Certificador, CAT-A, B1 o B2              ║
+    ║     • Es OBLIGATORIO cuando se muestra                                        ║
+    ║                                                                               ║
+    ║  ✈️ AERONAVES (opcional):                                                     ║
+    ║     • NO es obligatorio seleccionar aeronaves                                 ║
+    ║     • Helper no necesita seleccionar aeronaves                                ║
+    ║     • Si se selecciona UNA aeronave, ES obligatorio marcar al menos           ║
+    ║       una certificación habilitante (CAT A, B1 o B2) para esa aeronave       ║
+    ║     • Se puede tener B1/B2/CAT-A sin aeronaves seleccionadas                 ║
+    ║                                                                               ║
+    ║  📊 ESTRUCTURA JSON DE SALIDA (optimizada para base de datos):                ║
+    ║                                                                               ║
+    ║  {                                                                            ║
+    ║    // DATOS PERSONALES (strings)                                             ║
+    ║    "nombre_completo": "Juan García López",                                    ║
+    ║    "telefono": "+34 600 123 456",                                             ║
+    ║    "email": "juan.garcia@brok-air.com",                                       ║
+    ║    "codigo_empleado_aena": "AENA12345",                                       ║
+    ║    "departamento": "Mantenimiento",                                           ║
+    ║                                                                               ║
+    ║    // CERTIFICACIONES (binario 0/1 - fácil para SQL)                         ║
+    ║    "cert_helper": 0,                                                          ║
+    ║    "cert_cat_a": 1,                                                           ║
+    ║    "cert_b1": 1,                                                              ║
+    ║    "cert_b2": 0,                                                              ║
+    ║    "cert_certificador": 0,                                                    ║
+    ║                                                                               ║
+    ║    // NÚMERO BAC (string o null)                                             ║
+    ║    "numero_bac": "BAC-12345-A",                                               ║
+    ║                                                                               ║
+    ║    // AERONAVES (binario 0/1 - columnas individuales para filtros SQL)      ║
+    ║    "aeronave_a320_family": 1,                                                 ║
+    ║    "aeronave_a330": 0,                                                        ║
+    ║    "aeronave_a350": 0,                                                        ║
+    ║    "aeronave_b737": 1,                                                        ║
+    ║    "aeronave_b787": 0,                                                        ║
+    ║    "aeronave_b777": 0,                                                        ║
+    ║    "aeronave_atr": 0,                                                         ║
+    ║    "aeronave_embraer": 0,                                                     ║
+    ║    "aeronave_crj": 0,                                                         ║
+    ║    "aeronave_otros": 0,                                                       ║
+    ║                                                                               ║
+    ║    // DETALLE DE CERTIFICACIONES POR AERONAVE (JSON array)                   ║
+    ║    "aeronaves_detalle": [                                                     ║
+    ║      {                                                                        ║
+    ║        "modelo": "Airbus A320 Family",                                        ║
+    ║        "certificaciones_habilitantes": ["CAT A", "B1"]                        ║
+    ║      },                                                                       ║
+    ║      {                                                                        ║
+    ║        "modelo": "Boeing 737",                                                ║
+    ║        "certificaciones_habilitantes": ["B1"]                                 ║
+    ║      }                                                                        ║
+    ║    ],                                                                         ║
+    ║                                                                               ║
+    ║    // FORMATOS ALTERNATIVOS (strings - para búsquedas de texto)             ║
+    ║    "aeronaves_lista": "Airbus A320 Family,Boeing 737",                        ║
+    ║    "certificaciones_por_aeronave": "Airbus A320 Family: CAT A, B1 | ...",   ║
+    ║                                                                               ║
+    ║    // LEGAL (binario 0/1)                                                    ║
+    ║    "privacidad_aceptada": 1,                                                  ║
+    ║                                                                               ║
+    ║    // METADATA                                                               ║
+    ║    "timestamp": "2025-01-10T12:30:00.000Z",                                   ║
+    ║    "fecha_registro": "2025-01-10T12:30:00.000Z",                              ║
+    ║    "user_agent": "Mozilla/5.0...",                                            ║
+    ║                                                                               ║
+    ║    // CLIENTE Y PROYECTO                                                     ║
+    ║    "cliente": "Brok-Air Aviation Group",                                      ║
+    ║    "proyecto": "Brok-Node",                                                   ║
+    ║    "herramienta": "Broky",                                                    ║
+    ║    "origen_formulario": "Web - Formulario Registro Broky",                    ║
+    ║                                                                               ║
+    ║    // RESPONSABLE DEL TRATAMIENTO                                            ║
+    ║    "responsable_razon_social": "Airlogix AI, S.L.",                           ║
+    ║    "responsable_cif": "B23908213",                                            ║
+    ║    "responsable_direccion": "Calle Amaltea, 10...",                           ║
+    ║    "responsable_email": "info@airlogixai.com",                                ║
+    ║    "responsable_web": "https://airlogixai.com"                                ║
+    ║  }                                                                            ║
+    ║                                                                               ║
+    ║  💡 VENTAJAS DE ESTE FORMATO:                                                 ║
+    ║     ✓ Campos binarios (0/1) facilitan consultas SQL WHERE                    ║
+    ║     ✓ No necesitas parsear arrays en SQL para filtros simples                ║
+    ║     ✓ "aeronaves_detalle" tiene info completa para lógica compleja           ║
+    ║     ✓ Formatos de texto alternativos para búsquedas LIKE                     ║
+    ║     ✓ Estructura plana = fácil INSERT/UPDATE en SQL                          ║
+    ║     ✓ Compatible con MySQL, PostgreSQL, MongoDB, etc.                        ║
+    ╚═══════════════════════════════════════════════════════════════════════════════╝
+    */
+    
+    // Timestamp
+    document.getElementById('timestamp').value = new Date().toISOString();
+
+    // Referencias DOM
+    const form = document.getElementById('registroForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const feedbackMsg = document.getElementById('feedbackMsg');
+    const bacField = document.getElementById('bacField');
+    const numeroBacInput = document.getElementById('numeroBac');
+    const certTriggers = document.querySelectorAll('.cert-trigger');
+    const aeronaveCheckboxes = document.querySelectorAll('.aeronave-checkbox');
+
+    // =====================================================
+    // MOSTRAR/OCULTAR CAMPO BAC DINÁMICAMENTE
+    // =====================================================
+    function checkBacField() {
+      const isCertificador = document.querySelector('input[name="certificacion"][value="Certificador"]').checked;
+      const isCategoriaA = document.querySelector('input[name="certificacion"][value="Categoría A"]').checked;
+      const isB1 = document.querySelector('input[name="certificacion"][value="B1"]').checked;
+      const isB2 = document.querySelector('input[name="certificacion"][value="B2"]').checked;
+      
+      if (isCertificador || isCategoriaA || isB1 || isB2) {
+        bacField.classList.add('show');
+        numeroBacInput.required = true;
+      } else {
+        bacField.classList.remove('show');
+        numeroBacInput.required = false;
+        numeroBacInput.value = '';
+      }
+    }
+
+    certTriggers.forEach(trigger => {
+      trigger.addEventListener('change', checkBacField);
+    });
+
+    // =====================================================
+    // MOSTRAR/OCULTAR CERTIFICACIONES POR AERONAVE
+    // =====================================================
+    aeronaveCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const aeronave = this.dataset.aeronave;
+        const container = document.querySelector(`.aeronave-cert-container[data-aeronave="${aeronave}"]`);
+        
+        if (this.checked) {
+          container.classList.add('show');
+        } else {
+          container.classList.remove('show');
+          // Limpiar las certificaciones seleccionadas al desmarcar la aeronave
+          const certInputs = container.querySelectorAll('input[type="checkbox"]');
+          certInputs.forEach(input => input.checked = false);
+        }
+      });
+    });
+
+    // =====================================================
+    // URL DEL WEBHOOK
+    // =====================================================
+    const WEBHOOK_URL = 'https://n8n.airlogixai.com/webhook/registro_broky';
+
+    // =====================================================
+    // FUNCIÓN DE PRUEBA DE CONEXIÓN (para debugging)
+    // =====================================================
+    window.testWebhook = async function() {
+      console.log('🧪 Probando conexión con webhook...');
+      console.log('🌐 URL:', WEBHOOK_URL);
+      
+      try {
+        const testData = {
+          test: true,
+          mensaje: 'Prueba de conexión',
+          timestamp: new Date().toISOString()
+        };
+        
+        console.log('📤 Enviando datos de prueba:', testData);
+        
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(testData)
+        });
+        
+        console.log('📥 Respuesta:');
+        console.log('   Status:', response.status);
+        console.log('   Status Text:', response.statusText);
+        
+        const responseText = await response.text();
+        console.log('   Body:', responseText);
+        
+        if (response.ok) {
+          console.log('✅ Webhook funciona correctamente!');
+          alert('✅ Conexión exitosa con el webhook!');
+        } else {
+          console.log('❌ Webhook respondió con error');
+          alert(`❌ Error: ${response.status} - ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error('❌ Error de conexión:', error);
+        alert(`❌ Error de conexión: ${error.message}\n\nVerifica:\n1. URL del webhook correcta\n2. n8n está corriendo\n3. Firewall/CORS configurado`);
+      }
+    };
+    
+    // Hacer la función accesible globalmente para poder llamarla desde la consola
+    console.log('💡 Tip: Puedes probar la conexión ejecutando testWebhook() en la consola');
+
+    // =====================================================
+    // FUNCIÓN PARA CONSTRUIR OBJETO DE AERONAVES
+    // =====================================================
+    function getAeronaveKey(aeronave) {
+      // Crear una clave consistente para cada aeronave
+      const keyMap = {
+        'Airbus A320 Family': 'A320_Family',
+        'Airbus A330': 'A330',
+        'Airbus A350': 'A350',
+        'Boeing 737': '737',
+        'Boeing 787': '787',
+        'Boeing 777': '777',
+        'ATR 42/72': 'ATR',
+        'Embraer E-Jet': 'Embraer',
+        'Bombardier CRJ': 'CRJ',
+        'Otros': 'Otros'
+      };
+      return keyMap[aeronave] || aeronave.replace(/\s+/g, '_').replace(/\//g, '_');
+    }
+
+    function buildAeronavesData() {
+      const todasLasAeronaves = [];
+      
+      console.log('📋 Construyendo datos de TODAS las aeronaves (seleccionadas o no)...');
+      console.log('📊 Total checkboxes de aeronaves:', aeronaveCheckboxes.length);
+      
+      aeronaveCheckboxes.forEach((checkbox, index) => {
+        const aeronave = checkbox.dataset.aeronave;
+        const certKey = getAeronaveKey(aeronave);
+        
+        console.log(`\n🔸 Aeronave ${index + 1}:`, aeronave, 'Checked:', checkbox.checked);
+        
+        // Siempre incluir la aeronave, esté marcada o no
+        const aeronaveDatos = {
+          modelo: aeronave,
+          seleccionada: checkbox.checked,
+          cert_cat_a: false,
+          cert_b1: false,
+          cert_b2: false
+        };
+        
+        if (checkbox.checked) {
+          // Si está marcada, buscar qué certificaciones tiene
+          console.log(`  🔑 Clave: ${certKey}`);
+          console.log(`  🎯 Buscando: input[name="aeronave_cert_${certKey}"]:checked`);
+          
+          const certInputs = document.querySelectorAll(`input[name="aeronave_cert_${certKey}"]`);
+          certInputs.forEach(input => {
+            if (input.value === 'CAT A') {
+              aeronaveDatos.cert_cat_a = input.checked;
+            } else if (input.value === 'B1') {
+              aeronaveDatos.cert_b1 = input.checked;
+            } else if (input.value === 'B2') {
+              aeronaveDatos.cert_b2 = input.checked;
+            }
+          });
+          
+          console.log(`  ✅ Certificaciones:`, {
+            CAT_A: aeronaveDatos.cert_cat_a,
+            B1: aeronaveDatos.cert_b1,
+            B2: aeronaveDatos.cert_b2
+          });
+        } else {
+          console.log(`  ⏭️  No seleccionada - todas las certificaciones son false`);
+        }
+        
+        todasLasAeronaves.push(aeronaveDatos);
+      });
+      
+      console.log('\n📦 TODAS las aeronaves construidas:', todasLasAeronaves);
+      return todasLasAeronaves;
+    }
+
+    // =====================================================
+    // ENVÍO DEL FORMULARIO
+    // =====================================================
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Validar departamento
+      const departamento = form.querySelector('input[name="departamento"]:checked');
+      if (!departamento) {
+        showFeedback('error', '✕ Debe seleccionar un departamento');
+        return;
+      }
+
+      // Validar que se seleccionó al menos una certificación aeronáutica
+      const certificacionesSeleccionadas = form.querySelectorAll('input[name="certificacion"]:checked');
+      if (certificacionesSeleccionadas.length === 0) {
+        showFeedback('error', '✕ Debe seleccionar al menos una certificación aeronáutica');
+        return;
+      }
+
+      // Validar BAC si es necesario (solo para Certificador, CAT-A, B1, B2)
+      if (bacField.classList.contains('show') && !numeroBacInput.value.trim()) {
+        showFeedback('error', '✕ Debe ingresar el número BAC para Certificadores, Categoría A, B1 o B2');
+        numeroBacInput.focus();
+        return;
+      }
+
+      // Validar aeronaves: Si se seleccionó una aeronave, DEBE tener al menos una certificación
+      // Pero las aeronaves NO son obligatorias (se puede enviar sin ninguna)
+      const aeronavesMarcadas = Array.from(aeronaveCheckboxes).filter(cb => cb.checked);
+      console.log('🛫 Aeronaves marcadas:', aeronavesMarcadas.length);
+      
+      for (const checkbox of aeronavesMarcadas) {
+        const aeronave = checkbox.dataset.aeronave;
+        const certKey = getAeronaveKey(aeronave);
+        console.log(`🔍 Buscando certificaciones para: ${aeronave}`);
+        console.log(`🔑 Clave generada: ${certKey}`);
+        console.log(`🎯 Selector: input[name="aeronave_cert_${certKey}"]:checked`);
+        
+        const certInputs = document.querySelectorAll(`input[name="aeronave_cert_${certKey}"]:checked`);
+        console.log(`✅ Certificaciones encontradas: ${certInputs.length}`, Array.from(certInputs).map(i => i.value));
+        
+        if (certInputs.length === 0) {
+          showFeedback('error', `✕ Si marca ${aeronave}, debe seleccionar al menos una certificación habilitante (CAT A, B1 o B2)`);
+          return;
+        }
+      }
+
+      // Deshabilitar botón
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Enviando...
+      `;
+
+      console.log('🚀 Iniciando construcción de datos...');
+
+      // Recopilar datos
+      const formData = new FormData(form);
+      
+      console.log('✅ FormData creado');
+      
+      // Obtener todas las certificaciones marcadas
+      const certificacionesMarcadas = formData.getAll('certificacion');
+      console.log('📋 Certificaciones marcadas:', certificacionesMarcadas);
+      
+      // Construir todas las aeronaves con sus certificaciones
+      console.log('🛫 Construyendo datos de aeronaves...');
+      const todasLasAeronaves = buildAeronavesData();
+      console.log('✅ Aeronaves construidas:', todasLasAeronaves);
+      
+      // Validar que tenemos 10 aeronaves
+      if (todasLasAeronaves.length !== 10) {
+        console.error('❌ ERROR: Se esperaban 10 aeronaves pero hay', todasLasAeronaves.length);
+        showFeedback('error', '✕ Error interno: datos de aeronaves incorrectos');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          Enviar Registro
+        `;
+        return;
+      }
+      
+      console.log('🔨 Construyendo objeto de datos completo...');
+      
+      let data;
+      try {
+        // Construir objeto con formato optimizado para base de datos
+        // TODOS LOS CAMPOS SIEMPRE PRESENTES (false si no están seleccionados)
+        data = {
+        // ==========================================
+        // DATOS PERSONALES (strings - siempre presentes)
+        // ==========================================
+        nombre_completo: formData.get('nombre') || '',
+        telefono: formData.get('telefono') || '',
+        email: formData.get('email') || '',
+        codigo_empleado_aena: formData.get('codigo_empleado') || '',
+        
+        // ==========================================
+        // DEPARTAMENTO (string - siempre presente)
+        // ==========================================
+        departamento: formData.get('departamento') || '',
+        
+        // ==========================================
+        // CERTIFICACIONES (boolean true/false - SIEMPRE PRESENTES)
+        // ==========================================
+        cert_helper: certificacionesMarcadas.includes('Helper'),
+        cert_cat_a: certificacionesMarcadas.includes('Categoría A'),
+        cert_b1: certificacionesMarcadas.includes('B1'),
+        cert_b2: certificacionesMarcadas.includes('B2'),
+        cert_certificador: certificacionesMarcadas.includes('Certificador'),
+        
+        // ==========================================
+        // NÚMERO BAC (string vacío si no aplica)
+        // ==========================================
+        numero_bac: formData.get('numero_bac') || '',
+        
+        // ==========================================
+        // AERONAVES AUTORIZADAS (boolean true/false - SIEMPRE PRESENTES)
+        // ==========================================
+        aeronave_a320_family: aeronaveCheckboxes[0] ? aeronaveCheckboxes[0].checked : false,
+        aeronave_a330: aeronaveCheckboxes[1] ? aeronaveCheckboxes[1].checked : false,
+        aeronave_a350: aeronaveCheckboxes[2] ? aeronaveCheckboxes[2].checked : false,
+        aeronave_b737: aeronaveCheckboxes[3] ? aeronaveCheckboxes[3].checked : false,
+        aeronave_b787: aeronaveCheckboxes[4] ? aeronaveCheckboxes[4].checked : false,
+        aeronave_b777: aeronaveCheckboxes[5] ? aeronaveCheckboxes[5].checked : false,
+        aeronave_atr: aeronaveCheckboxes[6] ? aeronaveCheckboxes[6].checked : false,
+        aeronave_embraer: aeronaveCheckboxes[7] ? aeronaveCheckboxes[7].checked : false,
+        aeronave_crj: aeronaveCheckboxes[8] ? aeronaveCheckboxes[8].checked : false,
+        aeronave_otros: aeronaveCheckboxes[9] ? aeronaveCheckboxes[9].checked : false,
+        
+        // ==========================================
+        // AERONAVES CON CERTIFICACIONES DETALLADAS
+        // TODAS las aeronaves incluidas (array de 10 objetos)
+        // Cada aeronave tiene: modelo, seleccionada, cert_cat_a, cert_b1, cert_b2
+        // ==========================================
+        aeronaves_detalle: todasLasAeronaves,
+        
+        // ==========================================
+        // DESGLOSE INDIVIDUAL POR AERONAVE (TODOS LOS CAMPOS)
+        // Cada aeronave tiene sus 3 certificaciones como campos separados
+        // ==========================================
+        
+        // A320 Family
+        a320_family_seleccionada: todasLasAeronaves[0] ? todasLasAeronaves[0].seleccionada : false,
+        a320_family_cert_cat_a: todasLasAeronaves[0] ? todasLasAeronaves[0].cert_cat_a : false,
+        a320_family_cert_b1: todasLasAeronaves[0] ? todasLasAeronaves[0].cert_b1 : false,
+        a320_family_cert_b2: todasLasAeronaves[0] ? todasLasAeronaves[0].cert_b2 : false,
+        
+        // A330
+        a330_seleccionada: todasLasAeronaves[1] ? todasLasAeronaves[1].seleccionada : false,
+        a330_cert_cat_a: todasLasAeronaves[1] ? todasLasAeronaves[1].cert_cat_a : false,
+        a330_cert_b1: todasLasAeronaves[1] ? todasLasAeronaves[1].cert_b1 : false,
+        a330_cert_b2: todasLasAeronaves[1] ? todasLasAeronaves[1].cert_b2 : false,
+        
+        // A350
+        a350_seleccionada: todasLasAeronaves[2] ? todasLasAeronaves[2].seleccionada : false,
+        a350_cert_cat_a: todasLasAeronaves[2] ? todasLasAeronaves[2].cert_cat_a : false,
+        a350_cert_b1: todasLasAeronaves[2] ? todasLasAeronaves[2].cert_b1 : false,
+        a350_cert_b2: todasLasAeronaves[2] ? todasLasAeronaves[2].cert_b2 : false,
+        
+        // B737
+        b737_seleccionada: todasLasAeronaves[3] ? todasLasAeronaves[3].seleccionada : false,
+        b737_cert_cat_a: todasLasAeronaves[3] ? todasLasAeronaves[3].cert_cat_a : false,
+        b737_cert_b1: todasLasAeronaves[3] ? todasLasAeronaves[3].cert_b1 : false,
+        b737_cert_b2: todasLasAeronaves[3] ? todasLasAeronaves[3].cert_b2 : false,
+        
+        // B787
+        b787_seleccionada: todasLasAeronaves[4] ? todasLasAeronaves[4].seleccionada : false,
+        b787_cert_cat_a: todasLasAeronaves[4] ? todasLasAeronaves[4].cert_cat_a : false,
+        b787_cert_b1: todasLasAeronaves[4] ? todasLasAeronaves[4].cert_b1 : false,
+        b787_cert_b2: todasLasAeronaves[4] ? todasLasAeronaves[4].cert_b2 : false,
+        
+        // B777
+        b777_seleccionada: todasLasAeronaves[5] ? todasLasAeronaves[5].seleccionada : false,
+        b777_cert_cat_a: todasLasAeronaves[5] ? todasLasAeronaves[5].cert_cat_a : false,
+        b777_cert_b1: todasLasAeronaves[5] ? todasLasAeronaves[5].cert_b1 : false,
+        b777_cert_b2: todasLasAeronaves[5] ? todasLasAeronaves[5].cert_b2 : false,
+        
+        // ATR
+        atr_seleccionada: todasLasAeronaves[6] ? todasLasAeronaves[6].seleccionada : false,
+        atr_cert_cat_a: todasLasAeronaves[6] ? todasLasAeronaves[6].cert_cat_a : false,
+        atr_cert_b1: todasLasAeronaves[6] ? todasLasAeronaves[6].cert_b1 : false,
+        atr_cert_b2: todasLasAeronaves[6] ? todasLasAeronaves[6].cert_b2 : false,
+        
+        // Embraer
+        embraer_seleccionada: todasLasAeronaves[7] ? todasLasAeronaves[7].seleccionada : false,
+        embraer_cert_cat_a: todasLasAeronaves[7] ? todasLasAeronaves[7].cert_cat_a : false,
+        embraer_cert_b1: todasLasAeronaves[7] ? todasLasAeronaves[7].cert_b1 : false,
+        embraer_cert_b2: todasLasAeronaves[7] ? todasLasAeronaves[7].cert_b2 : false,
+        
+        // CRJ
+        crj_seleccionada: todasLasAeronaves[8] ? todasLasAeronaves[8].seleccionada : false,
+        crj_cert_cat_a: todasLasAeronaves[8] ? todasLasAeronaves[8].cert_cat_a : false,
+        crj_cert_b1: todasLasAeronaves[8] ? todasLasAeronaves[8].cert_b1 : false,
+        crj_cert_b2: todasLasAeronaves[8] ? todasLasAeronaves[8].cert_b2 : false,
+        
+        // Otros
+        otros_seleccionada: todasLasAeronaves[9] ? todasLasAeronaves[9].seleccionada : false,
+        otros_cert_cat_a: todasLasAeronaves[9] ? todasLasAeronaves[9].cert_cat_a : false,
+        otros_cert_b1: todasLasAeronaves[9] ? todasLasAeronaves[9].cert_b1 : false,
+        otros_cert_b2: todasLasAeronaves[9] ? todasLasAeronaves[9].cert_b2 : false,
+        
+        // ==========================================
+        // LEGAL Y CONSENTIMIENTO (boolean - siempre presente)
+        // ==========================================
+        privacidad_aceptada: formData.get('privacidad') === 'on',
+        
+        // ==========================================
+        // METADATA DEL REGISTRO (siempre presente)
+        // ==========================================
+        timestamp: formData.get('timestamp'),
+        fecha_registro: new Date().toISOString(),
+        user_agent: navigator.userAgent,
+        
+        // ==========================================
+        // INFORMACIÓN DEL CLIENTE Y PROYECTO (siempre presente)
+        // ==========================================
+        cliente: 'Brok-Air Aviation Group',
+        proyecto: 'Brok-Node',
+        herramienta: 'Broky',
+        origen_formulario: 'Web - Formulario Registro Broky',
+        
+        // ==========================================
+        // RESPONSABLE DEL TRATAMIENTO (siempre presente)
+        // ==========================================
+        responsable_razon_social: 'Airlogix AI, S.L.',
+        responsable_cif: 'B23908213',
+        responsable_direccion: 'Calle Amaltea, 10, 7º B, 28045 Madrid, España',
+        responsable_email: 'info@airlogixai.com',
+        responsable_web: 'https://airlogixai.com'
+      };
+      
+      console.log('✅ Objeto de datos construido correctamente');
+      console.log('📊 Total de campos:', Object.keys(data).length);
+      console.log('📦 Objeto completo:', data);
+      
+      } catch (errorConstruccion) {
+        console.error('❌ ERROR AL CONSTRUIR DATOS:', errorConstruccion);
+        console.error('   Stack:', errorConstruccion.stack);
+        showFeedback('error', `✕ Error al preparar datos: ${errorConstruccion.message}`);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          Enviar Registro
+        `;
+        return;
+      }
+
+      try {
+        console.log('📤 Iniciando envío al webhook...');
+        console.log('🌐 URL del webhook:', WEBHOOK_URL);
+
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+
+        console.log('📥 Respuesta recibida:');
+        console.log('   Status:', response.status);
+        console.log('   Status Text:', response.statusText);
+        console.log('   Headers:', [...response.headers.entries()]);
+
+        // Intentar leer la respuesta del servidor
+        let responseData;
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          responseData = await response.json();
+          console.log('   Response JSON:', responseData);
+        } else {
+          responseData = await response.text();
+          console.log('   Response Text:', responseData);
+        }
+
+        if (!response.ok) {
+          throw new Error(`Error en el servidor (HTTP ${response.status}): ${response.statusText}`);
+        }
+
+        // Éxito
+        console.log('✅ Envío exitoso!');
+        showFeedback('success', '✓ Registro completado correctamente. Bienvenido al sistema Broky de Brok-Air Aviation Group.');
+        form.reset();
+        bacField.classList.remove('show');
+        
+        // Ocultar todos los contenedores de certificaciones de aeronaves
+        document.querySelectorAll('.aeronave-cert-container').forEach(container => {
+          container.classList.remove('show');
+        });
+        
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 2500);
+
+      } catch (error) {
+        console.error('❌ Error completo:', error);
+        console.error('   Nombre:', error.name);
+        console.error('   Mensaje:', error.message);
+        console.error('   Stack:', error.stack);
+        
+        // Verificar si es un error de red
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          showFeedback('error', '✕ Error de conexión. Verifique su conexión a internet y que la URL del webhook sea correcta.');
+        } else {
+          showFeedback('error', `✕ Error al enviar: ${error.message}. Contacte con info@airlogixai.com`);
+        }
+      } finally {
+        // Reactivar botón
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          Enviar Registro
+        `;
+      }
+    });
+
+    function showFeedback(type, message) {
+      feedbackMsg.textContent = message;
+      feedbackMsg.className = `feedback-message show ${type}`;
+      
+      setTimeout(() => {
+        feedbackMsg.classList.remove('show');
+      }, 6000);
+    }
+
+    // Validación en tiempo real
+    const requiredInputs = form.querySelectorAll('input[required]:not([type="checkbox"]):not([type="radio"])');
+    requiredInputs.forEach(input => {
+      input.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+          this.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+        } else {
+          this.style.borderColor = '';
+        }
+      });
+
+      input.addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+          this.style.borderColor = '';
+        }
+      });
+    });
+
+    // Validación de email
+    const emailInput = form.querySelector('input[type="email"]');
+    if (emailInput) {
+      emailInput.addEventListener('blur', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.value && !emailRegex.test(this.value)) {
+          this.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+          showFeedback('error', '✕ Por favor, introduzca un email válido');
+        }
+      });
+    }
+
+    // Validación de teléfono
+    const telInput = form.querySelector('input[type="tel"]');
+    if (telInput) {
+      telInput.addEventListener('blur', function() {
+        const telRegex = /^\+?[0-9\s\-]{9,20}$/;
+        if (this.value && !telRegex.test(this.value)) {
+          this.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+          showFeedback('error', '✕ Por favor, introduzca un teléfono válido');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

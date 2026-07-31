@@ -13,7 +13,6 @@ export function FilterBar() {
     setFamilyFilter,
     furgonetas,
     gse,
-    aircraft,
   } = useApp();
 
   const all = [...furgonetas, ...gse];

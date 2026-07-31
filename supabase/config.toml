@@ -7,7 +7,7 @@ project_id = "broki"
 [api]
 enabled = true
 # Port to use for the API URL.
-port = 54321
+port = 55321
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
 schemas = ["public", "graphql_public"]
@@ -32,7 +32,7 @@ enabled = false
 
 [db]
 # Port to use for the local database URL.
-port = 54322
+port = 55322
 # Port used by db diff command to initialize the shadow database.
 shadow_port = 54320
 # Maximum amount of time to wait for health check when starting the local database.
@@ -44,7 +44,7 @@ major_version = 17
 [db.pooler]
 enabled = false
 # Port to use for the local connection pooler.
-port = 54329
+port = 55329
 # Specifies when a server connection can be reused by other clients.
 # Configure one of the supported pooler modes: `transaction`, `session`.
 pool_mode = "transaction"
@@ -94,7 +94,7 @@ enabled = true
 [studio]
 enabled = true
 # Port to use for Supabase Studio.
-port = 54323
+port = 55323
 # External URL of the API server that frontend connects to.
 api_url = "http://127.0.0.1"
 # OpenAI API Key to use for Supabase AI in the Supabase Studio.
@@ -105,7 +105,7 @@ openai_api_key = "env(OPENAI_API_KEY)"
 [inbucket]
 enabled = true
 # Port to use for the email testing server web interface.
-port = 54324
+port = 55324
 # Uncomment to expose additional ports for testing user applications that send emails.
 # smtp_port = 54325
 # pop3_port = 54326
@@ -217,8 +217,9 @@ web3 = 30
 # secret = ""
 
 [auth.email]
-# Solo login: no registro público por email.
-enable_signup = false
+# Controls GOTRUE_EXTERNAL_EMAIL_ENABLED, not just public signup. false disables
+# every email login (invite-only setups need this true + [auth].enable_signup=false).
+enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
@@ -382,9 +383,6 @@ inspector_port = 8083
 # The Deno major version to use.
 deno_version = 2
 
-[edge_runtime.secrets]
-N8N_BASE_URL = "https://n8n.airlogixai.com/webhook"
-
 [functions.inventory-list]
 verify_jwt = true
 
@@ -418,11 +416,16 @@ verify_jwt = true
 [functions.tooling-action]
 verify_jwt = true
 
-[functions.weather]
-verify_jwt = true
-
 [functions.roster-upload]
 verify_jwt = true
+
+[functions.relays]
+verify_jwt = true
+
+# Public: backs the /registrobroki form. Validation, honeypot and rate limiting
+# live inside the function.
+[functions.personnel-register]
+verify_jwt = false
 
 [functions.broki-import-batch]
 verify_jwt = true
@@ -432,7 +435,7 @@ verify_jwt = false
 
 [analytics]
 enabled = true
-port = 54327
+port = 55327
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
 

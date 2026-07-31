@@ -8,7 +8,6 @@ import {
   UserCircle,
   Check,
   Trash,
-  ArrowLineDown,
 } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
 import type { WorkGroup, WorkTask } from "@/lib/types/equipment";

@@ -1,10 +1,9 @@
 "use client";
 
-import { CheckCircle, WarningCircle, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
+import { CheckCircle, WarningCircle } from "@phosphor-icons/react";
 
 interface Props {
   name: string;
-  locationId: string;
   full: number;
   empty: number;
   color: "brand" | "blue";
@@ -15,7 +14,6 @@ interface Props {
 
 export function NitroStockCard({
   name,
-  locationId,
   full,
   empty,
   color,

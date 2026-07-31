@@ -8,7 +8,7 @@ import {
   WarningOctagon,
 } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
-import { brokiApi } from "@/lib/api/broki";
+import { fetchLemdWeather } from "@/lib/api/weather";
 import {
   buildCriticalAlerts,
   type CriticalAlert,
@@ -27,9 +27,8 @@ export function NotificationsBell() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
   useEffect(() => {
-    brokiApi
-      .fetchWeather()
-      .then((data) => setWeather(data as WeatherData))
+    fetchLemdWeather()
+      .then((data) => setWeather(data))
       .catch(() => null);
   }, [furgonetas.length, gse.length]);
 

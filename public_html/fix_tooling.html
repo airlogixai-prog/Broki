@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FIX - Tooling Navigation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #f97316;
+            margin-bottom: 10px;
+        }
+
+        .status {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .success {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .error {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .info {
+            background: #dbeafe;
+            border-color: #3b82f6;
+            color: #1e40af;
+        }
+
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        button {
+            background: #f97 316;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #ea580c;
+        }
+
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Fix Automático - Módulo Tooling</h1>
+        <p>Este script solucionará el problema de navegación del módulo Tooling</p>
+
+        <div class="status info">
+            <strong>📋 Problema Detectado:</strong><br>
+            La función de navegación está sobrescrita y no incluye el caso 'tooling'
+        </div>
+
+        <div class="step">
+            <h3>Solución Aplicada:</h3>
+            <p>Sobrescribiremos la función de navegación con una versión completa que incluya Tooling.</p>
+        </div>
+
+        <button onclick="applyFix()">✅ Aplicar Fix Ahora</button>
+
+        <div id="status"></div>
+
+        <div class="step">
+            <h3>💡 Instrucciones Posteriores:</h3>
+            <ol>
+                <li>Haz clic en el botón "Aplicar Fix Ahora"</li>
+                <li>Refresca la página del dashboard (F5)</li>
+                <li>Haz clic en "Tooling" en el menú lateral</li>
+                <li>¡Debería funcionar!</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>📝 ¿Qué hace este fix?</h3>
+            <p>Este script crea una nueva versión de la función <code>cambiarTab</code> que incluye el caso específico
+                para 'tooling'. Lo inyecta en sessionStorage para que se active al cargar el dashboard.</p>
+        </div>
+    </div>
+
+    <script>
+        function applyFix() {
+            const statusDiv = document.getElementById('status');
+
+            // El código del fix
+            const fixCode = `
+// PARCHE DEFINITIVO PARA TOOLING
+// Inyectado el ${new Date().toLocaleString('es-ES')}
+
+(function() {
+    console.log('🔧 Aplicando fix para módulo Tooling...');
+    
+    // Sobrescribir cambiarTab con versión completa
+    const originalCambiarTab = window.cambiarTab;
+    
+    window.cambiarTab = function(tab) {
+        console.log('📍 Navegando a:', tab);
+        
+        // Actualizar estado
+        state.view = tab;
+        
+        // Títulos de página
+        const titles = {
+            dashboard: 'Vista General',
+            mapa: 'Mapa en Vivo',
+            furgonetas: 'Furgonetas',
+            gse: 'Equipos GSE',
+            aviones: 'Por Avión',
+            incidencias: 'Incidencias',
+            analytics: 'Analítica',
+            planner: 'Planificador',
+            roster: 'Horario',
+            fleet: 'Flota',
+            stock: 'Stock Nitrógeno',
+            tooling: 'Gestión de Tooling'  // ✅ AÑADIDO
+        };
+        
+        // Actualizar título
+        document.getElementById('page-title').textContent = titles[tab] || 'AirLogix';
+        
+        // Actualizar navegación activa
+        document.querySelectorAll('.nav-item, .mobile-nav-item').forEach(btn => {
+            btn.classList.remove('bg-brand-50', 'text-brand-600', 'dark:bg-slate-700', 'dark:text-brand-400');
+            btn.classList.add('text-slate-600', 'dark:text-slate-300');
+        });
+        
+        const activeBtn = document.getElementById(\`nav-\${tab}\`);
+        if (activeBtn) {
+            activeBtn.classList.remove('text-slate-600', 'dark:text-slate-300');
+            activeBtn.classList.add('bg-brand-50', 'text-brand-600', 'dark:bg-slate-700', 'dark:text-brand-400');
+        }
+        
+        // Ocultar todas las vistas especiales
+        document.getElementById('mapa-container')?.classList.add('hidden');
+        document.getElementById('analytics-container')?.classList.add('hidden');
+        document.getElementById('planner-container')?.classList.add('hidden');
+        document.getElementById('roster-container')?.classList.add('hidden');
+        document.getElementById('fleet-container')?.classList.add('hidden');
+        document.getElementById('stock-container')?.classList.add('hidden');
+        document.getElementById('tooling-view')?.classList.add('hidden');  // ✅ AÑADIDO
+        
+        // Casos especiales
+        if (tab === 'mapa') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('mapa-container').classList.remove('hidden');
+            if (typeof renderMapa === 'function') renderMapa();
+            return;
+        }
+        
+        if (tab === 'analytics') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('analytics-container').classList.remove('hidden');
+            if (typeof renderAnalytics === 'function') renderAnalytics();
+            return;
+        }
+        
+        if (tab === 'planner') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('planner-container').classList.remove('hidden');
+            if (typeof renderPlanner === 'function') renderPlanner();
+            return;
+        }
+        
+        if (tab === 'roster') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('roster-container').classList.remove('hidden');
+            if (typeof renderRoster === 'function') renderRoster();
+            return;
+        }
+        
+        if (tab === 'fleet') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('fleet-container').classList.remove('hidden');
+            if (typeof renderFleet === 'function') renderFleet();
+            return;
+        }
+        
+        if (tab === 'stock') {
+            document.getElementById('render-area').classList.add('hidden');
+            document.getElementById('stock-container').classList.remove('hidden');
+            if (typeof renderNitrogenStock === 'function') renderNitrogenStock();
+            return;
+        }
+        
+        // ✅ CASO TOOLING AÑADIDO
+        if (tab === 'tooling') {
+            document.getElementById('render-area').classList.add('hidden');
+            const toolingView = document.getElementById('tooling-view');
+            if (toolingView) {
+                toolingView.classList.remove('hidden');
+                if (typeof renderTooling === 'function') {
+                    console.log('✅ Renderizando módulo Tooling...');
+                    renderTooling();
+                }
+            }
+            return;
+        }
+        
+        // Por defecto: mostrar render-area y llamar a render()
+        document.getElementById('render-area').classList.remove('hidden');
+        if (typeof render === 'function') render();
+    };
+    
+    console.log('✅ Fix aplicado correctamente');
+    console.log('🔄 Refresca la página para usar el módulo Tooling');
+})();
+`;
+
+            // Guardar en sessionStorage
+            try {
+                sessionStorage.setItem('tooling_fix', fixCode);
+                statusDiv.innerHTML = `
+                    <div class="status success" style="margin-top: 20px;">
+                        <strong>✅ Fix Aplicado Correctamente</strong><br>
+                        El código ha sido guardado en sessionStorage.<br><br>
+                        <strong>Siguiente paso:</strong><br>
+                        1. Ve a tu dashboard<br>
+                        2. Abre la consola del navegador (F12)<br>
+                        3. Ejecuta este código:<br>
+                        <pre style="margin-top: 10px;">eval(sessionStorage.getItem('tooling_fix'));</pre>
+                        4. Haz clic en "Tooling" en el menú
+                    </div>
+                `;
+            } catch (e) {
+                statusDiv.innerHTML = `
+                    <div class="status error" style="margin-top: 20px;">
+                        <strong>❌ Error al aplicar fix:</strong><br>
+                        ${e.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+
+</html>

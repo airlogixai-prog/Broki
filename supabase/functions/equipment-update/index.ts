@@ -1,9 +1,39 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nPostJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { assetToLegacyRow, applyEquipmentUpdates } from "../_shared/legacy-assets.ts";
+
+function applyEquipmentUpdates(
+  updates: Record<string, unknown>,
+  type: string,
+): Record<string, unknown> {
+  const patch: Record<string, unknown> = {};
+  const isFurgo = type === "furgo" || type === "vehicle";
+
+  if ("location" in updates) {
+    if (isFurgo) {
+      patch.parking = updates.location;
+    } else {
+      patch.ubicacion_habitual = updates.location;
+      patch.parking = updates.location;
+    }
+  }
+  if ("plane" in updates) patch.avion_text = updates.plane ?? null;
+  if ("worker" in updates) patch.current_worker_text = updates.worker ?? null;
+  if ("fuel" in updates) {
+    const v = updates.fuel;
+    patch.combustible = v === null || v === "" ? null : Number(v);
+  }
+  if ("status" in updates) patch.estado = updates.status ?? null;
+  if ("notes" in updates) patch.notas = updates.notes ?? null;
+  for (const n of ["nitrogeno_1", "nitrogeno_2", "nitrogeno_3", "nitrogeno_4"] as const) {
+    if (n in updates) {
+      const v = updates[n];
+      patch[n] = v === null || v === "" ? null : Number(v);
+    }
+  }
+  return patch;
+}
 
 serve(async (req) => {
   if (req.method !== "POST") {
@@ -21,16 +51,6 @@ serve(async (req) => {
     return jsonResponse(req, { error: "missing item_id" }, 400);
   }
 
-  // ponytail: remove EQUIPMENT_USE_N8N flag after PR1 validated in staging
-  if (Deno.env.get("EQUIPMENT_USE_N8N") === "true") {
-    try {
-      const data = await n8nPostJson("Inventario", body);
-      return jsonResponse(req, data);
-    } catch {
-      return jsonResponse(req, { error: "upstream_error" }, 502);
-    }
-  }
-
   const itemId = String(body.item_id);
   const type = String(body.type ?? "");
   const updates = (body.updates ?? {}) as Record<string, unknown>;
@@ -42,7 +62,6 @@ serve(async (req) => {
   try {
     const supabase = createServiceClient();
 
-    // Resolve asset — latest row by identifier
     const { data: existing, error: findErr } = await supabase
       .from("broki_assets")
       .select("id, identifier, asset_kind")
@@ -85,7 +104,7 @@ serve(async (req) => {
       updates,
     });
 
-    return jsonResponse(req, assetToLegacyRow(updated));
+    return jsonResponse(req, updated);
   } catch (err) {
     console.error("[equipment-update] unexpected error", err);
     return jsonResponse(req, { error: "internal_error" }, 500);

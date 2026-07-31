@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Notebook,
   PlusCircle,
@@ -13,35 +13,10 @@ import {
   Sun,
   ClockCounterClockwise,
   Archive,
+  Warning,
 } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
-
-interface RelayPoint {
-  text: string;
-}
-
-interface Relay {
-  id: number;
-  timestamp: string;
-  plane: string;
-  worker: string;
-  points: string[];
-}
-
-const STORAGE_KEY = "relays_db";
-
-function loadRelays(): Relay[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
-}
-
-function saveRelays(relays: Relay[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(relays));
-}
+import { brokiApi, type Relay } from "@/lib/api/broki";
 
 function getRelayGroup(timestamp: string): "today" | "yesterday" | "older" {
   const d = new Date(timestamp);
@@ -121,14 +96,38 @@ function RelayCard({ relay, onDelete }: RelayCardProps) {
 export default function FleetPage() {
   const { aircraft } = useApp();
   const [relays, setRelays] = useState<Relay[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [plane, setPlane] = useState("");
   const [worker, setWorker] = useState("");
   const [points, setPoints] = useState<string[]>(["", ""]);
 
-  useEffect(() => {
-    setRelays(loadRelays());
+  const load = useCallback(async (alive: () => boolean = () => true) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetched = await brokiApi.fetchRelays();
+      if (alive()) setRelays(fetched);
+    } catch (err) {
+      if (alive()) {
+        setError(err instanceof Error ? err.message : "No se pudieron cargar los relevos");
+      }
+    } finally {
+      if (alive()) setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      await load(() => alive);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [load]);
 
   const handleAddPoint = () => setPoints((p) => [...p, ""]);
   const handleRemovePoint = (i: number) =>
@@ -136,32 +135,41 @@ export default function FleetPage() {
   const handlePointChange = (i: number, val: string) =>
     setPoints((p) => p.map((x, idx) => (idx === i ? val : x)));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!plane) return;
     const validPoints = points.map((p) => p.trim()).filter(Boolean);
     if (validPoints.length === 0) return;
 
-    const newRelay: Relay = {
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-      plane,
-      worker: worker.trim() || "Sin Firma",
-      points: validPoints,
-    };
-    const updated = [newRelay, ...relays];
-    setRelays(updated);
-    saveRelays(updated);
-    setShowModal(false);
-    setPlane("");
-    setWorker("");
-    setPoints(["", ""]);
+    setSaving(true);
+    setError(null);
+    try {
+      const created = await brokiApi.createRelay({
+        plane,
+        worker: worker.trim(),
+        points: validPoints,
+      });
+      setRelays((prev) => [created, ...prev]);
+      setShowModal(false);
+      setPlane("");
+      setWorker("");
+      setPoints(["", ""]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo guardar el relevo");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("¿Borrar este relevo?")) return;
-    const updated = relays.filter((r) => r.id !== id);
-    setRelays(updated);
-    saveRelays(updated);
+    const previous = relays;
+    setRelays((prev) => prev.filter((r) => r.id !== id));
+    try {
+      await brokiApi.deleteRelay(id);
+    } catch (err) {
+      setRelays(previous);
+      setError(err instanceof Error ? err.message : "No se pudo borrar el relevo");
+    }
   };
 
   const today = relays.filter((r) => getRelayGroup(r.timestamp) === "today");
@@ -187,7 +195,36 @@ export default function FleetPage() {
         </button>
       </div>
 
-      {relays.length === 0 && (
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3"
+        >
+          <Warning size={18} className="text-red-500 mt-0.5 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-red-700 dark:text-red-300">{error}</p>
+            <button
+              onClick={() => void load()}
+              className="mt-1 text-xs font-bold text-red-600 dark:text-red-400 underline hover:no-underline"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-busy="true">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-48 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 animate-pulse"
+            />
+          ))}
+        </div>
+      )}
+
+      {!loading && !error && relays.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
             <Notebook size={36} className="text-slate-400 dark:text-slate-600" />
@@ -347,11 +384,11 @@ export default function FleetPage() {
               Cancelar
             </button>
             <button
-              onClick={handleSave}
-              disabled={!plane || points.every((p) => !p.trim())}
+              onClick={() => void handleSave()}
+              disabled={saving || !plane || points.every((p) => !p.trim())}
               className="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 disabled:opacity-50 shadow-sm transition-colors"
             >
-              Guardar Relevo
+              {saving ? "Guardando..." : "Guardar Relevo"}
             </button>
           </div>
         </dialog>

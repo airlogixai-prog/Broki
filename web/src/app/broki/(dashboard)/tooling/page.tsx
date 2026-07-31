@@ -14,6 +14,18 @@ import {
 import { brokiApi } from "@/lib/api/broki";
 import { useApp } from "@/context/AppContext";
 
+// Tooling rows keep arriving with the legacy column names alongside the current
+// ones, so they are read defensively rather than typed against the schema.
+type ToolingRow = Record<string, unknown>;
+
+/** First of `values` that holds something, as a trimmed string. */
+const str = (...values: unknown[]): string => {
+  for (const v of values) {
+    if (v !== null && v !== undefined && v !== "") return String(v).trim();
+  }
+  return "";
+};
+
 interface ToolItem {
   bac: string;
   description: string;
@@ -27,7 +39,8 @@ interface ToolItem {
 }
 
 interface ToolMovement {
-  id: number;
+  /** A uuid from broki_tooling_movements, or a legacy numeric id. */
+  id: string | number;
   bac: string;
   description: string;
   checkoutPerson: string;
@@ -82,51 +95,61 @@ export default function ToolingPage() {
   });
   const [checkinForm, setCheckinForm] = useState<CheckinForm>({ tma: "", notes: "" });
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (alive: () => boolean = () => true) => {
     setLoading(true);
     try {
       const data = await brokiApi.fetchTooling();
+      if (!alive()) return;
 
-      const rawCatalog = Array.isArray(data.catalog) ? data.catalog : [];
-      const rawMovements = Array.isArray(data.movements) ? data.movements : [];
+      const rawCatalog = (Array.isArray(data.catalog) ? data.catalog : []) as ToolingRow[];
+      const rawMovements = (Array.isArray(data.movements) ? data.movements : []) as ToolingRow[];
 
       setCatalog(
-        rawCatalog.map((item: any) => ({
-          bac: item.identificador ?? item.bac ?? "",
-          description: item.descripcion ?? "Sin descripción",
-          tipo: item.tipo_tool ?? "",
-          ubicacion: item.ubicacion_habitual ?? "",
-          estado: item.estado ?? "",
-          partNumber: item.part_number ?? "",
-          serialNumber: item.serial_number ?? "",
-          rango: item.rango ?? "",
-          notas: item.notas ?? "",
-        }))
+        rawCatalog.map((item) => {
+          const raw = (item.raw_payload ?? {}) as ToolingRow;
+          return {
+            bac: str(item.bac_bact, item.identificador, item.bac),
+            description: str(item.descripcion) || "Sin descripción",
+            tipo: str(item.familia, item.tipo_tool),
+            ubicacion: str(raw.ubicacion_habitual, raw.ubicacion, item.ubicacion_habitual),
+            estado: str(item.estado),
+            partNumber: str(item.codigo, raw.part_number, item.part_number),
+            serialNumber: str(raw.serial_number, item.serial_number),
+            rango: str(raw.rango, item.rango),
+            notas: str(raw.notas, item.notas),
+          };
+        }),
       );
 
       setMovements(
-        rawMovements.map((r: any) => ({
-          id: r.id ?? Date.now(),
-          bac: r.bac_bact ?? "",
-          description: r.descripcion ?? "",
-          checkoutPerson: r.tma_out ?? "",
-          checkoutDate: r.date_out ?? "",
-          aircraft: r.avion ?? "",
-          checkoutNotes: r.remarks ?? "",
-          checkinPerson: r.tma_in ?? null,
-          checkinDate: r.date_in ?? null,
-          checkinNotes: r.remarks ?? null,
+        rawMovements.map((r) => ({
+          id: (r.id ?? r.legacy_id ?? Date.now()) as string | number,
+          bac: str(r.bac_bact, r.bac),
+          description: str(r.descripcion),
+          checkoutPerson: str(r.tma_out),
+          checkoutDate: str(r.date_out),
+          aircraft: str(r.avion),
+          checkoutNotes: str(r.remarks),
+          checkinPerson: str(r.tma_in) || null,
+          checkinDate: str(r.date_in) || null,
+          checkinNotes: str(r.remarks) || null,
           status: r.date_in ? "returned" : "checked_out",
         }))
       );
     } catch (e) {
       console.error("[ToolingPage] fetch error", e);
     }
-    setLoading(false);
+    if (alive()) setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchData();
+    let alive = true;
+    void (async () => {
+      await fetchData(() => alive);
+    })();
+    return () => {
+      alive = false;
+    };
   }, [fetchData]);
 
   const activeMovements = movements.filter((m) => m.status === "checked_out");
@@ -206,7 +229,7 @@ export default function ToolingPage() {
         </h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={fetchData}
+            onClick={() => void fetchData()}
             disabled={loading}
             className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
           >

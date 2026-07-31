@@ -9,17 +9,11 @@ import { useEquipment } from "@/lib/hooks/useEquipment";
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { darkMode, theme } = useApp();
+  const { darkMode, refreshRef } = useApp();
 
-  // Sync dark mode + theme on mount
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
-    if (theme !== "default") {
-      document.documentElement.setAttribute("data-theme", theme);
-    } else {
-      document.documentElement.removeAttribute("data-theme");
-    }
-  }, [darkMode, theme]);
+  }, [darkMode]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -30,6 +24,11 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
         document.querySelector<HTMLInputElement>('[placeholder*="Buscar"]')?.focus();
+      }
+      // Refetch the dashboard data instead of reloading the whole page.
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        refreshRef.current?.();
       }
       if (e.key === "Escape") {
         document
@@ -43,7 +42,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [refreshRef]);
 
   // Data fetching
   useEquipment();

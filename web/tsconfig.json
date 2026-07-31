@@ -10,6 +10,8 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    // The test files run through `node --test`, which resolves the real .ts path.
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,

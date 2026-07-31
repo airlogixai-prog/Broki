@@ -9,8 +9,20 @@ import { createClient } from "@/lib/supabase/client";
 import type { IncidentState } from "@/lib/types/equipment";
 
 const REFRESH_MS = 30_000;
-// Tables that trigger a full refresh when they change via Realtime.
-const REALTIME_TABLES = ["broki_assets", "broki_incidents", "broki_nitro_stock", "broki_tooling_movements"] as const;
+// Tables that trigger a full refresh when they change via Realtime. They must
+// also be members of the supabase_realtime publication, see
+// supabase/migrations/20260620000100_broki_grants_realtime.sql
+const REALTIME_TABLES = [
+  "broki_assets",
+  "broki_incidents",
+  "broki_incident_messages",
+  "broki_nitro_stock",
+  "broki_tooling_movements",
+  "broki_planner_groups",
+  "broki_planner_tasks",
+  "broki_roster_assignments",
+  "broki_relays",
+] as const;
 
 function errMsg(reason: unknown): string {
   if (reason instanceof Error) return reason.message;
@@ -18,8 +30,14 @@ function errMsg(reason: unknown): string {
 }
 
 export function useEquipment() {
-  const { setInventory, setIncidentsMemory, setLoading, setFetchError, refreshRef } =
-    useApp();
+  const {
+    setInventory,
+    setIncidentsMemory,
+    setLoading,
+    setFetchError,
+    refreshRef,
+    autoRefresh,
+  } = useApp();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAll = useCallback(
@@ -67,31 +85,34 @@ export function useEquipment() {
         (Array.isArray(resIncidents) ? resIncidents : []).forEach(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (inc: any) => {
-            const itemId = inc.item_id || inc.id_objeto;
+            const itemId = inc.id_objeto || inc.item_id;
             if (!itemId) return;
             if (!incidentsMemory[itemId])
               incidentsMemory[itemId] = { current: null, history: [] };
 
+            const payload = inc.raw_payload ?? {};
             const obj = {
-              id: inc.incident_id || inc.id,
-              openedAt: inc.created_at || new Date().toISOString(),
-              closedAt: inc.closed_at,
-              messages: Array.isArray(inc.messages)
-                ? inc.messages
+              id: inc.incident_code || inc.external_id || inc.incident_id || inc.id,
+              openedAt: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
+              closedAt: inc.fecha_cierre || inc.closed_at,
+              messages: Array.isArray(payload.messages)
+                ? payload.messages
                 : [
                     {
-                      user: inc.worker || "Reporte",
-                      text: inc.defect || inc.descripcion || "Incidencia",
-                      time: inc.created_at || new Date().toISOString(),
+                      user: inc.trabajador_text || inc.worker || "Reporte",
+                      text: inc.descripcion || inc.defect || "Incidencia",
+                      time: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
                     },
                   ],
             };
 
-            const status = String(inc.status ?? "").toLowerCase();
+            const estado = Number(inc.estado ?? NaN);
+            const statusText = String(inc.status_text ?? inc.status ?? "").toLowerCase();
             const isOpen =
-              status === "1" ||
-              status.includes("abierta") ||
-              status === "open";
+              estado === 1 ||
+              statusText.includes("abierta") ||
+              statusText === "open" ||
+              statusText === "1";
             if (isOpen) incidentsMemory[itemId].current = obj;
             else incidentsMemory[itemId].history.push(obj);
           },
@@ -113,39 +134,31 @@ export function useEquipment() {
 
   useEffect(() => {
     fetchAll(true);
+  }, [fetchAll]);
+
+  // Polling fallback for environments where the Realtime socket cannot connect.
+  useEffect(() => {
+    if (!autoRefresh) return;
     timerRef.current = setInterval(() => fetchAll(), REFRESH_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [fetchAll]);
+  }, [fetchAll, autoRefresh]);
 
   // Realtime: refresh on any change to operational tables.
   // ponytail: v1 — full refresh on change; v2 upgrade = patch local state per event
   useEffect(() => {
     const supabase = createClient();
-    const channel = supabase
-      .channel("broki-realtime-refresh")
-      .on(
+    const channel = supabase.channel("broki-realtime-refresh");
+
+    for (const table of REALTIME_TABLES) {
+      channel.on(
         "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[0] },
+        { event: "*", schema: "public", table },
         () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[1] },
-        () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[2] },
-        () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[3] },
-        () => fetchAll(),
-      )
-      .subscribe();
+      );
+    }
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);

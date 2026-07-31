@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Crea un zip del repo excluyendo artefactos pesados y secretos.
+# Crea un zip del repo listo para arrancar (incluye web/node_modules).
+# Excluye artefactos de build, .git y secretos.
 # Uso: ./export-repo-zip.sh [nombre.zip]
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,11 +20,15 @@ if [[ -e "$OUTPUT" ]]; then
   exit 1
 fi
 
+if [[ ! -d "web/node_modules" ]]; then
+  echo "web/node_modules no existe; instalando dependencias..."
+  (cd web && npm install)
+fi
+
 echo "Exportando repo -> $OUTPUT"
 
 zip -r "$OUTPUT" . \
   -x "./node_modules/*" \
-  -x "./web/node_modules/*" \
   -x "./web/.next/*" \
   -x "./web/out/*" \
   -x "./web/build/*" \

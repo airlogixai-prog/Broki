@@ -15,7 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full antialiased">
+    <html lang="es" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var d=localStorage.getItem("broki_dark_mode")==="true";document.documentElement.classList.toggle("dark",d);}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

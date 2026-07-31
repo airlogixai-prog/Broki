@@ -1,24 +1,10 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nGetJson, n8nPostJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { incidentToLegacyRow } from "../_shared/legacy-incidents.ts";
 
 serve(async (req) => {
-  // ponytail: remove INCIDENTS_USE_N8N flag after PR2 validated in staging
-  const useN8n = Deno.env.get("INCIDENTS_USE_N8N") === "true";
-
   if (req.method === "GET") {
-    if (useN8n) {
-      try {
-        const data = await n8nGetJson("envio_incidencias");
-        return jsonResponse(req, data);
-      } catch {
-        return jsonResponse(req, { error: "upstream_error" }, 502);
-      }
-    }
-
     try {
       const supabase = createServiceClient();
       const { data, error } = await supabase
@@ -30,7 +16,7 @@ serve(async (req) => {
         console.error("[incidents] GET error", error);
         return jsonResponse(req, { error: "db_error" }, 500);
       }
-      return jsonResponse(req, (data ?? []).map(incidentToLegacyRow));
+      return jsonResponse(req, data ?? []);
     } catch (err) {
       console.error("[incidents] GET unexpected error", err);
       return jsonResponse(req, { error: "internal_error" }, 500);
@@ -49,15 +35,6 @@ serve(async (req) => {
       return jsonResponse(req, { error: "missing action or item_id" }, 400);
     }
 
-    if (useN8n) {
-      try {
-        const data = await n8nPostJson("incidencias", body);
-        return jsonResponse(req, data);
-      } catch {
-        return jsonResponse(req, { error: "upstream_error" }, 502);
-      }
-    }
-
     const action = String(body.action);
     const itemId = String(body.item_id);
     const incidentId = String(body.incident_id ?? "");
@@ -66,7 +43,6 @@ serve(async (req) => {
     try {
       const supabase = createServiceClient();
 
-      // Resolve asset FK (optional — no hard fail if asset not found)
       const { data: asset } = await supabase
         .from("broki_assets")
         .select("id")
@@ -113,7 +89,7 @@ serve(async (req) => {
           incident_id: incidentId,
         });
 
-        return jsonResponse(req, incidentToLegacyRow(inserted));
+        return jsonResponse(req, inserted);
       }
 
       if (action === "update_incident" || action === "close_incident") {
@@ -165,7 +141,7 @@ serve(async (req) => {
           incident_id: incidentId,
         });
 
-        return jsonResponse(req, incidentToLegacyRow(updated));
+        return jsonResponse(req, updated);
       }
 
       return jsonResponse(req, { error: "unknown_action" }, 400);

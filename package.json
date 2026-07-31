@@ -2,6 +2,10 @@
   "name": "broki",
   "private": true,
   "scripts": {
+    "prepare": "husky",
+    "precommit": "bash scripts/precommit.sh",
+    "test": "npm run precommit",
+    "test:live": "deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
     "dev": "npm run dev --prefix web",
     "build": "npm run build --prefix web",
     "start": "npm run start --prefix web",
@@ -16,6 +20,7 @@
     "functions:secrets": "supabase secrets set N8N_BASE_URL=https://n8n.airlogixai.com/webhook"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "supabase": "^2.106.0"
   }
 }

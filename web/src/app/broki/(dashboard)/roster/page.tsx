@@ -1,55 +1,44 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { CalendarBlank, Users, UploadSimple, ArrowsClockwise } from "@phosphor-icons/react";
-import { brokiApi } from "@/lib/api/broki";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  CalendarBlank,
+  Users,
+  UploadSimple,
+  ArrowsClockwise,
+  Warning,
+} from "@phosphor-icons/react";
+import { brokiApi, type RosterPerson, type RosterWeek } from "@/lib/api/broki";
 
-interface RosterPerson {
-  name: string;
-  id: string;
-  cert: string;
-  week: string[];
-}
-
-type ShiftType = "iberojet" | "w2f" | "off" | "leave";
+type ShiftType = "iberojet" | "w2f" | "off" | "leave" | "none";
 
 interface ShiftStyle {
   bg: string;
   text: string;
-  type: ShiftType | "mixed";
+  type: ShiftType;
 }
 
-const ROSTER_DATA: RosterPerson[] = [
-  { name: "Joaquin Leocadio", id: "255", cert: "B1, B2", week: ["L", "L", "L", "FL", "L", "L", "L"] },
-  { name: "Jose A Carrera", id: "216", cert: "B1, B2", week: ["B", "B", "B", "B", "B", "B", "B"] },
-  { name: "Mario Lorenzo", id: "241", cert: "B1, B2", week: ["07:00-19:00", "07:00-19:00", "07:00-19:00", "07:00-18:00", "07:00-18:00", "07:00-18:00", "07:00-18:00"] },
-  { name: "Sergio Galan", id: "231", cert: "B1", week: ["V", "V", "V", "08:00-18:00", "V", "V", "V"] },
-  { name: "Enrique García", id: "265", cert: "B1", week: ["07:00-17:00", "07:00-17:00", "06:00-16:00", "08:00-16:00", "07:00-17:00", "L", "L"] },
-  { name: "Roberto Merino", id: "337", cert: "B1", week: ["L", "09:00-17:00", "07:00-15:00", "V", "V", "FS", "FS"] },
-  { name: "Fernando Cabero", id: "457", cert: "B1, B2", week: ["L", "L", "L", "L", "09:00-19:00", "09:00-19:00", "09:00-19:00"] },
-  { name: "Alejandro Morales", id: "462", cert: "B1", week: ["10:00-18:00", "L", "L", "L", "L", "V", "V"] },
-  { name: "Omar Alawi", id: "458", cert: "B1", week: ["10:00-18:00", "10:00-18:00", "10:00-18:00", "L", "L", "L", "L"] },
-  { name: "Roberto Ferrandiz", id: "399", cert: "B1", week: ["09:00-17:00", "07:00-15:00", "10:00-18:00", "14:00-00:00", "L", "L", "L"] },
-  { name: "Jose Luis Nafarrate", id: "445", cert: "B1", week: ["L", "L", "10:00-18:00", "10:00-20:00", "10:00-20:00", "10:00-20:00", "L"] },
-  { name: "Pablo Regueros", id: "439", cert: "B1", week: ["12:00-20:00", "10:00-18:00", "L", "L", "L", "L", "10:00-20:00"] },
-  { name: "Javier Perez", id: "343", cert: "B1", week: ["V", "FSL", "FBL", "FSL", "L", "L", "L"] },
-  { name: "Miguel A Perello", id: "364", cert: "B1", week: ["10:00-18:00", "09:00-17:00", "09:00-17:00", "09:00-19:00", "09:00-19:00", "L", "L"] },
-  { name: "Enrique Aguado", id: "A-424", cert: "CAT A", week: ["10:00-18:00", "09:00-17:00", "L", "L", "L", "L", "09:00-19:00"] },
-];
-
-const W2F_ROWS = new Set([4, 9, 10, 13]);
-
-function getShiftStyle(shift: string, rowIndex: number): ShiftStyle {
-  const s = shift.toUpperCase();
-  if (["L", "B"].includes(s))
+/**
+ * The airline comes from the imported PDF. The legacy dashboard guessed it from a
+ * hardcoded set of table row indices, which mislabels everyone as soon as the
+ * roster order changes, so an unknown airline now renders as a neutral shift
+ * instead of being silently assigned to Iberojet.
+ */
+function getShiftStyle(shift: string, airline: RosterPerson["airline"]): ShiftStyle {
+  const s = shift.trim().toUpperCase();
+  if (!s)
+    return { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-400", type: "none" };
+  if (["L", "B", "BL", "LD"].includes(s))
     return { bg: "bg-amber-100 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400", type: "off" };
-  if (["V", "FS", "FSL", "FBL"].includes(s))
+  if (["V", "FS", "FSL", "FBL", "P", "IT", "SL"].includes(s))
     return { bg: "bg-red-100 dark:bg-red-900/30", text: "text-red-700 dark:text-red-400", type: "leave" };
   if (s.includes("FL"))
     return { bg: "bg-yellow-100 dark:bg-yellow-900/30", text: "text-yellow-700 dark:text-yellow-400", type: "off" };
-  if (W2F_ROWS.has(rowIndex))
+  if (airline === "w2f")
     return { bg: "bg-blue-600 dark:bg-blue-700", text: "text-white", type: "w2f" };
-  return { bg: "bg-cyan-400 dark:bg-cyan-600", text: "text-slate-900 dark:text-white", type: "iberojet" };
+  if (airline === "iberojet")
+    return { bg: "bg-cyan-400 dark:bg-cyan-600", text: "text-slate-900 dark:text-white", type: "iberojet" };
+  return { bg: "bg-slate-200 dark:bg-slate-700", text: "text-slate-700 dark:text-slate-200", type: "none" };
 }
 
 const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
@@ -60,24 +49,60 @@ type AirlineFilter = "all" | "iberojet" | "w2f";
 export default function RosterPage() {
   const [mode, setMode] = useState<Mode>("weekly");
   const [airlineFilter, setAirlineFilter] = useState<AirlineFilter>("all");
+  const [roster, setRoster] = useState<RosterWeek | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const load = useCallback(async (alive: () => boolean = () => true) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const fetched = await brokiApi.fetchRoster();
+      if (alive()) setRoster(fetched);
+    } catch (err) {
+      if (alive()) {
+        setError(err instanceof Error ? err.message : "No se pudo cargar el horario");
+      }
+    } finally {
+      if (alive()) setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      await load(() => alive);
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [load]);
 
   const handleUpload = async (file: File) => {
     setUploading(true);
+    setError(null);
+    setNotice(null);
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("type", "roster_pdf");
-      await brokiApi.rosterUpload(formData);
-      alert("Horario enviado correctamente.");
-    } catch (e) {
-      console.error("[RosterPage] upload error", e);
-      alert("Error al subir el horario.");
+      const result = await brokiApi.rosterUpload(formData);
+      setNotice(
+        result.duplicate
+          ? (result.message ?? "Este PDF ya se habia importado.")
+          : `Horario importado: ${result.people ?? 0} personas, ${result.imported ?? 0} turnos.`,
+      );
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error al subir el horario");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
+  const people = roster?.people ?? [];
   const today = new Date();
   const todayIdx = (today.getDay() + 6) % 7; // Mon=0
 
@@ -85,9 +110,22 @@ export default function RosterPage() {
     <div className="space-y-6 pb-10">
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <CalendarBlank size={28} className="text-brand-500" /> Horario
-        </h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+            <CalendarBlank size={28} className="text-brand-500" /> Horario
+          </h1>
+          {roster?.week && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Semana del{" "}
+              {new Date(`${roster.week}T00:00:00`).toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+              {roster.isFallback && " · ultimo horario importado"}
+            </p>
+          )}
+        </div>
 
         <div className="flex items-center gap-3 flex-wrap">
           {/* Mode toggle */}
@@ -136,6 +174,33 @@ export default function RosterPage() {
         </div>
       </div>
 
+      {error && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3"
+        >
+          <Warning size={18} className="text-red-500 mt-0.5 shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-red-700 dark:text-red-300">{error}</p>
+            <button
+              onClick={() => void load()}
+              className="mt-1 text-xs font-bold text-red-600 dark:text-red-400 underline hover:no-underline"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {notice && (
+        <p
+          role="status"
+          className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-300"
+        >
+          {notice}
+        </p>
+      )}
+
       {/* Legend */}
       <div className="flex flex-wrap gap-3 text-xs">
         {[
@@ -153,8 +218,27 @@ export default function RosterPage() {
         ))}
       </div>
 
+      {loading && (
+        <div
+          className="h-64 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 animate-pulse"
+          aria-busy="true"
+        />
+      )}
+
+      {!loading && !error && people.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+            <CalendarBlank size={36} className="text-slate-400 dark:text-slate-600" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Sin horario importado</h3>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm max-w-sm">
+            Sube el PDF del horario para ver los turnos de la semana.
+          </p>
+        </div>
+      )}
+
       {/* Weekly view */}
-      {mode === "weekly" && (
+      {!loading && people.length > 0 && mode === "weekly" && (
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
@@ -180,10 +264,10 @@ export default function RosterPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-              {ROSTER_DATA.map((p, rowIdx) => {
+              {people.map((p) => {
                 return (
                   <tr
-                    key={p.id}
+                    key={`${p.name}-${p.id}`}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                   >
                     <td className="p-3 border-r border-slate-100 dark:border-slate-700 text-xs font-medium text-slate-500">
@@ -191,10 +275,10 @@ export default function RosterPage() {
                     </td>
                     <td className="p-3 border-r border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white truncate max-w-[140px]">
                       {p.name}{" "}
-                      <span className="text-slate-400 font-normal">({p.id})</span>
+                      {p.id && <span className="text-slate-400 font-normal">({p.id})</span>}
                     </td>
                     {p.week.map((shift, i) => {
-                      const style = getShiftStyle(shift, rowIdx);
+                      const style = getShiftStyle(shift, p.airline);
                       return (
                         <td
                           key={i}
@@ -205,7 +289,7 @@ export default function RosterPage() {
                           <div
                             className={`text-[10px] font-bold p-1 rounded ${style.bg} ${style.text} truncate`}
                           >
-                            {shift}
+                            {shift || "—"}
                           </div>
                         </td>
                       );
@@ -219,7 +303,7 @@ export default function RosterPage() {
       )}
 
       {/* Daily view */}
-      {mode === "daily" && (
+      {!loading && people.length > 0 && mode === "daily" && (
         <div>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
             Turno de hoy ·{" "}
@@ -232,11 +316,17 @@ export default function RosterPage() {
             </span>
           </p>
           {(() => {
-            let items = ROSTER_DATA.map((p, idx) => {
-              const shift = p.week[todayIdx] ?? "L";
-              const style = getShiftStyle(shift, idx);
-              return { ...p, shift, style };
-            }).filter((p) => p.style.type !== "off" && p.style.type !== "leave");
+            let items = people
+              .map((p) => {
+                const shift = p.week[todayIdx] ?? "";
+                return { ...p, shift, style: getShiftStyle(shift, p.airline) };
+              })
+              .filter(
+                (p) =>
+                  p.style.type !== "off" &&
+                  p.style.type !== "leave" &&
+                  p.shift.trim() !== "",
+              );
 
             if (airlineFilter !== "all") {
               items = items.filter((p) => p.style.type === airlineFilter);
@@ -254,7 +344,7 @@ export default function RosterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {items.map((p) => (
                   <div
-                    key={p.id}
+                    key={`${p.name}-${p.id}`}
                     className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between hover:border-brand-300 dark:hover:border-brand-600 transition-colors"
                   >
                     <div>
@@ -262,7 +352,7 @@ export default function RosterPage() {
                         <span className="bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-1.5 py-0.5 rounded">
                           {p.cert}
                         </span>
-                        <span className="text-[10px] text-slate-400">ID: {p.id}</span>
+                        {p.id && <span className="text-[10px] text-slate-400">ID: {p.id}</span>}
                       </div>
                       <h4 className="font-bold text-slate-900 dark:text-white text-sm">
                         {p.name}
@@ -298,7 +388,8 @@ export default function RosterPage() {
               Datos del horario
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Sube el PDF del horario para actualizar los datos en n8n.
+              Sube el PDF del horario para actualizar los turnos. Subir el mismo
+              archivo dos veces no duplica la semana.
             </p>
           </div>
         </div>

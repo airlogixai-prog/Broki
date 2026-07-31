@@ -55,12 +55,15 @@ export function getFamily(item: Pick<Equipment, "model" | "id" | "type">): strin
   return "Otros Equipos";
 }
 
-// Mirrors getStatusCategory() from broki.html
+// Mirrors getStatusCategory() from broki.html, with the keyword order fixed.
+// These are substring matches, so the order decides the result: "INOPERATIVO"
+// contains "OPERATIVO" and "EN USO" contains "US". Legacy checked available
+// first and therefore painted inoperative equipment green. Checking occupied,
+// then inoperative, then available is the only order where every keyword lands
+// in its own bucket.
 export function getStatusCategory(status: string): StatusCategory {
   if (!status) return "unknown";
   const s = status.toUpperCase().trim();
-  if (["DISPONIBLE", "OPERATIVO", "LIBRE"].some((k) => s.includes(k)))
-    return "available";
   if (["EN USO", "OCUPADO", "RESERVADO", "TRANSITO"].some((k) => s.includes(k)))
     return "occupied";
   if (
@@ -74,6 +77,8 @@ export function getStatusCategory(status: string): StatusCategory {
     ].some((k) => s.includes(k))
   )
     return "inoperative";
+  if (["DISPONIBLE", "OPERATIVO", "LIBRE"].some((k) => s.includes(k)))
+    return "available";
   return "unknown";
 }
 
@@ -89,16 +94,16 @@ export function getStatusClass(status: string): string {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function normalizeFurgo(f: any): Equipment {
   const base: Equipment = {
-    id: uc(f.identificador || f.id),
+    id: uc(f.identifier ?? f.identificador ?? f.id),
     type: "furgo",
     family: "",
-    model: uc(f.vehiculo || f.descripcion),
+    model: uc(f.descripcion ?? f.nombre_equipo ?? f.vehiculo),
     seats: toNumber(f.plazas, 0),
     plate: uc(f.matricula),
     location: uc(f.parking) || "BASE",
-    plane: uc(f.avion),
+    plane: uc(f.avion_text ?? f.avion),
     fuel: toNumber(f.combustible, 100),
-    worker: uc(f.trabajadores || f.trabajador),
+    worker: uc(f.current_worker_text ?? f.trabajadores ?? f.trabajador),
     notes: uc(f.notas),
     status: uc(f.estado) || "Disponible",
     pressures: [],
@@ -111,16 +116,18 @@ export function normalizeFurgo(f: any): Equipment {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function normalizeGSE(g: any): Equipment {
   const base: Equipment = {
-    id: uc(g.brk || g.brk_id || g.BRK || g["BRK-ID"] || g.identificador || g.id),
+    id: uc(
+      g.identifier ?? g.brk ?? g.brk_id ?? g.BRK ?? g["BRK-ID"] ?? g.identificador ?? g.id,
+    ),
     type: "gse",
     family: "",
     model: uc(g.descripcion),
     plate: "",
-    location: uc(g.ubicacion_habitual || g.ubicacion),
+    location: uc(g.ubicacion_habitual ?? g.ubicacion ?? g.parking),
     parking: uc(g.parking),
-    plane: uc(g.avion),
+    plane: uc(g.avion_text ?? g.avion),
     fuel: null,
-    worker: uc(g.trabajadores || g.trabajador || g.persona),
+    worker: uc(g.current_worker_text ?? g.trabajadores ?? g.trabajador ?? g.persona),
     notes: uc(g.notas),
     status: uc(g.estado) || "Disponible",
     botella_1: g.nitrogeno_1 ?? null,
@@ -174,7 +181,7 @@ export function normalizePersonnel(p: any): Personnel {
   });
 
   return {
-    id: uc(p.id || name),
+    id: uc(p.cod_empleado_aena ?? p.external_id ?? p.id ?? name),
     name,
     qualifications: [...new Set(quals)],
     role: p.rol || (p.certificador ? "Certificador" : "Operario"),
@@ -201,9 +208,12 @@ export function splitInventory(rows: any[]): {
   const gse: Equipment[] = [];
 
   rows.forEach((row) => {
+    const kind = uc(row.asset_kind).toLowerCase();
     const famUpper = uc(row.familia || row.type || "").toUpperCase();
     const isFurgo =
-      famUpper.includes("FURGONETA") || famUpper.includes("VEHICULO");
+      kind === "van" ||
+      famUpper.includes("FURGONETA") ||
+      famUpper.includes("VEHICULO");
 
     if (isFurgo) {
       furgonetas.push(normalizeFurgo(row));

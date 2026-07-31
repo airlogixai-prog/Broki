@@ -5,8 +5,8 @@ const uc = (s: unknown): string => String(s ?? "").trim();
 const normalizeMat = (s: unknown): string =>
   uc(s).toUpperCase().replace(/[^A-Z0-9]/g, "");
 
-function isSameCalendarDay(dateRef: string | null | undefined): boolean {
-  if (!dateRef) return false;
+function isSameCalendarDay(dateRef: unknown): boolean {
+  if (typeof dateRef !== "string" || !dateRef) return false;
   const d = new Date(dateRef);
   const now = new Date();
   return (
@@ -16,16 +16,21 @@ function isSameCalendarDay(dateRef: string | null | undefined): boolean {
   );
 }
 
+/** Loosely typed row as it arrives from an Edge Function. */
+type PlannerRow = Record<string, unknown>;
+
 export function mergePlannerData(
-  rawGroups: any[],
-  rawTasks: any[]
+  rawGroups: PlannerRow[],
+  rawTasks: PlannerRow[]
 ): WorkGroup[] {
   if (!Array.isArray(rawGroups)) return [];
   const safeTasks = Array.isArray(rawTasks) ? rawTasks : [];
 
-  const uniqueGroupsMap = new Map<string, any>();
+  const uniqueGroupsMap = new Map<string, PlannerRow>();
 
-  const sortedGroups = [...rawGroups].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+  const sortedGroups = [...rawGroups].sort(
+    (a, b) => Number(b.id ?? 0) - Number(a.id ?? 0),
+  );
 
   sortedGroups.forEach((g) => {
     const rawMat = g.id_avion || g.matricula || "";
@@ -36,7 +41,7 @@ export function mergePlannerData(
     if (!isSameCalendarDay(dateRef)) return;
 
     const existing = uniqueGroupsMap.get(mat);
-    const candidate = { ...g, _cleanMat: mat, _displayMat: rawMat };
+    const candidate: PlannerRow = { ...g, _cleanMat: mat, _displayMat: rawMat };
 
     if (existing) {
       if (Number(existing.id) <= Number(g.id)) {
@@ -55,9 +60,16 @@ export function mergePlannerData(
     const mat = g._cleanMat as string;
 
     const workers: string[] = [];
-    for (let i = 1; i <= 10; i++) {
-      const w = g[`trabajador_${i}`];
-      if (w) workers.push(uc(w));
+    if (Array.isArray(g.members)) {
+      for (const m of g.members as PlannerRow[]) {
+        const w = m.worker_text;
+        if (w) workers.push(uc(w));
+      }
+    } else {
+      for (let i = 1; i <= 10; i++) {
+        const w = g[`trabajador_${i}`];
+        if (w) workers.push(uc(w));
+      }
     }
 
     const uniqueTasksMap = new Map<string, WorkTask>();
@@ -68,9 +80,9 @@ export function mergePlannerData(
       })
       .forEach((t) => {
         const key =
-          t.codigo && t.codigo !== "null" ? String(t.codigo) : t.descripcion;
+          t.codigo && t.codigo !== "null" ? String(t.codigo) : uc(t.descripcion);
         uniqueTasksMap.set(key, {
-          db_id: t.id,
+          db_id: t.id as WorkTask["db_id"],
           type: uc(t.tipo_tarea),
           code: uc(t.codigo),
           priority: uc(t.prioridad) || "NORMAL",
@@ -81,7 +93,7 @@ export function mergePlannerData(
       });
 
     return {
-      id: g.id ?? Date.now(),
+      id: (g.id as string | number | undefined) ?? Date.now(),
       matricula: uc(g._displayMat).toUpperCase(),
       modelo: uc(g.modelo),
       aerolinea: uc(g.aerolinea),

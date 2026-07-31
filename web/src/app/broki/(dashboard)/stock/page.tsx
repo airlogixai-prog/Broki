@@ -13,22 +13,29 @@ import { NitroStockCard } from "@/components/stock/NitroStockCard";
 import { useApp } from "@/context/AppContext";
 import { getStatusClass } from "@/lib/mappers/equipment";
 
-interface StockEntry {
-  ubicacion: string;
-  full: number;
-  empty: number;
-}
-
 const KEY_T4S = "t4s";
 const KEY_T123 = "t1,2,3";
 
-function parseEntry(obj: any): { full: number; empty: number } {
-  if (!obj) return { full: 0, empty: 0 };
-  const full =
-    parseInt(obj.cantida_de_botellas_llenas ?? obj.cantidad_de_botellas_llenas ?? 0) || 0;
-  const empty = parseInt(obj.cantidad_de_botellas_vacias ?? 0) || 0;
-  return { full, empty };
+// The stock rows arrive with several historical spellings of the same column,
+// including the "cantida_" typo that the legacy sheet shipped with.
+type StockRow = Record<string, unknown>;
+
+const asCount = (value: unknown): number => {
+  const n = parseInt(String(value ?? ""), 10);
+  return Number.isNaN(n) ? 0 : n;
+};
+
+function parseEntry(row: StockRow | undefined): { full: number; empty: number } {
+  if (!row) return { full: 0, empty: 0 };
+  return {
+    full: asCount(
+      row.botellas_llenas ?? row.cantida_de_botellas_llenas ?? row.cantidad_de_botellas_llenas,
+    ),
+    empty: asCount(row.botellas_vacias ?? row.cantidad_de_botellas_vacias),
+  };
 }
+
+const locationOf = (row: StockRow): string => String(row.ubicacion ?? "").toLowerCase();
 
 export default function StockPage() {
   const { gse } = useApp();
@@ -39,7 +46,10 @@ export default function StockPage() {
   const [editingGse, setEditingGse] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [gsePressures, setGsePressures] = useState<Record<string, number[]>>({});
+  // Only the bottles the user has actually touched are held here; everything
+  // else reads straight from the context, so there is no state to keep in sync
+  // when a Realtime update changes the pressures underneath.
+  const [pressureEdits, setPressureEdits] = useState<Record<string, number[]>>({});
 
   const nitroGse = gse.filter((item) => {
     const fam = (item.family ?? "").toUpperCase();
@@ -47,38 +57,39 @@ export default function StockPage() {
     return fam.includes("NITRO") || model.includes("NITRO") || model.includes("N2");
   });
 
-  const fetchStock = useCallback(async () => {
-    setLoading(true);
+  const pressuresOf = useCallback(
+    (item: { id: string; pressures?: number[] }): number[] =>
+      pressureEdits[item.id] ??
+      (item.pressures?.length ? item.pressures : [0, 0, 0, 0]),
+    [pressureEdits],
+  );
+
+  const fetchStock = useCallback(async (alive: () => boolean = () => true) => {
     try {
       const data = await brokiApi.fetchStock();
+      if (!alive()) return;
       if (Array.isArray(data)) {
-        const t4sRaw = data.find(
-          (x: any) => x.ubicacion?.toLowerCase() === KEY_T4S
+        const rows = data as StockRow[];
+        setT4s(parseEntry(rows.find((r) => locationOf(r) === KEY_T4S)));
+        setT123(
+          parseEntry(rows.find((r) => locationOf(r).includes(KEY_T123.split(",")[0]))),
         );
-        const t123Raw = data.find((x: any) =>
-          x.ubicacion?.toLowerCase().includes(KEY_T123.split(",")[0])
-        );
-        setT4s(parseEntry(t4sRaw));
-        setT123(parseEntry(t123Raw));
       }
     } catch (e) {
       console.error("[StockPage] fetch error", e);
     }
-    setLoading(false);
+    if (alive()) setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchStock();
+    let alive = true;
+    void (async () => {
+      await fetchStock(() => alive);
+    })();
+    return () => {
+      alive = false;
+    };
   }, [fetchStock]);
-
-  // Init GSE pressures from context
-  useEffect(() => {
-    const init: Record<string, number[]> = {};
-    nitroGse.forEach((item) => {
-      init[item.id] = item.pressures?.length ? [...item.pressures] : [0, 0, 0, 0];
-    });
-    setGsePressures(init);
-  }, [gse]);
 
   const handleSaveStock = async () => {
     setSaving(true);
@@ -108,7 +119,7 @@ export default function StockPage() {
     setSaving(true);
     try {
       for (const item of nitroGse) {
-        const p = gsePressures[item.id] ?? [0, 0, 0, 0];
+        const p = pressuresOf(item);
         await brokiApi.updateEquipment({
           action: "update_equipment",
           item_id: item.id,
@@ -122,6 +133,7 @@ export default function StockPage() {
           timestamp: new Date().toISOString(),
         });
       }
+      setPressureEdits({});
       setEditingGse(false);
     } catch (e) {
       console.error("[StockPage] save gse error", e);
@@ -130,11 +142,10 @@ export default function StockPage() {
   };
 
   const setPressure = (itemId: string, idx: number, val: number) => {
-    setGsePressures((prev) => {
-      const arr = [...(prev[itemId] ?? [0, 0, 0, 0])];
-      arr[idx] = val;
-      return { ...prev, [itemId]: arr };
-    });
+    const current = pressuresOf({ id: itemId, pressures: nitroGse.find((i) => i.id === itemId)?.pressures });
+    const arr = [...current];
+    arr[idx] = val;
+    setPressureEdits((prev) => ({ ...prev, [itemId]: arr }));
   };
 
   return (
@@ -146,7 +157,7 @@ export default function StockPage() {
         </h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={fetchStock}
+            onClick={() => void fetchStock()}
             disabled={loading}
             className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
           >
@@ -187,7 +198,6 @@ export default function StockPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <NitroStockCard
             name="Terminal T4S"
-            locationId="t4s"
             full={t4s.full}
             empty={t4s.empty}
             color="brand"
@@ -197,7 +207,6 @@ export default function StockPage() {
           />
           <NitroStockCard
             name="Terminales T1, T2, T3"
-            locationId="t123"
             full={t123.full}
             empty={t123.empty}
             color="blue"
@@ -235,7 +244,7 @@ export default function StockPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {nitroGse.map((item) => {
-              const pressures = gsePressures[item.id] ?? [0, 0, 0, 0];
+              const pressures = pressuresOf(item);
               return (
                 <div
                   key={item.id}

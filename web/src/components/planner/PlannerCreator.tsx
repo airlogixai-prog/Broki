@@ -17,7 +17,7 @@ import { useApp } from "@/context/AppContext";
 import type { WorkGroup } from "@/lib/types/equipment";
 
 interface Props {
-  onCreated: (group: WorkGroup) => void;
+  onCreated: (group: WorkGroup, importSummary?: string) => void;
   onCancel: () => void;
 }
 
@@ -35,6 +35,7 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   const [workerSearch, setWorkerSearch] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleAircraftChange = (reg: string) => {
@@ -49,7 +50,8 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   const toggleWorker = (name: string) => {
     setSelectedWorkers((prev) => {
       const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
       return next;
     });
   };
@@ -75,6 +77,9 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
       tasks: [],
     };
 
+    setError(null);
+    let importSummary: string | undefined;
+
     try {
       if (pdfFile) {
         const formData = new FormData();
@@ -91,7 +96,11 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           formData.append(`trabajador_${i}`, workers[i - 1] ?? "");
         }
         formData.append("file", pdfFile);
-        await brokiApi.plannerActionForm(formData);
+        const result = await brokiApi.plannerActionForm(formData);
+        importSummary = result.duplicate
+          ? (result.message ?? "Este PDF ya se habia importado.")
+          : `PDF importado: ${result.created ?? 0} tareas creadas, ` +
+            `${result.duplicates ?? 0} duplicadas, ${result.ignored ?? 0} ignoradas.`;
       } else {
         await brokiApi.plannerAction({
           action: "create",
@@ -110,10 +119,15 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
         });
       }
     } catch (e) {
+      // Reporting success on a failed write left phantom groups on screen that
+      // vanished on the next refresh.
       console.error("[PlannerCreator] create error", e);
+      setError(e instanceof Error ? e.message : "No se pudo crear el grupo de trabajo.");
+      setSaving(false);
+      return;
     }
 
-    onCreated(newGroup);
+    onCreated(newGroup, importSummary);
     setSaving(false);
   };
 
@@ -354,6 +368,15 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           </button>
         </div>
       </div>
+
+      {error && (
+        <p
+          role="alert"
+          className="mx-5 mb-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-3 py-2 text-xs font-bold text-red-700 dark:text-red-300"
+        >
+          {error}
+        </p>
+      )}
 
       <div className="flex gap-2 justify-end px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
         <button

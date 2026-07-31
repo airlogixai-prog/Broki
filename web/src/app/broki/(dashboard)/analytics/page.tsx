@@ -12,6 +12,17 @@ interface DonutSlice {
   label: string;
 }
 
+/** Where each arc starts: the running sum of the arc lengths before it. */
+function arcOffsets(lengths: number[]): number[] {
+  const offsets: number[] = [];
+  let running = 0;
+  for (const length of lengths) {
+    offsets.push(running);
+    running += length;
+  }
+  return offsets;
+}
+
 function DonutChart({ slices }: { slices: DonutSlice[] }) {
   const total = slices.reduce((s, x) => s + x.value, 0);
   if (total === 0)
@@ -25,12 +36,12 @@ function DonutChart({ slices }: { slices: DonutSlice[] }) {
   const cx = 90;
   const cy = 90;
   const circ = 2 * Math.PI * r;
-  let offset = 0;
 
-  const paths = slices.map((s) => {
-    const pct = s.value / total;
-    const dash = pct * circ;
-    const el = (
+  const offsets = arcOffsets(slices.map((s) => (s.value / total) * circ));
+
+  const paths = slices.map((s, i) => {
+    const dash = (s.value / total) * circ;
+    return (
       <circle
         key={s.label}
         cx={cx}
@@ -40,13 +51,11 @@ function DonutChart({ slices }: { slices: DonutSlice[] }) {
         stroke={s.color}
         strokeWidth={24}
         strokeDasharray={`${dash} ${circ - dash}`}
-        strokeDashoffset={-offset}
+        strokeDashoffset={-offsets[i]}
         className="transition-all duration-500"
         transform={`rotate(-90 ${cx} ${cy})`}
       />
     );
-    offset += dash;
-    return el;
   });
 
   return (

@@ -1,9 +1,245 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nPostForm, n8nPostJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { groupToLegacyRow, taskToLegacyRow, normalizeMat } from "../_shared/legacy-planner.ts";
+import { extractPdfText, looksScanned, openAiJson, PdfError, readPdfUpload, sha256Hex } from "../_shared/pdf.ts";
+import {
+  aiPayloadToTasks,
+  parsePlannerText,
+  PLANNER_AI_SCHEMA,
+  type PlannerAiPayload,
+  type PlannerParseResult,
+} from "../_shared/planner-parse.ts";
+
+function normalizeMat(s: unknown): string {
+  return String(s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+async function parsePlannerPdf(bytes: Uint8Array): Promise<{ parsed: PlannerParseResult; source: string }> {
+  const pdf = await extractPdfText(bytes);
+
+  // Always try the cheap parser first, whatever the text layer looks like. A
+  // short sheet with two tasks trips the "looks scanned" heuristic even though
+  // its text is perfectly readable, and skipping the parser used to send it to
+  // the AI, which means losing the import outright when no key is configured.
+  const heuristic = parsePlannerText(pdf.text);
+  if (heuristic.tasks.length > 0) return { parsed: heuristic, source: "heuristic" };
+
+  // Nothing came out: either it really is a scan, or the layout is one the
+  // parser does not know.
+  if (looksScanned(pdf)) console.warn("[planner-action] no text layer; trying AI");
+
+  const ai = await openAiJson<PlannerAiPayload>({
+    system:
+      "You extract aircraft maintenance tasks from work sheets. Return one entry per task with " +
+      "its code, type (MEL, CDL, PREVUELO, SERVICIO, INSPECCION, ADD), priority (NO_GO, CRITICAL, " +
+      "GO_IF, NORMAL), description, aircraft registration and date as YYYY-MM-DD. Do not invent tasks.",
+    user: pdf.text.slice(0, 60_000),
+    schemaName: "planner_tasks",
+    schema: PLANNER_AI_SCHEMA as unknown as Record<string, unknown>,
+  });
+
+  if (!ai) return { parsed: { matricula: null, fecha: null, tasks: [] }, source: "none" };
+  return { parsed: aiPayloadToTasks(ai), source: "ai" };
+}
+
+/**
+ * Imports a work sheet PDF. Replaces the n8n "grupotrabajo" webhook: the tasks
+ * are parsed here and written to broki_planner_*, and the same file uploaded
+ * twice reports duplicates instead of inserting everything again.
+ */
+async function handlePdfImport(req: Request): Promise<Response> {
+  const supabase = createServiceClient();
+  const { bytes, fileName, form } = await readPdfUpload(req);
+  const fileHash = await sha256Hex(bytes);
+
+  // The creator form posts the group metadata alongside the PDF, so the group is
+  // built from what the user typed instead of being a bare shell.
+  const formField = (name: string) => {
+    const value = form.get(name);
+    return typeof value === "string" && value.trim() ? value.trim() : null;
+  };
+  const formMat = normalizeMat(formField("id_avion") ?? formField("matricula") ?? "");
+  const formMembers = Array.from({ length: 10 }, (_, i) => formField(`trabajador_${i + 1}`))
+    .map((worker, i) => ({ position: i + 1, worker_text: worker }))
+    .filter((m): m is { position: number; worker_text: string } => m.worker_text !== null);
+
+  const { data: existing } = await supabase
+    .from("broki_planner_import_runs")
+    .select("id, status, created_count, duplicate_count")
+    .eq("file_hash", fileHash)
+    .maybeSingle();
+
+  if (existing && existing.status === "success") {
+    return jsonResponse(req, {
+      duplicate: true,
+      importRunId: existing.id,
+      created: 0,
+      duplicates: existing.created_count,
+      message: "Este PDF ya se habia importado.",
+    });
+  }
+
+  const { data: run, error: runErr } = await supabase
+    .from("broki_planner_import_runs")
+    .upsert(
+      { file_hash: fileHash, file_name: fileName, status: "started" },
+      { onConflict: "file_hash" },
+    )
+    .select("id")
+    .single();
+
+  if (runErr || !run) {
+    console.error("[planner-action] import run error", runErr);
+    return jsonResponse(req, { error: "db_error" }, 500);
+  }
+
+  const fail = async (message: string, status = 422) => {
+    await supabase
+      .from("broki_planner_import_runs")
+      .update({ status: "failed", errors: [message], finished_at: new Date().toISOString() })
+      .eq("id", run.id);
+    return jsonResponse(req, { error: message, importRunId: run.id }, status);
+  };
+
+  let parsed: PlannerParseResult;
+  let source: string;
+  try {
+    ({ parsed, source } = await parsePlannerPdf(bytes));
+  } catch (err) {
+    console.error("[planner-action] pdf parse error", err);
+    return await fail("No se pudo leer el PDF.");
+  }
+
+  if (parsed.tasks.length === 0) {
+    return await fail("No se encontro ninguna tarea en el PDF.");
+  }
+
+  // Group the tasks under one planner group per aircraft so the board keeps its
+  // existing shape.
+  const groupIdByMat = new Map<string, string>();
+  const errors: string[] = [];
+  let created = 0;
+  let duplicates = 0;
+
+  for (const task of parsed.tasks) {
+    const mat = task.matriculaAvion ?? parsed.matricula;
+    if (!mat) {
+      errors.push(`${task.codigo}: sin matricula`);
+      continue;
+    }
+
+    let groupId = groupIdByMat.get(mat);
+    if (!groupId) {
+      const isFormAircraft = formMat !== "" && mat === formMat;
+
+      const { data: group, error: groupErr } = await supabase
+        .from("broki_planner_groups")
+        .insert({
+          source_system: "edge_function",
+          source_table: "pdf_import",
+          external_id: `import-${run.id}-${mat}`,
+          import_run_id: run.id,
+          id_avion: isFormAircraft ? (formField("id_avion") ?? mat) : mat,
+          modelo: isFormAircraft ? formField("modelo") : null,
+          aerolinea: isFormAircraft ? formField("aerolinea") : null,
+          vehiculo: isFormAircraft ? formField("vehiculo") : null,
+          responsable: isFormAircraft ? formField("responsable") : null,
+          hora_salida: isFormAircraft ? formField("hora_salida") : null,
+          hora_llegada: isFormAircraft ? formField("hora_llegada") : null,
+          destino: isFormAircraft ? formField("destino") : null,
+          fecha_modificacion: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (groupErr || !group) {
+        errors.push(`${mat}: no se pudo crear el grupo`);
+        continue;
+      }
+      groupId = group.id;
+      groupIdByMat.set(mat, groupId);
+
+      if (isFormAircraft && formMembers.length > 0) {
+        await supabase.from("broki_planner_group_members").insert(
+          formMembers.map((m) => ({ group_id: groupId, ...m })),
+        );
+      }
+    }
+
+    const { error: taskErr } = await supabase.from("broki_planner_tasks").insert({
+      source_system: "edge_function",
+      source_table: "pdf_import",
+      external_id: `import-${run.id}-${mat}-${task.codigo}`,
+      import_run_id: run.id,
+      group_id: groupId,
+      tipo_tarea: task.tipoTarea,
+      codigo: task.codigo,
+      matricula_avion: mat,
+      prioridad: task.prioridad,
+      descripcion: task.descripcion,
+      estado: task.estado,
+      fecha: task.fecha ? `${task.fecha}T00:00:00Z` : null,
+      raw_payload: { source, file_hash: fileHash },
+    });
+
+    if (taskErr) {
+      // 23505 is the unique violation raised by broki_planner_tasks_dedup_idx,
+      // i.e. this aircraft already has this task code for that day.
+      if (taskErr.code === "23505") {
+        duplicates++;
+      } else {
+        console.error("[planner-action] task insert error", taskErr);
+        errors.push(`${task.codigo}: ${taskErr.message}`);
+      }
+      continue;
+    }
+    created++;
+  }
+
+  // Drop groups that ended up with no task at all because every task in them was
+  // already imported. The aircraft the user filled in by hand is kept: that group
+  // is what they asked for, tasks or not.
+  for (const [mat, groupId] of groupIdByMat) {
+    if (mat === formMat) continue;
+    const { count } = await supabase
+      .from("broki_planner_tasks")
+      .select("id", { count: "exact", head: true })
+      .eq("group_id", groupId);
+    if (!count) await supabase.from("broki_planner_groups").delete().eq("id", groupId);
+  }
+
+  const status = errors.length > 0 ? "partial" : "success";
+  await supabase
+    .from("broki_planner_import_runs")
+    .update({
+      status,
+      created_count: created,
+      duplicate_count: duplicates,
+      skipped_count: errors.length,
+      errors,
+      metadata: { source, matricula: parsed.matricula, fecha: parsed.fecha },
+      finished_at: new Date().toISOString(),
+    })
+    .eq("id", run.id);
+
+  await writeAudit("planner.import", "broki_planner_import_runs", run.id, {
+    file_name: fileName,
+    source,
+    created,
+    duplicates,
+    errors: errors.length,
+  });
+
+  return jsonResponse(req, {
+    importRunId: run.id,
+    created,
+    duplicates,
+    ignored: errors.length,
+    errors,
+    source,
+  });
+}
 
 serve(async (req) => {
   if (req.method !== "POST") {
@@ -12,24 +248,18 @@ serve(async (req) => {
 
   const contentType = req.headers.get("content-type") ?? "";
 
-  // --- Multipart / PDF branch: always proxy to n8n ---
-  // ponytail: PDF parsing via IA stays in n8n until native parser exists;
-  // set PLANNER_PDF_USE_N8N=false only when EF handles PDF
   if (contentType.includes("multipart/form-data")) {
-    const pdfUseN8n = Deno.env.get("PLANNER_PDF_USE_N8N") !== "false";
-    if (pdfUseN8n) {
-      try {
-        const formData = await req.formData();
-        const data = await n8nPostForm("grupotrabajo", formData);
-        return jsonResponse(req, data);
-      } catch {
-        return jsonResponse(req, { error: "upstream_error" }, 502);
+    try {
+      return await handlePdfImport(req);
+    } catch (err) {
+      if (err instanceof PdfError) {
+        return jsonResponse(req, { error: err.message }, err.status);
       }
+      console.error("[planner-action] pdf import error", err);
+      return jsonResponse(req, { error: "internal_error" }, 500);
     }
-    return jsonResponse(req, { error: "pdf_not_supported_yet" }, 501);
   }
 
-  // --- JSON branch ---
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -41,21 +271,10 @@ serve(async (req) => {
     return jsonResponse(req, { error: "missing action" }, 400);
   }
 
-  // ponytail: remove PLANNER_USE_N8N flag after PR6 validated in staging
-  if (Deno.env.get("PLANNER_USE_N8N") === "true") {
-    try {
-      const data = await n8nPostJson("grupotrabajo", body);
-      return jsonResponse(req, data);
-    } catch {
-      return jsonResponse(req, { error: "upstream_error" }, 502);
-    }
-  }
-
   const action = String(body.action);
   const supabase = createServiceClient();
 
   try {
-    // ----- create -----
     if (action === "create") {
       const idAvion = String(body.id_avion ?? body.matricula ?? "");
       if (!idAvion) {
@@ -86,7 +305,6 @@ serve(async (req) => {
         return jsonResponse(req, { error: "db_error" }, 500);
       }
 
-      // Insert members trabajador_1..10
       const memberInserts = [];
       for (let i = 1; i <= 10; i++) {
         const w = String(body[`trabajador_${i}`] ?? "").trim();
@@ -98,20 +316,13 @@ serve(async (req) => {
         await supabase.from("broki_planner_group_members").insert(memberInserts);
       }
 
-      const members = memberInserts.map((m) => ({
-        group_id: inserted.id,
-        position: m.position,
-        worker_text: m.worker_text,
-      }));
-
       await writeAudit("planner.group.create", "broki_planner_groups", inserted.id, {
         id_avion: idAvion,
       });
 
-      return jsonResponse(req, groupToLegacyRow(inserted, members));
+      return jsonResponse(req, { ...inserted, members: memberInserts });
     }
 
-    // ----- delete group -----
     if (action === "delete") {
       const mat = normalizeMat(String(body.matricula ?? body.id_avion ?? ""));
       if (!mat) {
@@ -134,7 +345,6 @@ serve(async (req) => {
       return jsonResponse(req, { ok: true });
     }
 
-    // ----- toggle_task -----
     if (action === "toggle_task") {
       const taskDbId = body.task_db_id;
       const codigo = String(body.codigo ?? "");
@@ -171,10 +381,9 @@ serve(async (req) => {
         return jsonResponse(req, { error: "db_error" }, 500);
       }
 
-      return jsonResponse(req, taskToLegacyRow(updated));
+      return jsonResponse(req, updated);
     }
 
-    // ----- delete_task -----
     if (action === "delete_task") {
       const codigo = String(body.codigo ?? "");
       const mat = normalizeMat(String(body.matricula_avion ?? ""));

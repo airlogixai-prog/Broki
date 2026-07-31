@@ -11,7 +11,6 @@ import {
 } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
 import type { Equipment, IncidentState, Incident } from "@/lib/types/equipment";
-import { useApp } from "@/context/AppContext";
 
 function formatDate(d: string | Date | undefined): string {
   if (!d) return "-";

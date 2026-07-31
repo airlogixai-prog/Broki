@@ -1,12 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { FilterBar } from "@/components/equipment/FilterBar";
 import { EquipmentGrid } from "@/components/equipment/EquipmentGrid";
+import { EquipmentDetailModal } from "@/components/modals/EquipmentDetailModal";
 import { useApp } from "@/context/AppContext";
 import { Airplane } from "@phosphor-icons/react";
+import type { Equipment } from "@/lib/types/equipment";
 
 export default function AvionesPage() {
   const { furgonetas, gse, avionFilter, setAvionFilter } = useApp();
+  const [selected, setSelected] = useState<Equipment | null>(null);
 
   const all = [...furgonetas, ...gse];
   const planes = [...new Set(all.map((i) => i.plane).filter(Boolean))].sort();
@@ -44,7 +48,8 @@ export default function AvionesPage() {
       </div>
 
       <FilterBar />
-      <EquipmentGrid items={all} />
+      <EquipmentGrid items={all} onSelect={setSelected} />
+      <EquipmentDetailModal item={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }

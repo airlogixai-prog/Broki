@@ -7,7 +7,7 @@ import {
   Wind,
   Gauge,
 } from "@phosphor-icons/react";
-import { brokiApi } from "@/lib/api/broki";
+import { fetchLemdWeather } from "@/lib/api/weather";
 import type { WeatherData } from "@/lib/alerts/buildCriticalAlerts";
 
 export function LemdWeatherWidget() {
@@ -16,10 +16,9 @@ export function LemdWeatherWidget() {
 
   useEffect(() => {
     let active = true;
-    brokiApi
-      .fetchWeather()
+    fetchLemdWeather()
       .then((data) => {
-        if (active) setWeather(data as WeatherData);
+        if (active) setWeather(data);
       })
       .catch(() => {
         if (active) {

@@ -16,46 +16,6 @@ import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { NotificationsBell } from "@/components/notifications/NotificationsBell";
 import { PwaInstallButton } from "@/components/pwa/PwaInstallButton";
-import type { Theme } from "@/lib/types/equipment";
-
-const THEMES: { id: Theme; label: string; desc: string; colors: string[] }[] = [
-  {
-    id: "default",
-    label: "AirLogix Orange",
-    desc: "Estilo original",
-    colors: ["bg-orange-500", "bg-orange-300"],
-  },
-  {
-    id: "oceanic",
-    label: "Oceanic Blue",
-    desc: "Limpio y moderno",
-    colors: ["bg-blue-500", "bg-cyan-400"],
-  },
-  {
-    id: "forest",
-    label: "Forest Green",
-    desc: "Corporativo y fresco",
-    colors: ["bg-green-500", "bg-emerald-400"],
-  },
-  {
-    id: "sunset",
-    label: "Sunset Purple",
-    desc: "Moderno y creativo",
-    colors: ["bg-purple-500", "bg-pink-400"],
-  },
-  {
-    id: "midnight",
-    label: "Midnight Dark",
-    desc: "Elegante premium",
-    colors: ["bg-slate-600", "bg-indigo-400"],
-  },
-  {
-    id: "monochrome",
-    label: "Monochrome",
-    desc: "Minimalista clásico",
-    colors: ["bg-neutral-600", "bg-neutral-900"],
-  },
-];
 
 interface Props {
   onMenuToggle: () => void;
@@ -67,16 +27,15 @@ export function Topbar({ onMenuToggle }: Props) {
     setFilter,
     darkMode,
     setDarkMode,
-    theme,
-    setTheme,
     compactMode,
     setCompactMode,
     loading,
     lastUpdate,
     refreshRef,
+    autoRefresh,
+    setAutoRefresh,
   } = useApp();
 
-  const [themeOpen, setThemeOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -117,12 +76,25 @@ export function Topbar({ onMenuToggle }: Props) {
         <PwaInstallButton />
         <NotificationsBell />
 
-        {/* Update indicator */}
+        {/* Update indicator doubles as the auto-refresh toggle */}
         {lastUpdate && (
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="hidden lg:inline">{updateText}</span>
-          </div>
+          <button
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            aria-pressed={autoRefresh}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            title={
+              autoRefresh
+                ? "Actualización automática cada 30 s. Clic para pausar."
+                : "Actualización automática pausada. Clic para reanudar."
+            }
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${autoRefresh ? "bg-emerald-500" : "bg-slate-400"}`}
+            />
+            <span className="hidden lg:inline">
+              {autoRefresh ? updateText : "Auto-refresco en pausa"}
+            </span>
+          </button>
         )}
 
         {/* Refresh */}
@@ -146,95 +118,13 @@ export function Topbar({ onMenuToggle }: Props) {
           {compactMode ? <SquaresFour size={18} /> : <Rows size={18} />}
         </button>
 
-        {/* Theme selector */}
-        <div className="relative">
-          <button
-            onClick={() => setThemeOpen((o) => !o)}
-            className="p-2 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
-            title="Cambiar tema"
-          >
-            <span className="w-4 h-4 rounded-full bg-brand-500 block" />
-          </button>
-
-          {themeOpen && (
-            <>
-              <div
-                className="fixed inset-0 z-40"
-                onClick={() => setThemeOpen(false)}
-              />
-              <div className="absolute right-0 top-10 z-50 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
-                <div className="p-3 border-b border-slate-100 dark:border-slate-700">
-                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Paleta de Color
-                  </p>
-                </div>
-                <div className="p-2 space-y-1">
-                  {THEMES.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        setTheme(t.id);
-                        setThemeOpen(false);
-                      }}
-                      className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group"
-                    >
-                      <div className="flex gap-1">
-                        <div
-                          className={`w-6 h-6 rounded-md ${t.colors[0]} shadow-sm`}
-                        />
-                        <div className={`w-2 h-6 rounded-sm ${t.colors[1]}`} />
-                      </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-medium text-sm text-slate-900 dark:text-white">
-                          {t.label}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {t.desc}
-                        </p>
-                      </div>
-                      {theme === t.id && (
-                        <span className="text-brand-500 text-xs font-bold">✓</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-                <div className="p-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      {darkMode ? (
-                        <Sun size={18} className="text-slate-300" />
-                      ) : (
-                        <Moon size={18} className="text-slate-600" />
-                      )}
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                        Modo Oscuro
-                      </span>
-                    </div>
-                    <div
-                      className={`w-10 h-6 rounded-full transition-colors ${
-                        darkMode ? "bg-brand-500" : "bg-slate-300"
-                      } relative`}
-                    >
-                      <span
-                        className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                          darkMode ? "translate-x-5" : "translate-x-1"
-                        }`}
-                      />
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Dark mode quick toggle */}
+        {/* Dark mode toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}
           className="p-2 text-slate-500 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
+          title={darkMode ? "Modo claro" : "Modo oscuro"}
+          aria-label={darkMode ? "Activar modo claro" : "Activar modo oscuro"}
+          aria-pressed={darkMode}
         >
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>

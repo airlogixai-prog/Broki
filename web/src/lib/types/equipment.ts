@@ -82,11 +82,3 @@ export interface NitrogenStock {
   llenas: number;
   vacias: number;
 }
-
-export type Theme =
-  | "default"
-  | "oceanic"
-  | "forest"
-  | "sunset"
-  | "midnight"
-  | "monochrome";

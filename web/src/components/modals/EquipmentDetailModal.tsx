@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   PencilSimple,
@@ -55,31 +55,29 @@ interface Props {
 }
 
 export function EquipmentDetailModal({ item, onClose }: Props) {
-  const { incidentsMemory, setIncidentsMemory, furgonetas, gse } = useApp();
-  const [editing, setEditing] = useState(false);
+  const { incidentsMemory, setIncidentsMemory } = useApp();
   const [saving, setSaving] = useState(false);
-  const [editState, setEditState] = useState<EditState | null>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  // The draft records which equipment it belongs to, so selecting a different
+  // item discards it without an effect that resets state on every prop change.
+  const [draft, setDraft] = useState<{ itemId: string; state: EditState } | null>(null);
 
-  useEffect(() => {
-    if (item) {
-      setEditing(false);
-      setEditState(null);
-      dialogRef.current?.showModal();
-    } else {
-      dialogRef.current?.close();
-    }
-  }, [item]);
+  const editing = !!item && draft?.itemId === item.id;
+  const editState = editing ? draft!.state : null;
+
+  const setEditState = (update: (s: EditState | null) => EditState | null) =>
+    setDraft((prev) => {
+      const next = update(prev?.state ?? null);
+      return next && prev ? { ...prev, state: next } : prev;
+    });
 
   const handleClose = () => {
-    setEditing(false);
+    setDraft(null);
     onClose();
   };
 
   const handleEdit = () => {
     if (!item) return;
-    setEditState(toEdit(item));
-    setEditing(true);
+    setDraft({ itemId: item.id, state: toEdit(item) });
   };
 
   const handleSave = async () => {
@@ -117,7 +115,7 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
     }
 
     setSaving(false);
-    setEditing(false);
+    setDraft(null);
   };
 
   const incState: IncidentState = item
@@ -128,6 +126,23 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
     if (!item) return;
     setIncidentsMemory({ ...incidentsMemory, [item.id]: updated });
   };
+
+  useEffect(() => {
+    if (!item) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setDraft(null);
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [item, onClose]);
 
   if (!item) return null;
 
@@ -167,11 +182,19 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
   );
 
   return (
-    <dialog
-      ref={dialogRef}
-      onClose={handleClose}
-      className="backdrop:bg-slate-900/50 backdrop:backdrop-blur-sm p-0 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white max-h-[90vh] overflow-hidden flex flex-col m-auto"
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="equipment-modal-title"
     >
+      <button
+        type="button"
+        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        onClick={handleClose}
+        aria-label="Cerrar"
+      />
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white m-auto">
       {/* Header */}
       <div className="flex items-start justify-between p-5 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-4">
@@ -180,7 +203,10 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h2
+                id="equipment-modal-title"
+                className="text-xl font-bold text-slate-900 dark:text-white"
+              >
                 {item.id}
               </h2>
               <span className="px-2 py-0.5 bg-slate-600 text-white rounded text-xs font-bold tracking-wide">
@@ -326,7 +352,7 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
         ) : (
           <div className="flex gap-2">
             <button
-              onClick={() => setEditing(false)}
+              onClick={() => setDraft(null)}
               className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
             >
               Cancelar
@@ -346,6 +372,7 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
           </div>
         )}
       </div>
-    </dialog>
+      </div>
+    </div>
   );
 }
