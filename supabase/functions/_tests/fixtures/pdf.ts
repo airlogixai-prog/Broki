@@ -1,9 +1,5 @@
-// Minimal uncompressed PDF writer, so the PDF fixtures are generated from
-// readable text instead of committed as opaque binaries. The text layer is
-// stored raw, which is what the parsers in supabase/functions/_shared read.
-//
-// Imported by the Playwright spec (Node) and by the Edge Function smoke script
-// (Deno); it uses nothing beyond TextEncoder.
+// Minimal uncompressed PDF writer for integration smoke tests.
+// Readable text layer — same bytes the Edge Function PDF parsers consume.
 
 const escape = (line: string) =>
   line.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
@@ -43,7 +39,6 @@ export function makeTextPdf(lines: string[]): Uint8Array {
   return new TextEncoder().encode(pdf);
 }
 
-/** Work sheet resembling the planner PDFs, two tasks on one aircraft. */
 export const plannerPdfLines = [
   "HOJA DE TRABAJO",
   "MATRICULA: EC-NFP",
@@ -54,7 +49,6 @@ export const plannerPdfLines = [
   "DEF-0075 NORMAL Cambio filtro hidraulico",
 ];
 
-/** Weekly roster resembling the AENA shift PDFs, three workers. */
 export const rosterPdfLines = [
   "HORARIO SEMANAL W2F",
   "SEMANA 16/03/2026 - 22/03/2026",

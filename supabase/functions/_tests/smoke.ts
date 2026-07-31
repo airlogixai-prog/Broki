@@ -17,7 +17,7 @@ import {
   plannerPdfLines,
   rosterPdf,
   rosterPdfLines,
-} from "../../../web/e2e/fixtures/pdf.ts";
+} from "./fixtures/pdf.ts";
 
 const BASE = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const ANON = Deno.env.get("SUPABASE_ANON_KEY") ?? "";

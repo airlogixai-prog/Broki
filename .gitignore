@@ -1,15 +1,70 @@
+# --- OS ---
 .DS_Store
-*.pem
-
-# Windows metadata (WSL / descargas)
+Thumbs.db
+Desktop.ini
 *:Zone.Identifier
 
-# dependencies (Supabase CLI en la raíz)
-/node_modules
+# --- Dependencies ---
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# env files
+# --- Env & secrets ---
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+!**/.env.example
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Next.js / frontend build ---
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# --- Supabase local ---
+supabase/.branches
+supabase/.temp
+
+# --- Testing (unit/E2E; integration smoke: supabase/functions/_tests/) ---
+**/coverage/
+**/test-results/
+**/playwright-report/
+**/blob-report/
+**/.playwright/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+web/playwright.config.ts
+web/e2e/
+
+# --- Local dev scripts (runners in package.json) ---
+scripts/
+
+# --- IDE / editor ---
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# --- Certs ---
+*.pem
