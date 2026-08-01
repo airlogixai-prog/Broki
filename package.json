@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
-    "precommit": "npm run lint --prefix web && npm exec --prefix web -- tsc --noEmit -p web/tsconfig.json && npm run test:unit && npm run test:integration && npm run test:e2e",
+    "ci:install": "node -e \"const fs=require('fs');for(const p of['pnpm-lock.yaml','yarn.lock','web/pnpm-lock.yaml','web/yarn.lock'])if(fs.existsSync(p)){console.error('Forbidden lockfile (npm only):',p);process.exit(1)}\" && npm ci && npm ci --prefix web",
+    "precommit": "npm run ci:install && npm run lint --prefix web && npm exec --prefix web -- tsc --noEmit -p web/tsconfig.json && npm run test:unit && npm run test:integration && npm run test:e2e",
     "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:unit": "npm test --prefix web",
     "test:integration": "deno run supabase/functions/_shared/register-validate.ts && deno run supabase/functions/_shared/planner-parse.ts && deno run supabase/functions/_shared/roster-parse.ts && SMOKE_OFFLINE_ONLY=1 deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",

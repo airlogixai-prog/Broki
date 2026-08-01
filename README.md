@@ -10,9 +10,12 @@ Broki/
 
 ## Inicio rápido
 
+Requisito: **npm** (gestor único). Lockfiles versionados: `package-lock.json` (raíz) y `web/package-lock.json`.
+
 ```bash
-npm install
-npm install --prefix web
+npm ci
+npm ci --prefix web
+# o: npm run ci:install
 cp web/.env.example web/.env.local   # credenciales locales por defecto
 npm run supabase:start               # opcional: base de datos local
 npm run dev
@@ -25,7 +28,7 @@ Abre http://localhost:3000.
 Requisitos: [Docker](https://docs.docker.com/get-docker/) y Node.js.
 
 ```bash
-npm install              # instala Supabase CLI en el repo
+npm ci                 # instala Supabase CLI en el repo (desde package-lock.json)
 npm run supabase:start   # levanta Postgres, Auth, Storage, Studio…
 npm run supabase:status  # URLs y claves locales
 ```
