@@ -1,11 +1,17 @@
-# --- OS ---
-.DS_Store
-Thumbs.db
-Desktop.ini
-*:Zone.Identifier
+# --- Secrets ---
+.secrets/
+*.secret.env
+broki-service-secrets.env
+.env
+.env.*
+!.env.example
+!**/.env.example
+!web/.env.example
 
 # --- Dependencies ---
 node_modules/
+web/node_modules/
+pnpm-lock.yaml
 .pnp
 .pnp.*
 .yarn/*
@@ -14,20 +20,10 @@ node_modules/
 !.yarn/releases
 !.yarn/versions
 
-# --- Env & secrets ---
-.env
-.env.*
-!.env.example
-!**/.env.example
-
-# --- Logs ---
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# --- Next.js / frontend build ---
+# --- Next / TypeScript ---
+web/.next/
+web/out/
+web/tsconfig.tsbuildinfo
 .next/
 out/
 build/
@@ -37,31 +33,54 @@ dist/
 next-env.d.ts
 .vercel
 
-# --- Supabase local ---
-supabase/.branches
-supabase/.temp
-
-# --- Testing (unit/E2E; integration smoke: supabase/functions/_tests/) ---
+# --- Tests ---
+web/test-results/
+web/playwright-report/
+test-results/
+playwright-report/
+coverage/
 **/coverage/
-**/test-results/
-**/playwright-report/
 **/blob-report/
 **/.playwright/
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.ts
-**/*.spec.tsx
+# Ignore web tests; keep Deno tests in supabase/
+web/**/*.test.ts
+web/**/*.test.tsx
+web/**/*.spec.ts
+web/**/*.spec.tsx
 web/playwright.config.ts
 web/e2e/
 
-# --- Local dev scripts (runners in package.json) ---
-scripts/
+# --- Supabase local ---
+supabase/.branches/
+supabase/.temp/
+
+# --- Exports locales ---
+*.zip
+Broki-export-*.zip
+
+# --- Tooling personal (Cursor / skills) ---
+.agents/
+skills-lock.json
+
+# --- Legacy static site (migrado a web/) ---
+public_html/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+*:Zone.Identifier
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # --- IDE / editor ---
+.vscode/
 .idea/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
 *.swp
 *.swo
 *~
