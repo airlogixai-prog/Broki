@@ -100,11 +100,12 @@ function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
 interface Props {
   group: WorkGroup;
   onUpdate: (updated: WorkGroup) => void;
-  onDelete: (id: string | number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const totalTasks = group.tasks.length;
   const doneTasks = group.tasks.filter((t) => t.done).length;
@@ -115,56 +116,72 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
 
   const handleToggleTask = async (idx: number) => {
     const task = group.tasks[idx];
+    if (!task.db_id) {
+      setError("Tarea sin identificador. Recarga la página.");
+      return;
+    }
+
+    const prev = group.tasks;
     const updatedTasks = group.tasks.map((t, i) =>
-      i === idx ? { ...t, done: !t.done } : t
+      i === idx ? { ...t, done: !t.done } : t,
     );
     onUpdate({ ...group, tasks: updatedTasks });
 
     setSaving(true);
+    setError(null);
     try {
       await brokiApi.plannerAction({
         action: "toggle_task",
-        task_db_id: task.db_id,
-        codigo: task.code,
-        matricula_avion: group.matricula,
+        task_id: task.db_id,
         estado: task.done ? 0 : 1,
         timestamp: new Date().toISOString(),
       });
     } catch (e) {
-      console.error("[WorkGroupCard] toggle task error", e);
+      onUpdate({ ...group, tasks: prev });
+      setError(e instanceof Error ? e.message : "No se pudo actualizar la tarea.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleDeleteTask = async (idx: number) => {
     if (!confirm("¿Eliminar esta tarea?")) return;
     const task = group.tasks[idx];
+    if (!task.db_id) {
+      setError("Tarea sin identificador. Recarga la página.");
+      return;
+    }
+
+    const prev = group.tasks;
     const updatedTasks = group.tasks.filter((_, i) => i !== idx);
     onUpdate({ ...group, tasks: updatedTasks });
 
     try {
       await brokiApi.plannerAction({
         action: "delete_task",
-        codigo: task.code,
-        matricula_avion: group.matricula,
+        task_id: task.db_id,
       });
     } catch (e) {
-      console.error("[WorkGroupCard] delete task error", e);
+      onUpdate({ ...group, tasks: prev });
+      setError(e instanceof Error ? e.message : "No se pudo eliminar la tarea.");
     }
   };
 
   const handleDeleteGroup = async () => {
     if (!confirm(`¿Eliminar asignación del avión ${group.matricula}?`)) return;
-    onDelete(group.id);
+    if (!group.id) {
+      setError("Grupo sin identificador. Recarga la página.");
+      return;
+    }
 
     try {
       await brokiApi.plannerAction({
         action: "delete",
-        matricula: group.matricula,
-        fecha: new Date().toISOString(),
+        group_id: group.id,
       });
+      onDelete(group.id);
     } catch (e) {
-      console.error("[WorkGroupCard] delete group error", e);
+      setError(e instanceof Error ? e.message : "No se pudo eliminar el grupo.");
     }
   };
 
@@ -173,8 +190,12 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
       {saving && (
         <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
       )}
+      {error && (
+        <p role="alert" className="mb-2 text-xs text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
 
-      {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-600">
@@ -203,7 +224,6 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 mb-4 overflow-hidden">
         <div
           className={`${progressColor} h-2 rounded-full transition-all duration-500`}
@@ -211,7 +231,6 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
         />
       </div>
 
-      {/* Meta */}
       <div className="grid grid-cols-2 gap-2 text-xs mb-3">
         <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-700">
           <span className="text-slate-400 block text-[10px] uppercase mb-1">
@@ -233,7 +252,6 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Workers */}
       {group.workers.length > 0 && (
         <div className="mb-3 px-1">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5 block">
@@ -252,12 +270,11 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
         </div>
       )}
 
-      {/* Tasks */}
       {totalTasks > 0 ? (
         <div className="mt-4 space-y-1 border-t border-slate-100 dark:border-slate-700 pt-3">
           {group.tasks.map((task, idx) => (
             <TaskRow
-              key={task.code || idx}
+              key={task.db_id || task.code || idx}
               task={task}
               onToggle={() => handleToggleTask(idx)}
               onDelete={() => handleDeleteTask(idx)}
@@ -273,7 +290,6 @@ export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
         </div>
       )}
 
-      {/* Footer */}
       <div className="mt-4 flex justify-end border-t border-slate-100 dark:border-slate-700 pt-3">
         <button
           onClick={handleDeleteGroup}

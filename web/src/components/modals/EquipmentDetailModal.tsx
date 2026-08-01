@@ -18,14 +18,16 @@ import {
 import type { Equipment, IncidentState } from "@/lib/types/equipment";
 import { brokiApi } from "@/lib/api/broki";
 import { getFamily, getStatusClass } from "@/lib/mappers/equipment";
+import { validateEquipmentForm } from "@/lib/validators/equipment";
 import { useApp } from "@/context/AppContext";
 import { IncidentSection } from "./IncidentSection";
 
 interface EditState {
-  location: string;
+  parking: string;
   plane: string;
   worker: string;
   fuel: string;
+  adblue: string;
   status: string;
   notes: string;
   botella_1: string;
@@ -36,10 +38,14 @@ interface EditState {
 
 function toEdit(item: Equipment): EditState {
   return {
-    location: item.location || item.parking || "",
+    parking:
+      item.type === "furgo"
+        ? item.parking || item.location || ""
+        : item.parking || "",
     plane: item.plane || "",
     worker: item.worker || "",
     fuel: item.fuel != null ? String(item.fuel) : "",
+    adblue: item.adblue != null ? String(item.adblue) : "",
     status: item.status || "",
     notes: item.notes || "",
     botella_1: String(item.botella_1 ?? item.pressures?.[0] ?? 0),
@@ -55,8 +61,9 @@ interface Props {
 }
 
 export function EquipmentDetailModal({ item, onClose }: Props) {
-  const { incidentsMemory, setIncidentsMemory } = useApp();
+  const { incidentsMemory, setIncidentsMemory, refreshRef } = useApp();
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   // The draft records which equipment it belongs to, so selecting a different
   // item discards it without an effect that resets state on every prop change.
   const [draft, setDraft] = useState<{ itemId: string; state: EditState } | null>(null);
@@ -77,26 +84,41 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
 
   const handleEdit = () => {
     if (!item) return;
+    setSaveError(null);
     setDraft({ itemId: item.id, state: toEdit(item) });
   };
 
   const handleSave = async () => {
     if (!item || !editState) return;
-    setSaving(true);
 
+    const isNitrogen =
+      getFamily(item).includes("Nitrógeno") || getFamily(item).includes("Nitrogeno");
+    const validationError = validateEquipmentForm(editState, {
+      isFurgo: item.type === "furgo",
+      isNitrogen,
+    });
+    if (validationError) {
+      setSaveError(validationError);
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+
+    const locationKey = item.type === "furgo" ? "location" : "parking";
     const payload = {
       action: "update_equipment",
       item_id: item.id,
       type: item.type,
       updates: {
-        location: editState.location,
+        [locationKey]: editState.parking,
         plane: editState.plane,
         worker: editState.worker,
         notes: editState.notes,
         ...(item.type === "furgo"
-          ? { fuel: editState.fuel }
+          ? { fuel: editState.fuel, adblue: editState.adblue }
           : { status: editState.status }),
-        ...(getFamily(item).includes("Nitrógeno") || getFamily(item).includes("Nitrogeno")
+        ...(isNitrogen
           ? {
               nitrogeno_1: editState.botella_1,
               nitrogeno_2: editState.botella_2,
@@ -110,12 +132,13 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
 
     try {
       await brokiApi.updateEquipment(payload);
+      refreshRef.current?.();
+      setDraft(null);
     } catch (e) {
-      console.error("[EquipmentDetailModal] save error", e);
+      setSaveError(e instanceof Error ? e.message : "No se pudo guardar los cambios.");
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
-    setDraft(null);
   };
 
   const incState: IncidentState = item
@@ -238,9 +261,14 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
               <>
                 <div className={fieldCls}>
                   <p className={labelCls}>
-                    <MapPin size={10} /> Ubicación
+                    <MapPin size={10} />{" "}
+                    {item.type === "furgo" ? "Ubicación" : "Ubicación habitual"}
                   </p>
-                  <p className={valueCls}>{item.location || item.parking || "-"}</p>
+                  <p className={valueCls}>
+                    {item.type === "furgo"
+                      ? item.parking || item.location || "-"
+                      : item.usualLocation || item.location || "-"}
+                  </p>
                 </div>
                 <div className={fieldCls}>
                   <p className={labelCls}>
@@ -255,18 +283,38 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
                   <p className={valueCls}>{item.worker || "-"}</p>
                 </div>
                 {item.type === "furgo" ? (
-                  <div className={fieldCls}>
-                    <p className={labelCls}>
-                      <Drop size={10} /> Combustible
-                    </p>
-                    <p className={valueCls}>{item.fuel != null ? `${item.fuel}%` : "-"}</p>
-                  </div>
+                  <>
+                    <div className={fieldCls}>
+                      <p className={labelCls}>
+                        <Drop size={10} /> Combustible
+                      </p>
+                      <p className={valueCls}>{item.fuel != null ? `${item.fuel}%` : "-"}</p>
+                    </div>
+                    <div className={fieldCls}>
+                      <p className={labelCls}>
+                        <Drop size={10} /> AdBlue
+                      </p>
+                      <p className={valueCls}>{item.adblue != null ? `${item.adblue}%` : "-"}</p>
+                    </div>
+                  </>
                 ) : (
                   <div className={fieldCls}>
                     <p className={labelCls}>
                       <Signpost size={10} /> Parking
                     </p>
                     <p className={valueCls}>{item.parking || "-"}</p>
+                  </div>
+                )}
+                {item.type === "furgo" && item.plate && (
+                  <div className={fieldCls}>
+                    <p className={labelCls}>Matrícula</p>
+                    <p className={valueCls}>{item.plate}</p>
+                  </div>
+                )}
+                {item.model && (
+                  <div className={fieldCls}>
+                    <p className={labelCls}>Descripción</p>
+                    <p className={valueCls}>{item.model}</p>
                   </div>
                 )}
                 {item.type === "furgo" && item.seats != null && (
@@ -288,11 +336,20 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
               </>
             ) : (
               <>
-                {efield("Ubicación (Parking)", "location", MapPin)}
+                {efield(
+                  item.type === "furgo" ? "Ubicación" : "Parking",
+                  "parking",
+                  item.type === "furgo" ? MapPin : Signpost,
+                )}
                 {efield("Avión Asignado", "plane", Airplane)}
                 {efield("Operario", "worker", User)}
                 {item.type === "furgo"
-                  ? efield("Combustible (%)", "fuel", Drop, "number")
+                  ? (
+                    <>
+                      {efield("Combustible (%)", "fuel", Drop, "number")}
+                      {efield("AdBlue (%)", "adblue", Drop, "number")}
+                    </>
+                  )
                   : efield("Estado", "status", Gauge)}
                 {isNitrogen && (
                   <>
@@ -350,7 +407,13 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
             <PencilSimple size={16} /> Editar Información
           </button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex flex-col items-end gap-2">
+            {saveError && (
+              <p role="alert" className="text-xs text-red-600 dark:text-red-400 max-w-xs text-right">
+                {saveError}
+              </p>
+            )}
+            <div className="flex gap-2">
             <button
               onClick={() => setDraft(null)}
               className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
@@ -369,6 +432,7 @@ export function EquipmentDetailModal({ item, onClose }: Props) {
               )}
               Guardar Cambios
             </button>
+            </div>
           </div>
         )}
       </div>

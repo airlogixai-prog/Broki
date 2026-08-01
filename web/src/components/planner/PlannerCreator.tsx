@@ -65,17 +65,6 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
     setSaving(true);
 
     const workers = Array.from(selectedWorkers);
-    const newGroup: WorkGroup = {
-      id: Date.now(),
-      matricula: matricula.toUpperCase(),
-      modelo,
-      aerolinea,
-      salida,
-      responsable,
-      furgo,
-      workers,
-      tasks: [],
-    };
 
     setError(null);
     let importSummary: string | undefined;
@@ -83,13 +72,13 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
     try {
       if (pdfFile) {
         const formData = new FormData();
-        formData.append("id_avion", newGroup.matricula);
-        formData.append("matricula", newGroup.matricula);
-        formData.append("modelo", newGroup.modelo);
-        formData.append("aerolinea", newGroup.aerolinea);
-        formData.append("vehiculo", newGroup.furgo);
-        formData.append("responsable", newGroup.responsable);
-        formData.append("hora_salida", newGroup.salida);
+        formData.append("id_avion", matricula.toUpperCase());
+        formData.append("matricula", matricula.toUpperCase());
+        formData.append("modelo", modelo);
+        formData.append("aerolinea", aerolinea);
+        formData.append("vehiculo", furgo);
+        formData.append("responsable", responsable);
+        formData.append("hora_salida", salida);
         formData.append("hora_llegada", llegada);
         formData.append("fecha_modificacion", new Date().toISOString());
         for (let i = 1; i <= 10; i++) {
@@ -101,33 +90,55 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
           ? (result.message ?? "Este PDF ya se habia importado.")
           : `PDF importado: ${result.created ?? 0} tareas creadas, ` +
             `${result.duplicates ?? 0} duplicadas, ${result.ignored ?? 0} ignoradas.`;
+        onCreated(
+          {
+            id: "",
+            matricula: matricula.toUpperCase(),
+            modelo,
+            aerolinea,
+            salida,
+            responsable,
+            furgo,
+            workers,
+            tasks: [],
+          },
+          importSummary,
+        );
       } else {
-        await brokiApi.plannerAction({
+        const created = await brokiApi.plannerAction({
           action: "create",
-          id_avion: newGroup.matricula,
-          modelo: newGroup.modelo,
-          aerolinea: newGroup.aerolinea,
-          hora_salida: newGroup.salida,
+          id_avion: matricula.toUpperCase(),
+          modelo,
+          aerolinea,
+          hora_salida: salida,
           hora_llegada: llegada,
-          responsable: newGroup.responsable,
-          vehiculo: newGroup.furgo,
+          responsable,
+          vehiculo: furgo,
           timestamp: new Date().toISOString(),
           ...workers.reduce(
             (acc, w, i) => ({ ...acc, [`trabajador_${i + 1}`]: w }),
             {} as Record<string, string>,
           ),
+        }) as Record<string, unknown>;
+
+        onCreated({
+          id: String(created.id ?? ""),
+          matricula: String(created.id_avion ?? matricula).toUpperCase(),
+          modelo: String(created.modelo ?? modelo),
+          aerolinea: String(created.aerolinea ?? aerolinea),
+          salida: String(created.hora_salida ?? salida),
+          responsable: String(created.responsable ?? responsable),
+          furgo: String(created.vehiculo ?? furgo),
+          workers,
+          tasks: [],
         });
       }
     } catch (e) {
-      // Reporting success on a failed write left phantom groups on screen that
-      // vanished on the next refresh.
-      console.error("[PlannerCreator] create error", e);
       setError(e instanceof Error ? e.message : "No se pudo crear el grupo de trabajo.");
       setSaving(false);
       return;
     }
 
-    onCreated(newGroup, importSummary);
     setSaving(false);
   };
 
@@ -230,6 +241,22 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
               onChange={(e) => setLlegada(e.target.value)}
               className={fieldCls}
             />
+            <div className="flex gap-2 mt-1">
+              <button
+                type="button"
+                onClick={() => setLlegada("BASE")}
+                className="px-3 py-1 text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-600"
+              >
+                BASE
+              </button>
+              <button
+                type="button"
+                onClick={() => setLlegada("PRE")}
+                className="px-3 py-1 text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-600"
+              >
+                PRE
+              </button>
+            </div>
           </div>
         </div>
 

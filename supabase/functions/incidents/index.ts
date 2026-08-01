@@ -2,21 +2,84 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
+
+type IncidentRow = {
+  id: string;
+  incident_code: string | null;
+  id_objeto: string | null;
+  descripcion: string | null;
+  estado: number | null;
+  status_text: string | null;
+  trabajador_text: string | null;
+  fecha_apertura: string | null;
+  fecha_cierre: string | null;
+  created_at: string | null;
+  raw_payload: Record<string, unknown> | null;
+  broki_incident_messages?: Array<{
+    author_text: string | null;
+    message_text: string;
+    created_at: string;
+  }>;
+};
+
+function mapMessages(row: IncidentRow) {
+  const tableMsgs = row.broki_incident_messages ?? [];
+  if (tableMsgs.length > 0) {
+    return tableMsgs
+      .slice()
+      .sort((a, b) => a.created_at.localeCompare(b.created_at))
+      .map((m) => ({
+        user: m.author_text || "Operario",
+        text: m.message_text,
+        time: m.created_at,
+      }));
+  }
+
+  const legacy = row.raw_payload?.messages;
+  if (Array.isArray(legacy)) {
+    return legacy.map((m: Record<string, unknown>) => ({
+      user: String(m.user ?? row.trabajador_text ?? "Operario"),
+      text: String(m.text ?? row.descripcion ?? "Incidencia"),
+      time: String(m.time ?? row.fecha_apertura ?? row.created_at ?? new Date().toISOString()),
+    }));
+  }
+
+  return [
+    {
+      user: row.trabajador_text || "Reporte",
+      text: row.descripcion || "Incidencia",
+      time: row.fecha_apertura || row.created_at || new Date().toISOString(),
+    },
+  ];
+}
+
+function toClientIncident(row: IncidentRow) {
+  return {
+    ...row,
+    messages: mapMessages(row),
+  };
+}
 
 serve(async (req) => {
+  const auth = await authorizeOrRespond(req, "incidents", { mutation: req.method === "POST" });
+  if (auth instanceof Response) return auth;
+
   if (req.method === "GET") {
     try {
       const supabase = createServiceClient();
       const { data, error } = await supabase
         .from("broki_incidents")
-        .select("*")
+        .select("*, broki_incident_messages(author_text, message_text, created_at)")
         .order("fecha_apertura", { ascending: false, nullsFirst: false });
 
       if (error) {
         console.error("[incidents] GET error", error);
         return jsonResponse(req, { error: "db_error" }, 500);
       }
-      return jsonResponse(req, data ?? []);
+
+      const rows = (data ?? []) as IncidentRow[];
+      return jsonResponse(req, rows.map(toClientIncident));
     } catch (err) {
       console.error("[incidents] GET unexpected error", err);
       return jsonResponse(req, { error: "internal_error" }, 500);
@@ -39,6 +102,8 @@ serve(async (req) => {
     const itemId = String(body.item_id);
     const incidentId = String(body.incident_id ?? "");
     const now = new Date().toISOString();
+    const worker = String(body.worker ?? "Operario").trim() || "Operario";
+    const messageText = String(body.message ?? body.defect ?? "").trim();
 
     try {
       const supabase = createServiceClient();
@@ -54,45 +119,69 @@ serve(async (req) => {
       const assetId = asset?.id ?? null;
 
       if (action === "open_incident") {
-        const initialMessage = {
-          user: String(body.worker ?? "Operario"),
-          text: String(body.defect ?? ""),
-          time: String(body.timestamp ?? now),
-        };
+        if (!messageText) {
+          return jsonResponse(req, { error: "missing defect text" }, 400);
+        }
+
+        const code = incidentId || `${itemId}-${Date.now()}`;
+        const openedAt = String(body.timestamp ?? now);
 
         const { data: inserted, error } = await supabase
           .from("broki_incidents")
           .insert({
             source_system: "edge_function",
             source_table: "broki_incidents",
-            external_id: incidentId || `${itemId}-${Date.now()}`,
-            incident_code: incidentId,
+            external_id: code,
+            incident_code: code,
             id_objeto: itemId,
             asset_id: assetId,
-            descripcion: String(body.defect ?? ""),
+            descripcion: messageText,
             estado: 1,
             status_text: "abierta",
-            trabajador_text: String(body.worker ?? ""),
-            fecha_apertura: String(body.timestamp ?? now),
-            raw_payload: { messages: [initialMessage] },
+            trabajador_text: worker,
+            fecha_apertura: openedAt,
+            raw_payload: {},
           })
-          .select()
+          .select("*, broki_incident_messages(author_text, message_text, created_at)")
           .single();
 
-        if (error) {
+        if (error || !inserted) {
           console.error("[incidents] open_incident error", error);
+          return jsonResponse(req, { error: "db_error" }, 500);
+        }
+
+        const { error: msgErr } = await supabase.from("broki_incident_messages").insert({
+          incident_id: inserted.id,
+          author_text: worker,
+          message_text: messageText,
+          created_at: openedAt,
+        });
+
+        if (msgErr) {
+          await supabase.from("broki_incidents").delete().eq("id", inserted.id);
+          console.error("[incidents] open_incident message error", msgErr);
           return jsonResponse(req, { error: "db_error" }, 500);
         }
 
         await writeAudit("incident.open", "broki_incidents", inserted.id, {
           item_id: itemId,
-          incident_id: incidentId,
-        });
+          incident_id: code,
+        }, auth);
 
-        return jsonResponse(req, inserted);
+        const { data: withMsgs } = await supabase
+          .from("broki_incidents")
+          .select("*, broki_incident_messages(author_text, message_text, created_at)")
+          .eq("id", inserted.id)
+          .single();
+
+        return jsonResponse(req, toClientIncident((withMsgs ?? inserted) as IncidentRow));
       }
 
       if (action === "update_incident" || action === "close_incident") {
+        if (!incidentId) {
+          return jsonResponse(req, { error: "missing incident_id" }, 400);
+        }
+
         const { data: existing, error: findErr } = await supabase
           .from("broki_incidents")
           .select("*")
@@ -103,45 +192,54 @@ serve(async (req) => {
           return jsonResponse(req, { error: "incident_not_found" }, 404);
         }
 
-        const rawPayload = (existing.raw_payload ?? {}) as Record<string, unknown>;
-        const messages = Array.isArray(rawPayload.messages) ? [...rawPayload.messages] : [];
-
-        if (body.message || body.defect) {
-          messages.push({
-            user: String(body.worker ?? existing.trabajador_text ?? "Operario"),
-            text: String(body.message ?? body.defect ?? ""),
-            time: String(body.timestamp ?? now),
+        if (messageText) {
+          const { error: msgErr } = await supabase.from("broki_incident_messages").insert({
+            incident_id: existing.id,
+            author_text: worker,
+            message_text: messageText,
+            created_at: String(body.timestamp ?? now),
           });
+          if (msgErr) {
+            console.error("[incidents] message insert error", msgErr);
+            return jsonResponse(req, { error: "db_error" }, 500);
+          }
         }
 
-        const patch: Record<string, unknown> = {
-          raw_payload: { ...rawPayload, messages },
-        };
-
+        const patch: Record<string, unknown> = {};
         if (action === "close_incident") {
           patch.estado = 0;
           patch.status_text = "cerrada";
           patch.fecha_cierre = String(body.timestamp ?? now);
         }
 
-        const { data: updated, error: updateErr } = await supabase
-          .from("broki_incidents")
-          .update(patch)
-          .eq("id", existing.id)
-          .select()
-          .single();
+        let updatedRow = existing;
+        if (Object.keys(patch).length > 0) {
+          const { data: updated, error: updateErr } = await supabase
+            .from("broki_incidents")
+            .update(patch)
+            .eq("id", existing.id)
+            .select("*")
+            .single();
 
-        if (updateErr) {
-          console.error("[incidents] update error", updateErr);
-          return jsonResponse(req, { error: "db_error" }, 500);
+          if (updateErr || !updated) {
+            console.error("[incidents] update error", updateErr);
+            return jsonResponse(req, { error: "db_error" }, 500);
+          }
+          updatedRow = updated;
         }
 
         await writeAudit(`incident.${action}`, "broki_incidents", existing.id, {
           item_id: itemId,
           incident_id: incidentId,
-        });
+        }, auth);
 
-        return jsonResponse(req, updated);
+        const { data: withMsgs } = await supabase
+          .from("broki_incidents")
+          .select("*, broki_incident_messages(author_text, message_text, created_at)")
+          .eq("id", existing.id)
+          .single();
+
+        return jsonResponse(req, toClientIncident((withMsgs ?? updatedRow) as IncidentRow));
       }
 
       return jsonResponse(req, { error: "unknown_action" }, 400);

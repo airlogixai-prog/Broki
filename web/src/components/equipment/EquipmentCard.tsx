@@ -143,7 +143,7 @@ export function EquipmentCard({ item, onClick }: Props) {
         <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 pt-1">
           <MapPin size={14} className="text-slate-400 shrink-0" />
           <span className="truncate font-medium">
-            {item.location || item.parking}
+            {item.usualLocation || item.location || item.parking}
           </span>
         </div>
         {item.worker && (

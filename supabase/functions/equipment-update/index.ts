@@ -2,43 +2,20 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-
-function applyEquipmentUpdates(
-  updates: Record<string, unknown>,
-  type: string,
-): Record<string, unknown> {
-  const patch: Record<string, unknown> = {};
-  const isFurgo = type === "furgo" || type === "vehicle";
-
-  if ("location" in updates) {
-    if (isFurgo) {
-      patch.parking = updates.location;
-    } else {
-      patch.ubicacion_habitual = updates.location;
-      patch.parking = updates.location;
-    }
-  }
-  if ("plane" in updates) patch.avion_text = updates.plane ?? null;
-  if ("worker" in updates) patch.current_worker_text = updates.worker ?? null;
-  if ("fuel" in updates) {
-    const v = updates.fuel;
-    patch.combustible = v === null || v === "" ? null : Number(v);
-  }
-  if ("status" in updates) patch.estado = updates.status ?? null;
-  if ("notes" in updates) patch.notas = updates.notes ?? null;
-  for (const n of ["nitrogeno_1", "nitrogeno_2", "nitrogeno_3", "nitrogeno_4"] as const) {
-    if (n in updates) {
-      const v = updates[n];
-      patch[n] = v === null || v === "" ? null : Number(v);
-    }
-  }
-  return patch;
-}
+import { applyEquipmentUpdates } from "../_shared/equipment-update.ts";
+import {
+  EquipmentValidationError,
+  validateEquipmentUpdates,
+} from "../_shared/equipment-validate.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
+
+  const auth = await authorizeOrRespond(req, "equipment-update", { mutation: true });
+  if (auth instanceof Response) return auth;
 
   let body: Record<string, unknown>;
   try {
@@ -80,6 +57,16 @@ serve(async (req) => {
 
     const assetKind = existing.asset_kind as string;
     const effectiveType = type || (assetKind === "van" ? "furgo" : "gse");
+
+    try {
+      validateEquipmentUpdates(updates, effectiveType);
+    } catch (err) {
+      if (err instanceof EquipmentValidationError) {
+        return jsonResponse(req, { error: err.message, field: err.field }, 400);
+      }
+      throw err;
+    }
+
     const patch = applyEquipmentUpdates(updates, effectiveType);
 
     if (Object.keys(patch).length === 0) {
@@ -102,7 +89,7 @@ serve(async (req) => {
       item_id: itemId,
       type: effectiveType,
       updates,
-    });
+    }, auth);
 
     return jsonResponse(req, updated);
   } catch (err) {

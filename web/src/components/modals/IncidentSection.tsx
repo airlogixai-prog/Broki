@@ -10,6 +10,7 @@ import {
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
+import { useApp } from "@/context/AppContext";
 import type { Equipment, IncidentState, Incident } from "@/lib/types/equipment";
 
 function formatDate(d: string | Date | undefined): string {
@@ -33,6 +34,18 @@ function generateNextIncidentId(itemId: string, data: IncidentState): string {
     if (m) max = Math.max(max, parseInt(m[1], 10));
   });
   return `i-${itemId}-${max + 1}`;
+}
+
+function rowToIncident(row: Record<string, unknown>, fallbackId: string): Incident {
+  const msgs = Array.isArray(row.messages)
+    ? (row.messages as Incident["messages"])
+    : [];
+  return {
+    id: String(row.incident_code ?? row.id ?? fallbackId),
+    openedAt: String(row.fecha_apertura ?? row.openedAt ?? new Date().toISOString()),
+    closedAt: row.fecha_cierre ? String(row.fecha_cierre) : undefined,
+    messages: msgs.length > 0 ? msgs : [{ user: "Operario", text: "Incidencia", time: new Date().toISOString() }],
+  };
 }
 
 interface HistoryItemProps {
@@ -101,12 +114,14 @@ interface Props {
 }
 
 export function IncidentSection({ item, incidentState, onUpdate }: Props) {
+  const { refreshRef } = useApp();
   const [showForm, setShowForm] = useState(false);
   const [newText, setNewText] = useState("");
   const [newWorker, setNewWorker] = useState(item.worker || "");
   const [msgText, setMsgText] = useState("");
   const [closeCheck, setCloseCheck] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const current = incidentState.current;
   const history = incidentState.history;
@@ -114,18 +129,12 @@ export function IncidentSection({ item, incidentState, onUpdate }: Props) {
   const handleOpenIncident = async () => {
     if (!newText.trim()) return;
     setSubmitting(true);
+    setError(null);
     const newId = generateNextIncidentId(item.id, incidentState);
     const now = new Date().toISOString();
-    const newIncident: Incident = {
-      id: newId,
-      openedAt: now,
-      messages: [{ user: newWorker.trim() || "Operario", text: newText, time: now }],
-    };
-    const updated: IncidentState = { ...incidentState, current: newIncident };
-    onUpdate(updated);
 
     try {
-      await brokiApi.postIncident({
+      const row = await brokiApi.postIncident({
         action: "open_incident",
         incident_id: newId,
         item_id: item.id,
@@ -134,59 +143,61 @@ export function IncidentSection({ item, incidentState, onUpdate }: Props) {
         status: "abierta",
         timestamp: now,
       });
+      const newIncident = rowToIncident(row as Record<string, unknown>, newId);
+      onUpdate({ ...incidentState, current: newIncident });
+      refreshRef.current?.();
+      setNewText("");
+      setShowForm(false);
     } catch (e) {
-      console.error("[IncidentSection] open incident error", e);
+      setError(e instanceof Error ? e.message : "No se pudo abrir la incidencia.");
+    } finally {
+      setSubmitting(false);
     }
-    setNewText("");
-    setShowForm(false);
-    setSubmitting(false);
   };
 
   const handleSubmitMessage = async () => {
     if (!msgText.trim() || !current) return;
     setSubmitting(true);
+    setError(null);
     const now = new Date().toISOString();
     const msgUser = current.messages[0]?.user ?? item.worker ?? "Operario";
-    const updatedMessages = [...current.messages, { user: msgUser, text: msgText, time: now }];
-
-    let updated: IncidentState;
-    if (closeCheck) {
-      const closed: Incident = {
-        ...current,
-        messages: updatedMessages,
-        closedAt: now,
-      };
-      updated = { current: null, history: [closed, ...history] };
-    } else {
-      updated = {
-        ...incidentState,
-        current: { ...current, messages: updatedMessages },
-      };
-    }
-    onUpdate(updated);
+    const savedText = msgText;
 
     try {
-      await brokiApi.postIncident({
+      const row = await brokiApi.postIncident({
         action: closeCheck ? "close_incident" : "update_incident",
         incident_id: current.id,
         item_id: item.id,
         worker: msgUser,
-        message: msgText,
-        defect: msgText,
+        message: savedText,
         status: closeCheck ? "cerrada" : "abierta",
         timestamp: now,
       });
+      const fromServer = rowToIncident(row as Record<string, unknown>, current.id);
+
+      if (closeCheck) {
+        onUpdate({ current: null, history: [fromServer, ...history] });
+      } else {
+        onUpdate({ ...incidentState, current: fromServer });
+      }
+      refreshRef.current?.();
+      setMsgText("");
+      setCloseCheck(false);
     } catch (e) {
-      console.error("[IncidentSection] submit message error", e);
+      setError(e instanceof Error ? e.message : "No se pudo guardar el mensaje.");
+    } finally {
+      setSubmitting(false);
     }
-    setMsgText("");
-    setCloseCheck(false);
-    setSubmitting(false);
   };
 
   return (
     <div>
-      {/* Active incident */}
+      {error && (
+        <p role="alert" className="mb-3 text-xs text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      )}
+
       {current ? (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl p-4 mb-4">
           <div className="flex justify-between items-center mb-4 border-b border-red-200 dark:border-red-800 pb-2">
@@ -204,7 +215,6 @@ export function IncidentSection({ item, incidentState, onUpdate }: Props) {
             </span>
           </div>
 
-          {/* Messages */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-red-100 dark:border-red-900/50 p-3 max-h-48 overflow-y-auto mb-3">
             {current.messages.map((m, i) => (
               <div key={i} className="mb-3 last:mb-0">
@@ -221,7 +231,6 @@ export function IncidentSection({ item, incidentState, onUpdate }: Props) {
             ))}
           </div>
 
-          {/* Reply */}
           <div className="flex flex-col gap-2">
             <textarea
               value={msgText}
@@ -313,7 +322,6 @@ export function IncidentSection({ item, incidentState, onUpdate }: Props) {
         </div>
       )}
 
-      {/* History */}
       {history.length > 0 && (
         <div className="mt-6 border-t border-slate-100 dark:border-slate-700 pt-4">
           <h4 className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">

@@ -2,8 +2,12 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
+  const auth = await authorizeOrRespond(req, "nitro-stock", { mutation: req.method === "POST" });
+  if (auth instanceof Response) return auth;
+
   if (req.method === "GET") {
     try {
       const supabase = createServiceClient();
@@ -73,7 +77,7 @@ serve(async (req) => {
         location,
         llenas,
         vacias,
-      });
+      }, auth);
 
       return jsonResponse(req, upserted);
     } catch (err) {

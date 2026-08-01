@@ -60,7 +60,7 @@ export default function PlannerPage() {
     );
   };
 
-  const handleDelete = (id: string | number) => {
+  const handleDelete = (id: string) => {
     setAssignments((prev) => prev.filter((g) => g.id !== id));
   };
 

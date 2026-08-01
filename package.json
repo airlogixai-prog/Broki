@@ -7,7 +7,7 @@
     "precommit": "npm run ci:install && npm run lint --prefix web && npm exec --prefix web -- tsc --noEmit -p web/tsconfig.json && npm run test:unit && npm run test:integration && npm run test:e2e",
     "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:unit": "npm test --prefix web",
-    "test:integration": "deno run supabase/functions/_shared/register-validate.ts && deno run supabase/functions/_shared/planner-parse.ts && deno run supabase/functions/_shared/roster-parse.ts && SMOKE_OFFLINE_ONLY=1 deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
+    "test:integration": "deno run supabase/functions/_shared/register-validate.ts && deno run supabase/functions/_shared/planner-parse.ts && deno run supabase/functions/_shared/roster-parse.ts && deno run supabase/functions/_shared/equipment-update.ts && deno run supabase/functions/_shared/equipment-validate.ts && deno test -A supabase/functions/_tests/service-auth.test.ts && SMOKE_OFFLINE_ONLY=1 deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
     "test:integration:live": "deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
     "test:e2e": "bash -c '[ \"$BROKI_SKIP_E2E\" = 1 ] && { echo \"skip e2e: BROKI_SKIP_E2E=1\"; exit 0; }; [ -f web/playwright.config.ts ] && [ -d web/e2e ] || { echo \"skip e2e: no playwright config\"; exit 0; }; BASE=\"${E2E_BASE_URL:-http://127.0.0.1:3000}\"; curl -sf --max-time 5 -o /dev/null \"$BASE/login\" || { echo \"skip e2e: no dev at $BASE\"; exit 0; }; cd web && E2E_BASE_URL=\"$BASE\" E2E_EMAIL=\"${E2E_EMAIL:-qa@broki.test}\" E2E_PASSWORD=\"${E2E_PASSWORD:-brokiqa1234}\" npx playwright test --reporter=line'",
     "test:live": "npm run test:integration:live",

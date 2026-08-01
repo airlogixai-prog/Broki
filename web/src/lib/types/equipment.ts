@@ -8,14 +8,17 @@ export interface Equipment {
   family: string;
   model: string;
   plate: string;
+  /** Ubicación habitual (broki_assets.ubicacion_habitual). */
   location: string;
-  parking?: string;
+  usualLocation: string;
+  parking: string;
   plane: string;
   worker: string;
   notes: string;
   status: string;
   seats?: number;
   fuel: number | null;
+  adblue?: number | null;
   pressures: number[];
   // N2 raw bottles
   botella_1?: number | null;
@@ -56,7 +59,7 @@ export interface Aircraft {
 }
 
 export interface WorkTask {
-  db_id?: string | number;
+  db_id: string;
   type: string;
   code: string;
   priority: string;
@@ -66,7 +69,7 @@ export interface WorkTask {
 }
 
 export interface WorkGroup {
-  id: string | number;
+  id: string;
   matricula: string;
   modelo: string;
   aerolinea: string;
@@ -75,10 +78,4 @@ export interface WorkGroup {
   furgo: string;
   workers: string[];
   tasks: WorkTask[];
-}
-
-export interface NitrogenStock {
-  ubicacion: string;
-  llenas: number;
-  vacias: number;
 }

@@ -12,6 +12,7 @@ import {
   type RosterAiPayload,
   type RosterParseResult,
 } from "../_shared/roster-parse.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 // GET  -> assignments for a week (?week=YYYY-MM-DD, defaults to the current one)
 // POST -> multipart PDF; parses and stores it in broki_roster_*
@@ -119,8 +120,11 @@ async function parsePdf(bytes: Uint8Array): Promise<{ parsed: RosterParseResult;
   const heuristic = parseRosterText(pdf.text);
   if (heuristic.rows.length > 0) return { parsed: heuristic, source: "heuristic" };
 
-  // Either a scan or a layout the line parser could not follow.
-  if (looksScanned(pdf)) console.warn("[roster-upload] no text layer; trying AI");
+  if (looksScanned(pdf)) {
+    throw new PdfError(
+      "El PDF no contiene texto seleccionable. Exporta el documento con capa de texto o usa un PDF no escaneado.",
+    );
+  }
 
   const ai = await openAiJson<RosterAiPayload>({
     system:
@@ -136,7 +140,7 @@ async function parsePdf(bytes: Uint8Array): Promise<{ parsed: RosterParseResult;
   return { parsed: aiPayloadToRows(ai), source: "ai" };
 }
 
-async function handlePost(req: Request): Promise<Response> {
+async function handlePost(req: Request, auth?: import("./../_shared/request-auth.ts").AuthContext): Promise<Response> {
   const supabase = createServiceClient();
 
   const { bytes, fileName } = await readPdfUpload(req);
@@ -267,7 +271,7 @@ async function handlePost(req: Request): Promise<Response> {
     people: parsed.rows.length,
     assignments: assignments.length,
     week_start: weekStart,
-  });
+  }, auth);
 
   return jsonResponse(req, {
     importRunId: run.id,
@@ -280,13 +284,16 @@ async function handlePost(req: Request): Promise<Response> {
 }
 
 serve(async (req) => {
+  const auth = await authorizeOrRespond(req, "roster-upload", { mutation: req.method === "POST" });
+  if (auth instanceof Response) return auth;
+
   if (req.method === "GET") return await handleGet(req);
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
 
   try {
-    return await handlePost(req);
+    return await handlePost(req, auth);
   } catch (err) {
     if (err instanceof PdfError) {
       return jsonResponse(req, { error: err.message }, err.status);

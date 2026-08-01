@@ -7,6 +7,10 @@
 // Reads SUPABASE_URL / SUPABASE_ANON_KEY, defaulting to the local stack. The
 // PDF-parsing phase needs no stack and always runs, so this file is still worth
 // running when Docker is unavailable.
+//
+// When BROKI_REMOTE_TEST_SECRET is set, all live calls carry service headers
+// (X-Broki-Service-Id: remote-smoke, etc.) and the test also verifies that
+// auth hardening works (wrong secret → 401, missing headers → 401, etc.).
 
 import { assertPdf, extractPdfText, sha256Hex } from "../_shared/pdf.ts";
 import { parsePlannerText } from "../_shared/planner-parse.ts";
@@ -22,9 +26,14 @@ import {
 const BASE = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const ANON = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
 const FN = `${BASE}/functions/v1`;
+const SMOKE_SECRET = Deno.env.get("BROKI_REMOTE_TEST_SECRET") ?? "";
+const SMOKE_RUN_ID = Deno.env.get("SMOKE_RUN_ID") ?? crypto.randomUUID();
 
 let failures = 0;
 let checks = 0;
+
+// Track entities created during the run for cleanup
+const created: { type: string; id: string }[] = [];
 
 function check(ok: unknown, what: string, detail = "") {
   checks++;
@@ -36,14 +45,30 @@ function check(ok: unknown, what: string, detail = "") {
   }
 }
 
+function makeServiceHeaders(): Record<string, string> {
+  if (!SMOKE_SECRET) return {};
+  return {
+    "X-Broki-Service-Id": "remote-smoke",
+    "X-Broki-Service-Secret": SMOKE_SECRET,
+    "X-Broki-Request-Id": crypto.randomUUID(),
+    "X-Broki-Timestamp": Math.floor(Date.now() / 1000).toString(),
+  };
+}
+
 async function call(
   path: string,
   init: RequestInit = {},
+  opts: { skipServiceHeaders?: boolean } = {},
 ): Promise<{ status: number; body: unknown; text: string }> {
   const headers = new Headers(init.headers);
   if (ANON) {
     headers.set("Authorization", `Bearer ${ANON}`);
     headers.set("apikey", ANON);
+  }
+  if (!opts.skipServiceHeaders) {
+    for (const [k, v] of Object.entries(makeServiceHeaders())) {
+      headers.set(k, v);
+    }
   }
   if (init.body && typeof init.body === "string" && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
@@ -63,6 +88,61 @@ function pdfForm(bytes: Uint8Array, name: string, extra: Record<string, string> 
   form.append("file", new File([bytes as BlobPart], name, { type: "application/pdf" }));
   for (const [k, v] of Object.entries(extra)) form.append(k, v);
   return form;
+}
+
+// ---------------------------------------------------------------------------
+// Cleanup — run on exit or after tests
+// ---------------------------------------------------------------------------
+
+let cleanupDone = false;
+
+async function cleanup() {
+  if (cleanupDone) return;
+  cleanupDone = true;
+  if (created.length === 0) return;
+
+  let deleted = 0;
+  let remaining = 0;
+
+  for (const item of created) {
+    if (item.type === "relay") {
+      const r = await call("relays", {
+        method: "POST",
+        body: JSON.stringify({ action: "delete", id: item.id }),
+      });
+      if (r.status === 200 || r.status === 404) {
+        deleted++;
+      } else {
+        remaining++;
+        console.error(`  cleanup FAIL relay ${item.id}: ${r.status}`);
+      }
+    }
+    if (item.type === "planner_group") {
+      const r = await call("planner-action", {
+        method: "POST",
+        body: JSON.stringify({ action: "delete", group_id: item.id }),
+      });
+      if (r.status === 200 || r.status === 404) {
+        deleted++;
+      } else {
+        remaining++;
+        console.error(`  cleanup FAIL planner group ${item.id}: ${r.status}`);
+      }
+    }
+  }
+
+  console.log(`\nCleanup: Created: ${created.length} / Deleted: ${deleted} / Remaining: ${remaining}`);
+  if (remaining > 0) {
+    console.error(`  cleanup residues — smoke_run_id: ${SMOKE_RUN_ID}`);
+  }
+}
+
+// Register cleanup handler for unhandled exits (Deno signal)
+try {
+  Deno.addSignalListener("SIGINT", () => cleanup().finally(() => Deno.exit(1)));
+  Deno.addSignalListener("SIGTERM", () => cleanup().finally(() => Deno.exit(1)));
+} catch {
+  // Signals may not be available in all environments
 }
 
 // ---------------------------------------------------------------------------
@@ -101,9 +181,7 @@ async function pdfPhase() {
   const plannerHash = await sha256Hex(planner);
   check(plannerHash === await sha256Hex(plannerPdf()), "PDF hash is stable");
   check(plannerHash !== await sha256Hex(roster), "different PDFs hash differently");
-  // Extraction must not consume the caller's buffer: if it does, the hash taken
-  // afterwards is the digest of the empty string and every import looks like a
-  // duplicate of the first one.
+  // Extraction must not consume the caller's buffer.
   check(planner.byteLength > 0, "text extraction leaves the input bytes intact");
 
   let rejected = false;
@@ -157,15 +235,21 @@ async function writePhase() {
   console.log("\nWrite endpoints");
 
   // Relays: create, read back, delete.
-  const created = await call("relays", {
+  const created_ = await call("relays", {
     method: "POST",
-    body: JSON.stringify({ plane: "EC-NFP", worker: "Smoke Test", points: ["punto uno", "punto dos"] }),
+    body: JSON.stringify({
+      plane: "EC-NFP",
+      worker: "Smoke Test",
+      points: ["punto uno", "punto dos"],
+      metadata: { smoke_run_id: SMOKE_RUN_ID },
+    }),
   });
-  check(created.status === 201, "POST relays creates a relay", `got ${created.status} ${created.text.slice(0, 160)}`);
-  const relay = created.body as { id?: string; points?: string[] };
+  check(created_.status === 201, "POST relays creates a relay", `got ${created_.status} ${created_.text.slice(0, 160)}`);
+  const relay = created_.body as { id?: string; points?: string[] };
   check(relay?.points?.length === 2, "the relay keeps both points");
 
   if (relay?.id) {
+    created.push({ type: "relay", id: relay.id });
     const list = await call("relays");
     check(
       Array.isArray(list.body) && (list.body as { id: string }[]).some((r) => r.id === relay.id),
@@ -176,6 +260,9 @@ async function writePhase() {
       body: JSON.stringify({ action: "delete", id: relay.id }),
     });
     check(deleted.status === 200, "POST relays delete removes it", `got ${deleted.status}`);
+    // Remove from cleanup list since already deleted
+    const idx = created.findIndex((c) => c.type === "relay" && c.id === relay.id);
+    if (idx >= 0) created.splice(idx, 1);
   }
 
   check(
@@ -195,34 +282,98 @@ async function writePhase() {
     method: "POST",
     body: JSON.stringify({
       action: "create",
-      matricula: "EC-SMK",
+      id_avion: "EC-SMK",
       modelo: "A330",
       aerolinea: "IBEROJET",
       responsable: "Smoke Test",
       trabajador_1: "Smoke Worker",
+      metadata: { smoke_run_id: SMOKE_RUN_ID },
     }),
   });
   check(group.status < 300, "POST planner-action create", `got ${group.status} ${group.text.slice(0, 160)}`);
+  const groupId = (group.body as { id?: string })?.id;
+
+  if (groupId) {
+    created.push({ type: "planner_group", id: groupId });
+  }
+
   const removed = await call("planner-action", {
     method: "POST",
-    body: JSON.stringify({ action: "delete", matricula: "EC-SMK" }),
+    body: JSON.stringify({ action: "delete", group_id: groupId }),
   });
-  check(removed.status < 300, "POST planner-action delete", `got ${removed.status}`);
+  check(removed.status < 300, "POST planner-action delete by group_id", `got ${removed.status}`);
+  if (groupId) {
+    const idx = created.findIndex((c) => c.type === "planner_group" && c.id === groupId);
+    if (idx >= 0) created.splice(idx, 1);
+  }
 
   // Unknown actions must be refused, not silently accepted.
   check(
     (await call("planner-action", { method: "POST", body: JSON.stringify({ action: "nope" }) })).status === 400,
     "planner-action rejects an unknown action with 400",
   );
+
+  // GSE parking must not overwrite ubicacion_habitual.
+  type AssetRow = {
+    identifier?: string;
+    asset_kind?: string;
+    parking?: string | null;
+    ubicacion_habitual?: string | null;
+  };
+  const invBefore = await call("inventory-list");
+  const rows = Array.isArray(invBefore.body) ? (invBefore.body as AssetRow[]) : [];
+  const gseBefore =
+    rows.find((r) => r.identifier === "E-07") ??
+    rows.find((r) => r.asset_kind !== "van" && r.ubicacion_habitual) ??
+    rows.find((r) => r.asset_kind !== "van" && r.identifier);
+
+  if (!gseBefore?.identifier) {
+    check(false, "GSE parking test has a target asset", "no GSE row in inventory-list");
+  } else {
+    const itemId = gseBefore.identifier;
+    const usualBefore = gseBefore.ubicacion_habitual ?? "";
+    const parkingBefore = gseBefore.parking ?? null;
+    const testParking = `SMK-${Date.now().toString().slice(-4)}`;
+
+    const equip = await call("equipment-update", {
+      method: "POST",
+      body: JSON.stringify({
+        item_id: itemId,
+        type: "gse",
+        updates: { parking: testParking },
+      }),
+    });
+    check(
+      equip.status === 200,
+      `POST equipment-update updates GSE parking (${itemId})`,
+      `got ${equip.status} ${equip.text.slice(0, 160)}`,
+    );
+
+    const invAfter = await call("inventory-list");
+    const gseAfter = Array.isArray(invAfter.body)
+      ? (invAfter.body as AssetRow[]).find((r) => r.identifier === itemId)
+      : undefined;
+    check(gseAfter?.parking === testParking, "GSE parking persisted", String(gseAfter?.parking));
+    check(
+      gseAfter?.ubicacion_habitual === usualBefore,
+      "GSE ubicacion_habitual unchanged after parking edit",
+      `${gseAfter?.ubicacion_habitual} !== ${usualBefore}`,
+    );
+
+    await call("equipment-update", {
+      method: "POST",
+      body: JSON.stringify({
+        item_id: itemId,
+        type: "gse",
+        updates: { parking: parkingBefore },
+      }),
+    });
+  }
 }
 
 async function importPhase() {
   console.log("\nPDF imports");
 
-  // Imports are idempotent twice over: by file hash, and by
-  // (aircraft, task code, day). A fixed fixture would therefore only ever import
-  // on the very first run against a given database, so the task codes carry a
-  // per-run suffix. The same bytes are reused below to prove the dedup works.
   const runId = Date.now().toString().slice(-5);
   const runMark = `EJECUCION SMOKE ${new Date().toISOString()}`;
   const planner = makeTextPdf([
@@ -259,7 +410,6 @@ async function importPhase() {
     "the imported week can be read back",
   );
 
-  // Garbage must not reach the parser.
   const bad = new FormData();
   bad.append("file", new File(["definitely not a pdf"], "x.pdf", { type: "application/pdf" }));
   check(
@@ -277,16 +427,14 @@ async function registerPhase() {
     telefono: `6${unique.slice(0, 8)}`,
     email: `smoke${unique}@example.com`,
     codigo_empleado: `SMK${unique}`,
-    departamento: "Mantenimiento", // one of DEPARTMENTS, as in the legacy form
+    departamento: "Mantenimiento",
     certificaciones: { b1: true },
-    numero_bac: `BAC-${unique.slice(0, 4)}`, // required by B1
+    numero_bac: `BAC-${unique.slice(0, 4)}`,
     aeronaves: { airbus_a330: { selected: true, b1: true } },
     privacidad: true,
   };
 
   const first = await call("personnel-register", { method: "POST", body: JSON.stringify(person) });
-  // 429 is the IP rate limit doing its job; repeated runs from the same host hit
-  // it, and that is a pass rather than a regression.
   if (first.status === 429) {
     check(true, "registration rate-limited (anti-abuse active, run against a fresh DB to retest)");
     return;
@@ -311,7 +459,6 @@ async function registerPhase() {
     body: JSON.stringify({ nombre: "", telefono: "123", privacidad: false }),
   });
   check(invalid.status === 400, "an invalid registration is a 400", `got ${invalid.status}`);
-  // The form highlights the offending input from this, so the name must be there.
   check(
     typeof (invalid.body as { field?: unknown })?.field === "string",
     "the 400 names the offending field",
@@ -320,12 +467,109 @@ async function registerPhase() {
 }
 
 // ---------------------------------------------------------------------------
+// Auth hardening checks (only when BROKI_REMOTE_TEST_SECRET is set)
+// ---------------------------------------------------------------------------
+
+async function authChecks() {
+  if (!SMOKE_SECRET) return;
+  console.log("\nAuth hardening");
+
+  // No service headers → should get auth error (anon JWT rejected by user-auth)
+  {
+    const r = await call("inventory-list", {}, { skipServiceHeaders: true });
+    check(
+      r.status === 401 || r.status === 403,
+      "anon-only request to privileged endpoint → 401/403",
+      `got ${r.status}`,
+    );
+  }
+
+  // Wrong secret → 401
+  {
+    const headers: Record<string, string> = {
+      "X-Broki-Service-Id": "remote-smoke",
+      "X-Broki-Service-Secret": "wrong-secret-should-fail",
+      "X-Broki-Request-Id": crypto.randomUUID(),
+      "X-Broki-Timestamp": Math.floor(Date.now() / 1000).toString(),
+    };
+    const r = await fetch(`${FN}/inventory-list`, {
+      headers: {
+        Authorization: `Bearer ${ANON}`,
+        apikey: ANON,
+        ...headers,
+      },
+    });
+    check(r.status === 401, "wrong secret → 401", `got ${r.status}`);
+    await r.text();
+  }
+
+  // Wrong service id → 403 (valid id but not in allowed list for aircraft-list with n8n)
+  // We test with n8n on inventory-list where n8n is not allowed
+  {
+    const headers: Record<string, string> = {
+      "X-Broki-Service-Id": "n8n",
+      "X-Broki-Service-Secret": SMOKE_SECRET, // smoke secret ≠ n8n secret, but tests 403 path
+      "X-Broki-Request-Id": crypto.randomUUID(),
+      "X-Broki-Timestamp": Math.floor(Date.now() / 1000).toString(),
+    };
+    const r = await fetch(`${FN}/inventory-list`, {
+      headers: {
+        Authorization: `Bearer ${ANON}`,
+        apikey: ANON,
+        ...headers,
+      },
+    });
+    // Either 401 (wrong secret for n8n) or 403 (n8n not in allowed list) — both are auth rejections
+    check(r.status === 401 || r.status === 403, "n8n not allowed on inventory-list → 401/403", `got ${r.status}`);
+    await r.text();
+  }
+
+  // Stale timestamp → 401
+  {
+    const staleTs = (Math.floor(Date.now() / 1000) - 400).toString();
+    const headers: Record<string, string> = {
+      "X-Broki-Service-Id": "remote-smoke",
+      "X-Broki-Service-Secret": SMOKE_SECRET,
+      "X-Broki-Request-Id": crypto.randomUUID(),
+      "X-Broki-Timestamp": staleTs,
+    };
+    const r = await fetch(`${FN}/inventory-list`, {
+      headers: { Authorization: `Bearer ${ANON}`, apikey: ANON, ...headers },
+    });
+    check(r.status === 401, "stale timestamp → 401", `got ${r.status}`);
+    await r.text();
+  }
+
+  // Bad UUID → 400
+  {
+    const headers: Record<string, string> = {
+      "X-Broki-Service-Id": "remote-smoke",
+      "X-Broki-Service-Secret": SMOKE_SECRET,
+      "X-Broki-Request-Id": "not-a-uuid",
+      "X-Broki-Timestamp": Math.floor(Date.now() / 1000).toString(),
+    };
+    const r = await fetch(`${FN}/inventory-list`, {
+      headers: { Authorization: `Bearer ${ANON}`, apikey: ANON, ...headers },
+    });
+    check(r.status === 400 || r.status === 401, "invalid UUID → 400/401", `got ${r.status}`);
+    await r.text();
+  }
+
+  // personnel-register (public) must pass without service headers
+  {
+    const r = await call("personnel-register", {
+      method: "POST",
+      body: JSON.stringify({ nombre: "", telefono: "123", privacidad: false }),
+    }, { skipServiceHeaders: true });
+    // Should reach the function (400 = valid call, not 401/403)
+    check(r.status === 400, "personnel-register public → reaches handler (400 invalid body)", `got ${r.status}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 async function n8nPhase() {
   console.log("\nn8n independence");
-  // A runtime call to n8n from a dashboard function would need the URL or the
-  // env flag in the source. Comments that explain what replaced n8n are history,
-  // not a dependency, so they are stripped before looking.
   const stripComments = (src: string) =>
     src.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
   const hits: string[] = [];
@@ -338,7 +582,7 @@ async function n8nPhase() {
     } catch {
       continue;
     }
-    if (entry.name === "broki-whatsapp-inbound") continue; // out of scope
+    if (entry.name === "broki-whatsapp-inbound") continue;
     if (/n8n|USE_N8N/i.test(stripComments(src))) hits.push(entry.name);
   }
   check(hits.length === 0, "no dashboard function references n8n", hits.join(", "));
@@ -354,6 +598,8 @@ if (!offlineOnly && (await reachable())) {
   await writePhase();
   await importPhase();
   await registerPhase();
+  await authChecks();
+  await cleanup();
 } else if (offlineOnly) {
   console.log("\nSkipping live checks: SMOKE_OFFLINE_ONLY=1 (pre-commit).");
 } else {

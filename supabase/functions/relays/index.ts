@@ -2,6 +2,7 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 // Shift relay notes. Replaces the `relays_db` localStorage key the legacy
 // dashboard used as its only store, so a relay survives a browser wipe and is
@@ -33,6 +34,9 @@ function toClientRelay(row: RelayRow) {
 }
 
 serve(async (req) => {
+  const auth = await authorizeOrRespond(req, "relays", { mutation: req.method === "POST" });
+  if (auth instanceof Response) return auth;
+
   const supabase = createServiceClient();
 
   if (req.method === "GET") {
@@ -73,7 +77,7 @@ serve(async (req) => {
       return jsonResponse(req, { error: "db_error" }, 500);
     }
 
-    await writeAudit("relay.delete", "broki_relays", id, {});
+    await writeAudit("relay.delete", "broki_relays", id, {}, auth);
     return jsonResponse(req, { ok: true });
   }
 
@@ -152,7 +156,7 @@ serve(async (req) => {
   await writeAudit("relay.create", "broki_relays", inserted.id, {
     plane,
     point_count: points.length,
-  });
+  }, auth);
 
   return jsonResponse(
     req,

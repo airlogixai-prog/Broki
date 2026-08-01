@@ -1,6 +1,8 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
+import { authenticateServiceRequest } from "../_shared/service-auth.ts";
+import { FUNCTION_SERVICE_ACCESS } from "../_shared/function-access.ts";
 
 const BATCH_MAX = 1000;
 const ID_KEYS = [
@@ -127,6 +129,42 @@ async function incrementSnapshotCounts(
 serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
+  }
+
+  // Auth: service identity (n8n or remote-smoke) required.
+  // Legacy transition: BROKI_ALLOW_LEGACY_IMPORT=1 also accepts service_role JWT
+  // (current import workflow uses Authorization: Bearer SERVICE_ROLE_KEY).
+  const serviceIdHeader = req.headers.get("x-broki-service-id");
+  if (serviceIdHeader !== null) {
+    const allowed = FUNCTION_SERVICE_ACCESS["broki-import-batch"] ?? [];
+    const result = authenticateServiceRequest(req, allowed);
+    if (!result.ok) {
+      return jsonResponse(req, { error: result.error }, result.status);
+    }
+  } else {
+    // No service headers — check legacy import JWT
+    const allowLegacy = Deno.env.get("BROKI_ALLOW_LEGACY_IMPORT") === "1";
+    if (!allowLegacy) {
+      return jsonResponse(req, { error: "unauthorized_service_request" }, 401);
+    }
+    // ponytail: legacy import path — accepts service_role JWT until caller migrates to BROKI_N8N_SECRET.
+    // Upgrade: migrate caller to send service headers and remove BROKI_ALLOW_LEGACY_IMPORT.
+    const bearer = req.headers.get("authorization") ?? "";
+    if (!bearer.toLowerCase().startsWith("bearer ")) {
+      return jsonResponse(req, { error: "unauthorized_service_request" }, 401);
+    }
+    // JWT role check: accept service_role only
+    try {
+      const [, payloadB64] = bearer.slice(7).split(".");
+      if (payloadB64) {
+        const payload = JSON.parse(atob(payloadB64.replace(/-/g, "+").replace(/_/g, "/")));
+        if (payload?.role !== "service_role") {
+          return jsonResponse(req, { error: "unauthorized_service_request" }, 403);
+        }
+      }
+    } catch {
+      return jsonResponse(req, { error: "unauthorized_service_request" }, 401);
+    }
   }
 
   let body: ImportBody;

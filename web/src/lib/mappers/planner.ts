@@ -82,7 +82,7 @@ export function mergePlannerData(
         const key =
           t.codigo && t.codigo !== "null" ? String(t.codigo) : uc(t.descripcion);
         uniqueTasksMap.set(key, {
-          db_id: t.id as WorkTask["db_id"],
+          db_id: String(t.id ?? ""),
           type: uc(t.tipo_tarea),
           code: uc(t.codigo),
           priority: uc(t.prioridad) || "NORMAL",
@@ -93,7 +93,7 @@ export function mergePlannerData(
       });
 
     return {
-      id: (g.id as string | number | undefined) ?? Date.now(),
+      id: String(g.id ?? ""),
       matricula: uc(g._displayMat).toUpperCase(),
       modelo: uc(g.modelo),
       aerolinea: uc(g.aerolinea),

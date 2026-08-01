@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test src/lib/**/*.test.ts",
+    "test": "node --experimental-strip-types --test 'src/lib/**/*.test.ts'",
     "e2e": "playwright test",
     "db:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/lib/supabase/database.types.ts"
   },

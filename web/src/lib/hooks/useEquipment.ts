@@ -91,19 +91,27 @@ export function useEquipment() {
               incidentsMemory[itemId] = { current: null, history: [] };
 
             const payload = inc.raw_payload ?? {};
+            const tableMsgs = inc.messages ?? inc.broki_incident_messages;
+            const messages = Array.isArray(tableMsgs) && tableMsgs.length > 0
+              ? tableMsgs.map((m: { user?: string; author_text?: string; text?: string; message_text?: string; time?: string; created_at?: string }) => ({
+                  user: m.user ?? m.author_text ?? inc.trabajador_text ?? "Operario",
+                  text: m.text ?? m.message_text ?? inc.descripcion ?? "Incidencia",
+                  time: m.time ?? m.created_at ?? inc.fecha_apertura ?? inc.created_at ?? new Date().toISOString(),
+                }))
+              : Array.isArray(payload.messages)
+              ? payload.messages
+              : [
+                  {
+                    user: inc.trabajador_text || inc.worker || "Reporte",
+                    text: inc.descripcion || inc.defect || "Incidencia",
+                    time: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
+                  },
+                ];
             const obj = {
               id: inc.incident_code || inc.external_id || inc.incident_id || inc.id,
               openedAt: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
               closedAt: inc.fecha_cierre || inc.closed_at,
-              messages: Array.isArray(payload.messages)
-                ? payload.messages
-                : [
-                    {
-                      user: inc.trabajador_text || inc.worker || "Reporte",
-                      text: inc.descripcion || inc.defect || "Incidencia",
-                      time: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
-                    },
-                  ],
+              messages,
             };
 
             const estado = Number(inc.estado ?? NaN);

@@ -2,11 +2,15 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
+
+  const auth = await authorizeOrRespond(req, "tooling-action", { mutation: true });
+  if (auth instanceof Response) return auth;
 
   let body: Record<string, unknown>;
   try {
@@ -59,7 +63,7 @@ serve(async (req) => {
       await writeAudit("tooling.checkout", "broki_tooling_movements", inserted.id, {
         bac_bact: body.bac_bact,
         tma_out: body.tma_out,
-      });
+      }, auth);
 
       return jsonResponse(req, inserted);
     }
@@ -120,7 +124,7 @@ serve(async (req) => {
       await writeAudit("tooling.checkin", "broki_tooling_movements", existing.id, {
         bac_bact: existing.bac_bact,
         tma_in: body.tma_in,
-      });
+      }, auth);
 
       return jsonResponse(req, updated);
     }

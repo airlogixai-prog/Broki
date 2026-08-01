@@ -1,11 +1,15 @@
 import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
   if (req.method !== "GET") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
+
+  const auth = await authorizeOrRespond(req, "aircraft-list");
+  if (auth instanceof Response) return auth;
 
   try {
     const supabase = createServiceClient();
