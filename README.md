@@ -16,7 +16,9 @@ Requisito: **npm** (gestor único). Lockfiles versionados: `package-lock.json` (
 npm ci
 npm ci --prefix web
 # o: npm run ci:install
-cp web/.env.example web/.env.local   # credenciales locales por defecto
+# Crea web/.env.local (no está en el repo):
+#   NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key local o remota>
 npm run supabase:start               # opcional: base de datos local
 npm run dev
 ```
@@ -62,7 +64,7 @@ npm run functions:secrets   # N8N_BASE_URL para las Edge Functions
 npm run functions:deploy    # despliega todas las functions
 ```
 
-En Vercel, configura las mismas variables de entorno de Supabase (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) apuntando al proyecto remoto, no a `127.0.0.1`.
+En Vercel, configura `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` apuntando al proyecto remoto, no a `127.0.0.1`.
 
 #### Vercel (monorepo)
 

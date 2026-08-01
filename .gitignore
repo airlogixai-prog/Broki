@@ -4,9 +4,9 @@
 broki-service-secrets.env
 .env
 .env.*
-!.env.example
-!**/.env.example
-!web/.env.example
+
+# --- Local ops (no commitear) ---
+scripts/
 
 # --- Dependencies ---
 node_modules/
