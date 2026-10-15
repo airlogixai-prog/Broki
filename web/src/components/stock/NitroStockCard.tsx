@@ -1,126 +1,83 @@
 "use client";
 
-import { CheckCircle, WarningCircle, PencilSimple, FloppyDisk } from "@phosphor-icons/react";
+import { CheckCircle, WarningCircle } from "@phosphor-icons/react";
+import { TextField } from "@/components/ui/FormField";
 
 interface Props {
   name: string;
-  locationId: string;
   full: number;
   empty: number;
-  color: "brand" | "blue";
   editing: boolean;
-  onFullChange: (v: number) => void;
-  onEmptyChange: (v: number) => void;
+  dirty?: boolean;
+  errors?: { full?: string; empty?: string };
+  onFullChange: (v: string) => void;
+  onEmptyChange: (v: string) => void;
+  /** Raw strings while editing (so the user can clear the field). */
+  draft?: { full: string; empty: string };
 }
 
-export function NitroStockCard({
-  name,
-  locationId,
-  full,
-  empty,
-  color,
-  editing,
-  onFullChange,
-  onEmptyChange,
-}: Props) {
+/** One stock location (terminal): full/empty bottle counts with a share gauge. */
+export function NitroStockCard({ name, full, empty, editing, dirty = false, errors, onFullChange, onEmptyChange, draft }: Props) {
   const total = full + empty;
   const pct = total > 0 ? Math.round((full / total) * 100) : 0;
   const circumference = 251.2;
   const offset = circumference - (circumference * pct) / 100;
-
-  const ringColor =
-    color === "brand"
-      ? "text-brand-500 dark:text-brand-400"
-      : "text-blue-500 dark:text-blue-400";
-  const ringBg =
-    color === "brand"
-      ? "text-brand-100 dark:text-brand-900/30"
-      : "text-blue-100 dark:text-blue-900/30";
-  const barColor =
-    color === "brand" ? "bg-brand-500" : "bg-blue-500";
-  const themeText =
-    color === "brand"
-      ? "text-brand-600 dark:text-brand-400"
-      : "text-blue-600 dark:text-blue-400";
+  const tone = total === 0 ? "text-neutral" : pct >= 50 ? "text-success" : pct >= 25 ? "text-warning" : "text-danger";
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden group">
-      <div className={`absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity text-9xl ${themeText}`}>
-        N₂
-      </div>
-
-      <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2 relative z-10">
-        <span className={`w-1 h-6 rounded-full ${barColor}`} />
+    <section className={`rounded-xl border bg-surface p-5 shadow-sm ${dirty ? "border-brand-400" : "border-border"}`} aria-label={`Stock ${name}`}>
+      <h3 className="mb-4 flex items-center gap-2 text-base font-bold text-fg">
+        <span className="h-5 w-1 rounded-full bg-brand-500" aria-hidden />
         {name}
-      </h4>
+        {dirty && <span className="ml-auto text-[11px] font-semibold text-brand-700 dark:text-brand-300">Sin guardar</span>}
+      </h3>
 
-      <div className="flex items-center gap-8 relative z-10">
-        {/* Circular gauge */}
-        <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-          <svg className="w-full h-full -rotate-90">
-            <circle
-              cx="48" cy="48" r="40"
-              strokeWidth="8" fill="transparent"
-              stroke="currentColor" className={ringBg}
-            />
-            <circle
-              cx="48" cy="48" r="40"
-              strokeWidth="8" fill="transparent"
-              stroke="currentColor" className={ringColor}
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-            />
+      <div className="flex items-center gap-6">
+        <div className="relative flex h-24 w-24 shrink-0 items-center justify-center" role="img" aria-label={`${pct} % de botellas llenas (${full} de ${total})`}>
+          <svg className="h-full w-full -rotate-90" viewBox="0 0 96 96" aria-hidden>
+            <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" stroke="var(--broki-bg-subtle)" />
+            <circle cx="48" cy="48" r="40" strokeWidth="8" fill="transparent" stroke="currentColor" className={tone} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" />
           </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-800 dark:text-white">
-            <span className="text-xl font-bold">{pct}%</span>
-            <span className="text-[10px] uppercase text-slate-400 font-bold">Llenas</span>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="tabular text-xl font-bold text-fg">{pct} %</span>
+            <span className="text-[11px] font-semibold uppercase text-fg-subtle">llenas</span>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="flex-1 space-y-3">
-          <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-md">
+        <dl className="flex-1 space-y-2">
+          <div className="flex items-center justify-between rounded-lg bg-muted p-3">
+            <dt className="flex items-center gap-2 text-sm font-medium text-fg-muted">
+              <span className="rounded-md bg-success-muted p-1.5 text-success-strong" aria-hidden>
                 <CheckCircle size={16} weight="fill" />
-              </div>
-              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Llenas</span>
-            </div>
-            {editing ? (
-              <input
-                type="number"
-                min={0}
-                value={full}
-                onChange={(e) => onFullChange(Number(e.target.value))}
-                className="w-20 text-center font-bold text-lg border-b-2 border-slate-300 dark:border-slate-600 bg-transparent outline-none focus:border-brand-500 transition-colors text-slate-900 dark:text-white"
-              />
-            ) : (
-              <span className="text-xl font-bold text-slate-900 dark:text-white">{full}</span>
-            )}
+              </span>
+              Llenas
+            </dt>
+            <dd>
+              {editing ? (
+                <TextField label={`Botellas llenas ${name}`} className="w-24 [&_label]:sr-only" type="number" inputMode="numeric" min={0} step={1} value={draft?.full ?? String(full)} onChange={(e) => onFullChange(e.target.value)} error={errors?.full} />
+              ) : (
+                <span className="tabular text-xl font-bold text-fg">{full}</span>
+              )}
+            </dd>
           </div>
-
-          <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-md">
+          <div className="flex items-center justify-between rounded-lg bg-muted p-3">
+            <dt className="flex items-center gap-2 text-sm font-medium text-fg-muted">
+              <span className="rounded-md bg-warning-muted p-1.5 text-warning-strong" aria-hidden>
                 <WarningCircle size={16} weight="fill" />
-              </div>
-              <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Vacías</span>
-            </div>
-            {editing ? (
-              <input
-                type="number"
-                min={0}
-                value={empty}
-                onChange={(e) => onEmptyChange(Number(e.target.value))}
-                className="w-20 text-center font-bold text-lg border-b-2 border-slate-300 dark:border-slate-600 bg-transparent outline-none focus:border-brand-500 transition-colors text-slate-900 dark:text-white"
-              />
-            ) : (
-              <span className="text-xl font-bold text-slate-900 dark:text-white">{empty}</span>
-            )}
+              </span>
+              Vacías
+            </dt>
+            <dd>
+              {editing ? (
+                <TextField label={`Botellas vacías ${name}`} className="w-24 [&_label]:sr-only" type="number" inputMode="numeric" min={0} step={1} value={draft?.empty ?? String(empty)} onChange={(e) => onEmptyChange(e.target.value)} error={errors?.empty} />
+              ) : (
+                <span className="tabular text-xl font-bold text-fg">{empty}</span>
+              )}
+            </dd>
           </div>
-        </div>
+          <p className="tabular text-right text-[11px] text-fg-subtle">Total {total} botellas</p>
+        </dl>
       </div>
-    </div>
+    </section>
   );
 }

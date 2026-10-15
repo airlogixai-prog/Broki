@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useApp } from "@/context/AppContext";
 import { brokiApi } from "@/lib/api/broki";
 import { splitInventory } from "@/lib/mappers/equipment";
@@ -9,8 +9,13 @@ import { createClient } from "@/lib/supabase/client";
 import type { IncidentState } from "@/lib/types/equipment";
 
 const REFRESH_MS = 30_000;
-// Tables that trigger a full refresh when they change via Realtime.
-const REALTIME_TABLES = ["broki_assets", "broki_incidents", "broki_nitro_stock", "broki_tooling_movements"] as const;
+const REALTIME_DEBOUNCE_MS = 600;
+
+const REALTIME_TABLES = [
+  "broki_assets",
+  "broki_incidents",
+  "broki_incident_messages",
+] as const;
 
 function errMsg(reason: unknown): string {
   if (reason instanceof Error) return reason.message;
@@ -18,13 +23,25 @@ function errMsg(reason: unknown): string {
 }
 
 export function useEquipment() {
-  const { setInventory, setIncidentsMemory, setLoading, setFetchError, refreshRef } =
-    useApp();
+  const {
+    setInventory,
+    setIncidentsMemory,
+    setLoading,
+    setFetchError,
+    setSyncMode,
+    refreshRef,
+    autoRefresh,
+  } = useApp();
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const realtimeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialLoadRef = useRef(true);
 
   const fetchAll = useCallback(
     async (manual = false) => {
-      if (manual) setLoading(true);
+      if (manual || initialLoadRef.current) {
+        setLoading(true);
+        setSyncMode("loading");
+      }
       try {
         const [invR, persR, incR, acR] = await Promise.allSettled([
           brokiApi.fetchInventory(),
@@ -41,57 +58,75 @@ export function useEquipment() {
             failures.map((r) => errMsg(r.reason)).join(" · ") ||
               "Error al cargar datos",
           );
+          setSyncMode("error");
         } else {
           setFetchError(null);
         }
 
-        const resInv = invR.status === "fulfilled" ? invR.value : [];
-        const resP = persR.status === "fulfilled" ? persR.value : [];
-        const resIncidents = incR.status === "fulfilled" ? incR.value : [];
-        const resAircraft = acR.status === "fulfilled" ? acR.value : [];
-
-        const rows = Array.isArray(resInv)
-          ? resInv
-          : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (resInv as any)?.data ?? (resInv as any)?.rows ?? [];
-        const { furgonetas, gse } = splitInventory(rows);
-
-        const personal = (Array.isArray(resP) ? resP : []).map(normalizePersonnel);
-        const aircraft = (Array.isArray(resAircraft) ? resAircraft : [])
-          .map(normalizeAircraft)
-          .filter((a) => a.reg);
-
-        setInventory({ furgonetas, gse, personal, aircraft });
+        // A failed source keeps what is on screen (the banner says data may be stale)
+        // instead of blanking the dashboard with empty lists.
+        if (invR.status === "fulfilled" || persR.status === "fulfilled" || acR.status === "fulfilled") {
+          const resInv = invR.status === "fulfilled" ? invR.value : null;
+          const rows = resInv == null
+            ? null
+            : Array.isArray(resInv)
+              ? resInv
+              : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (resInv as any)?.data ?? (resInv as any)?.rows ?? [];
+          const split = rows ? splitInventory(rows) : null;
+          const personal = persR.status === "fulfilled" ? (Array.isArray(persR.value) ? persR.value : []).map(normalizePersonnel) : null;
+          const aircraft = acR.status === "fulfilled"
+            ? (Array.isArray(acR.value) ? acR.value : []).map(normalizeAircraft).filter((a) => a.reg)
+            : null;
+          setInventory({
+            ...(split ? { furgonetas: split.furgonetas, gse: split.gse } : {}),
+            ...(personal ? { personal } : {}),
+            ...(aircraft ? { aircraft } : {}),
+          });
+        }
+        if (incR.status !== "fulfilled") return;
+        const resIncidents = incR.value;
 
         const incidentsMemory: Record<string, IncidentState> = {};
         (Array.isArray(resIncidents) ? resIncidents : []).forEach(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (inc: any) => {
-            const itemId = inc.item_id || inc.id_objeto;
+            const itemId = inc.id_objeto || inc.item_id;
             if (!itemId) return;
             if (!incidentsMemory[itemId])
               incidentsMemory[itemId] = { current: null, history: [] };
 
+            const payload = inc.raw_payload ?? {};
+            const tableMsgs = inc.messages ?? inc.broki_incident_messages;
+            const messages = Array.isArray(tableMsgs) && tableMsgs.length > 0
+              ? tableMsgs.map((m: { user?: string; author_text?: string; text?: string; message_text?: string; time?: string; created_at?: string }) => ({
+                  user: m.user ?? m.author_text ?? inc.trabajador_text ?? "Operario",
+                  text: m.text ?? m.message_text ?? inc.descripcion ?? "Incidencia",
+                  time: m.time ?? m.created_at ?? inc.fecha_apertura ?? inc.created_at ?? new Date().toISOString(),
+                }))
+              : Array.isArray(payload.messages)
+              ? payload.messages
+              : [
+                  {
+                    user: inc.trabajador_text || inc.worker || "Reporte",
+                    text: inc.descripcion || inc.defect || "Incidencia",
+                    time: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
+                  },
+                ];
             const obj = {
-              id: inc.incident_id || inc.id,
-              openedAt: inc.created_at || new Date().toISOString(),
-              closedAt: inc.closed_at,
-              messages: Array.isArray(inc.messages)
-                ? inc.messages
-                : [
-                    {
-                      user: inc.worker || "Reporte",
-                      text: inc.defect || inc.descripcion || "Incidencia",
-                      time: inc.created_at || new Date().toISOString(),
-                    },
-                  ],
+              id: inc.incident_code || inc.external_id || inc.incident_id || inc.id,
+              openedAt: inc.fecha_apertura || inc.created_at || new Date().toISOString(),
+              closedAt: inc.fecha_cierre || inc.closed_at,
+              messages,
             };
 
-            const status = String(inc.status ?? "").toLowerCase();
+            const estado = Number(inc.estado ?? NaN);
+            const statusText = String(inc.status_text ?? inc.status ?? "").toLowerCase();
             const isOpen =
-              status === "1" ||
-              status.includes("abierta") ||
-              status === "open";
+              estado === 1 ||
+              statusText.includes("abierta") ||
+              statusText === "open" ||
+              statusText === "1";
             if (isOpen) incidentsMemory[itemId].current = obj;
             else incidentsMemory[itemId].history.push(obj);
           },
@@ -100,11 +135,15 @@ export function useEquipment() {
       } catch (err) {
         console.error("[useEquipment] fetch error", err);
         setFetchError(errMsg(err));
+        setSyncMode("error");
       } finally {
-        if (manual) setLoading(false);
+        if (manual || initialLoadRef.current) {
+          setLoading(false);
+          initialLoadRef.current = false;
+        }
       }
     },
-    [setInventory, setIncidentsMemory, setLoading, setFetchError],
+    [setInventory, setIncidentsMemory, setLoading, setFetchError, setSyncMode],
   );
 
   useEffect(() => {
@@ -113,42 +152,47 @@ export function useEquipment() {
 
   useEffect(() => {
     fetchAll(true);
-    timerRef.current = setInterval(() => fetchAll(), REFRESH_MS);
+  }, [fetchAll]);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    // Background refresh; the sync label stays "realtime" while the channel is subscribed.
+    timerRef.current = setInterval(() => {
+      setSyncMode((m) => (m === "realtime" ? m : "polling"));
+      fetchAll();
+    }, REFRESH_MS);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [fetchAll]);
+  }, [fetchAll, autoRefresh, setSyncMode]);
 
-  // Realtime: refresh on any change to operational tables.
-  // ponytail: v1 — full refresh on change; v2 upgrade = patch local state per event
   useEffect(() => {
     const supabase = createClient();
-    const channel = supabase
-      .channel("broki-realtime-refresh")
-      .on(
+    const channel = supabase.channel("broki-realtime-refresh");
+
+    const scheduleRefresh = () => {
+      if (realtimeTimerRef.current) clearTimeout(realtimeTimerRef.current);
+      realtimeTimerRef.current = setTimeout(() => fetchAll(), REALTIME_DEBOUNCE_MS);
+    };
+
+    for (const table of REALTIME_TABLES) {
+      channel.on(
         "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[0] },
-        () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[1] },
-        () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[2] },
-        () => fetchAll(),
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: REALTIME_TABLES[3] },
-        () => fetchAll(),
-      )
-      .subscribe();
+        { event: "*", schema: "public", table },
+        scheduleRefresh,
+      );
+    }
+
+    channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") setSyncMode("realtime");
+      else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        setSyncMode(autoRefresh ? "polling" : "error");
+      }
+    });
 
     return () => {
+      if (realtimeTimerRef.current) clearTimeout(realtimeTimerRef.current);
       supabase.removeChannel(channel);
     };
-  }, [fetchAll]);
+  }, [fetchAll, autoRefresh, setSyncMode]);
 }

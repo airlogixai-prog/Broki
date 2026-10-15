@@ -1,8 +1,8 @@
-# Supabase
+# Supabase CLI local state (also listed in root .gitignore).
 .branches
 .temp
 
-# dotenvx
+# Env overrides from dotenvx
 .env.keys
 .env.local
 .env.*.local

@@ -1,0 +1,144 @@
+/**
+ * BROKI design tokens — framework-agnostic CSS variables.
+ * Consumed by themes.css, components.css and the Tailwind @theme mapping in
+ * globals.css. Semantic colours are defined once per mode here; components must
+ * use the Tailwind aliases (bg-surface, text-fg-muted, border-border, …) instead
+ * of raw slate-* classes so dark mode and brand themes stay consistent.
+ */
+:root {
+  /* Typography */
+  --broki-font-sans: var(--font-inter, "Inter"), ui-sans-serif, system-ui, sans-serif;
+  --broki-font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, monospace;
+
+  /* Layout */
+  --broki-sidebar-width: 17rem;
+  --broki-topbar-height: 3.5rem;
+  --broki-content-max-width: 96rem;
+
+  /* Z-index */
+  --broki-z-topbar: 30;
+  --broki-z-sidebar: 40;
+  --broki-z-overlay: 50;
+  --broki-z-dropdown: 60;
+  --broki-z-modal: 100;
+  --broki-z-toast: 110;
+
+  /* Spacing */
+  --broki-space-1: 0.25rem;
+  --broki-space-2: 0.5rem;
+  --broki-space-3: 0.75rem;
+  --broki-space-4: 1rem;
+  --broki-space-5: 1.25rem;
+  --broki-space-6: 1.5rem;
+  --broki-space-8: 2rem;
+
+  /* Radius */
+  --broki-radius-sm: 0.375rem;
+  --broki-radius-md: 0.5rem;
+  --broki-radius-lg: 0.75rem;
+  --broki-radius-xl: 1rem;
+  --broki-radius-full: 9999px;
+
+  /* Shadows */
+  --broki-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05);
+  --broki-shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.08),
+    0 2px 4px -2px rgb(15 23 42 / 0.05);
+  --broki-shadow-lg: 0 10px 25px -5px rgb(15 23 42 / 0.1),
+    0 8px 10px -6px rgb(15 23 42 / 0.04);
+  --broki-shadow-sidebar: 0 25px 50px -12px rgb(15 23 42 / 0.25);
+
+  /* Motion */
+  --broki-transition-fast: 150ms ease;
+  --broki-transition: 300ms ease;
+  --broki-transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --broki-transition-fast: 0ms;
+    --broki-transition: 0ms;
+    --broki-transition-slow: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Semantic colours: light ---- */
+:root {
+  --broki-bg: #f4f6f9;
+  --broki-bg-subtle: #eef1f5;
+  --broki-bg-elevated: #ffffff;
+  --broki-bg-muted: #f8fafc;
+  --broki-border: #dde3ea;
+  --broki-border-subtle: #edf1f5;
+  --broki-border-strong: #c3ccd7;
+  --broki-text: #16202e;
+  --broki-text-muted: #5b6b7f;
+  --broki-text-subtle: #8a98aa;
+  --broki-text-inverse: #ffffff;
+  --broki-ring: var(--theme-primary-500);
+  --broki-selection: color-mix(in srgb, var(--theme-primary-500) 18%, transparent);
+
+  /* Status */
+  --broki-success: #0f9d6a;
+  --broki-success-strong: #0b7a52;
+  --broki-success-muted: #dcf5ea;
+  --broki-warning: #d98a06;
+  --broki-warning-strong: #a86a02;
+  --broki-warning-muted: #fdf1d6;
+  --broki-danger: #d7322f;
+  --broki-danger-strong: #a81f1d;
+  --broki-danger-muted: #fde3e2;
+  --broki-info: #1e6fd9;
+  --broki-info-strong: #1655a8;
+  --broki-info-muted: #dfeafb;
+  --broki-neutral: #64748b;
+  --broki-neutral-muted: #e9edf2;
+
+  /* Nav */
+  --broki-nav-active-bg: var(--theme-primary-50);
+  --broki-nav-active-text: var(--theme-primary-700);
+  --broki-nav-hover-bg: var(--broki-bg-subtle);
+}
+
+/* ---- Semantic colours: dark ---- */
+.dark {
+  --broki-bg: #0b1220;
+  --broki-bg-subtle: #121b2b;
+  --broki-bg-elevated: #151f31;
+  --broki-bg-muted: #1b2639;
+  --broki-border: #27344a;
+  --broki-border-subtle: #1f2a3d;
+  --broki-border-strong: #3a4a64;
+  --broki-text: #eef2f7;
+  --broki-text-muted: #a3b0c2;
+  --broki-text-subtle: #70809a;
+  --broki-text-inverse: #0b1220;
+  --broki-selection: color-mix(in srgb, var(--theme-primary-400) 28%, transparent);
+
+  --broki-success: #2fcf8f;
+  --broki-success-strong: #7fe6bd;
+  --broki-success-muted: rgb(47 207 143 / 0.16);
+  --broki-warning: #f5b23c;
+  --broki-warning-strong: #ffd58a;
+  --broki-warning-muted: rgb(245 178 60 / 0.16);
+  --broki-danger: #ff6b67;
+  --broki-danger-strong: #ffb3b0;
+  --broki-danger-muted: rgb(255 107 103 / 0.16);
+  --broki-info: #5aa0ff;
+  --broki-info-strong: #a9cbff;
+  --broki-info-muted: rgb(90 160 255 / 0.16);
+  --broki-neutral: #94a3b8;
+  --broki-neutral-muted: rgb(148 163 184 / 0.16);
+
+  --broki-nav-active-bg: color-mix(in srgb, var(--theme-primary-500) 18%, transparent);
+  --broki-nav-active-text: var(--theme-primary-300);
+  --broki-nav-hover-bg: #1b2639;
+}

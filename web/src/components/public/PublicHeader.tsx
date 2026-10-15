@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 const NAV = [
@@ -18,11 +19,18 @@ export function PublicHeader() {
     <header className="sticky top-0 z-50 border-b border-[#172a45] bg-[#172a45]/60 backdrop-blur-md">
       <div className="container mx-auto flex items-center justify-between px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-3">
-          <img src="/images/logo_3.png" alt="AIRLOGIX AI" className="h-10 w-auto sm:h-12" />
+          <Image
+            src="/images/logo_3.png"
+            alt="AIRLOGIX AI"
+            width={120}
+            height={48}
+            className="h-10 w-auto sm:h-12"
+            priority
+          />
           <span className="text-lg font-bold text-white sm:text-xl">AIRLOGIX AI</span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Navegación principal">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href} className="text-[#ccd6f6] hover:text-[#41ead4]">
               {item.label}
@@ -37,16 +45,19 @@ export function PublicHeader() {
         </nav>
 
         <button
+          type="button"
           className="md:hidden text-white"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Menú"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={open}
+          aria-controls="public-nav-mobile"
         >
           ☰
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-[#172a45] px-4 py-3 space-y-2">
+        <nav id="public-nav-mobile" className="md:hidden border-t border-[#172a45] px-4 py-3 space-y-2" aria-label="Navegación móvil">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -60,7 +71,7 @@ export function PublicHeader() {
           <Link href="/broki" onClick={() => setOpen(false)} className="block py-2 text-sm text-[#41ead4] font-semibold">
             BROKI
           </Link>
-        </div>
+        </nav>
       )}
     </header>
   );

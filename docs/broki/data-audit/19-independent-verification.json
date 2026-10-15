@@ -1,0 +1,145 @@
+{
+  "generated_at": "2026-08-10T15:49:58.454Z",
+  "role": "Independent Migration Verification Lead",
+  "independent_live_run": true,
+  "does_not_treat_v7_as_sufficient_proof": true,
+  "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+  "closure": "NOT_CLOSED",
+  "closure_reason": "SOURCE CURRENT = UNKNOWN. Cannot declare SOURCE=RAW=CANONICAL without live legacy Postgres compare.",
+  "done_gates": {
+    "SOURCE_CURRENT_eq_LATEST_RAW": "UNKNOWN_NO_CREDENTIAL",
+    "LATEST_RAW_eq_CANONICAL_LOGICAL": "PASS_WITH_APPROVED_DIFFS",
+    "MISSING_unexpected": 0,
+    "UNKNOWN": 1,
+    "P0_unexpected": 0,
+    "unexpected_orphans": 0,
+    "logical_duplicates": 0,
+    "test_residues": 0
+  },
+  "done_criteria_met": false,
+  "source": {
+    "credential_present": false,
+    "compare_required": [
+      "tables",
+      "columns",
+      "rows",
+      "hashes",
+      "fields",
+      "relationships"
+    ],
+    "if_changed": "controlled delta migration_id — no blind full re-import"
+  },
+  "audits_executed": {
+    "legacy_fields": "ran OK",
+    "migration_control_latest": "PASS expected=imported=9316 failed=0 obsolete=213",
+    "migration_parity_naive": "FAIL 115 P0 (pre-F11 1:1)",
+    "migration_parity_logical": "PASS_WITH_APPROVED_DIFFS",
+    "data_parity": "count MISMATCH inventario+furgonetas+gse post-merge (approved F11)",
+    "relational_integrity_rpc": {
+      "ok": true,
+      "recoverable_orphans": 0
+    },
+    "canonical_cleanup_rpc": {
+      "ok": true,
+      "assets_count": 94,
+      "orphan_tasks": 0,
+      "orphan_groups": 0,
+      "smoke_movements": 0,
+      "legacy_rows_intact": 9529,
+      "logical_asset_dups": 0,
+      "open_checkout_dups": 0,
+      "broken_tool_relations": 0
+    },
+    "alias_backfill_rpc": [
+      {
+        "check_name": "furgonetas.trabajadores",
+        "raw_with_value": 14,
+        "canonical_filled": 14,
+        "status": "OK"
+      },
+      {
+        "check_name": "gse.brk",
+        "raw_with_value": 77,
+        "canonical_filled": 77,
+        "status": "CHECK"
+      },
+      {
+        "check_name": "aviones.compania",
+        "raw_with_value": 18,
+        "canonical_filled": 18,
+        "status": "OK"
+      },
+      {
+        "check_name": "tooling.tipo",
+        "raw_with_value": 343,
+        "canonical_filled": 344,
+        "status": "OK"
+      }
+    ],
+    "canonical_duplicate_audit": {
+      "logical_dups": 0
+    },
+    "smoke_residue_audit": {
+      "ok": true
+    },
+    "runtime_contracts_pipeline_p0": {
+      "exit": 0
+    }
+  },
+  "control_plane": {
+    "snapshots": 20,
+    "snap_vs_raw_diffs": [],
+    "raw_total": 9316
+  },
+  "logical_coverage": {
+    "assets": 94,
+    "aliases": 263,
+    "alias_columns": [
+      "id",
+      "asset_id",
+      "alias",
+      "alias_type",
+      "created_at"
+    ],
+    "alias_sample": {
+      "id": "ed5df4d5-b08f-4265-9e49-806fe1b49211",
+      "asset_id": "c41124f6-acd0-48ca-897a-dd7d57779692",
+      "alias": "BRK-005",
+      "alias_type": "legacy",
+      "created_at": "2026-08-10T15:19:52.315912+00:00"
+    },
+    "inventario_raw": 94,
+    "inventario_logical_hit": 94,
+    "furgonetas_uncovered": 0,
+    "gse_uncovered": 0,
+    "tasks_null_group_approved": 20
+  },
+  "unexpected": {
+    "inventario_logical_uncovered": 0,
+    "furgonetas_uncovered": 0,
+    "gse_uncovered": 0,
+    "tasks_bad_fk": 0,
+    "orphan_incidents": 0,
+    "movements_no_tool": 0,
+    "logical_dups": 0,
+    "smoke_personnel": 0,
+    "smoke_movements": 0,
+    "snap_vs_raw": 0
+  },
+  "approved_diffs": [
+    {
+      "id": "F11_ASSET_MERGE",
+      "detail": "inventario codes map 1:1 to asset.identifier; row count inventario≠asset"
+    },
+    {
+      "id": "F11_SOURCE_GROUP_NULL",
+      "detail": "20 tasks without group_id"
+    }
+  ],
+  "next_steps": [
+    "Set LEGACY_DATABASE_URL",
+    "Diff live PG vs V7 snapshots (schema/counts/hashes)",
+    "If drift → delta migration run",
+    "Re-verify until SOURCE=RAW=CANONICAL"
+  ]
+}

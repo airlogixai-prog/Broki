@@ -2,6 +2,21 @@
   "name": "broki",
   "private": true,
   "scripts": {
+    "prepare": "husky",
+    "ci:install": "node -e \"const fs=require('fs');for(const p of['pnpm-lock.yaml','yarn.lock','web/pnpm-lock.yaml','web/yarn.lock'])if(fs.existsSync(p)){console.error('Forbidden lockfile (npm only):',p);process.exit(1)}\" && npm ci && npm ci --prefix web",
+    "precommit": "npm run ci:install && npm run lint --prefix web && npm exec --prefix web -- tsc --noEmit -p web/tsconfig.json && npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:unit": "npm test --prefix web",
+    "test:integration": "deno run supabase/functions/_shared/register-validate.ts && deno run supabase/functions/_shared/planner-parse.ts && deno run supabase/functions/_shared/roster-parse.ts && deno run supabase/functions/_shared/equipment-update.ts && deno run supabase/functions/_shared/equipment-validate.ts && deno run supabase/functions/_shared/service-auth.ts && deno run supabase/functions/_shared/uuid.ts && deno run supabase/functions/_shared/lead-validate.ts && deno run supabase/functions/_shared/legacy-import.ts && deno run supabase/functions/_shared/nitro-normalize.ts && deno run supabase/functions/_shared/planner-normalize.ts && deno run supabase/functions/_shared/legacy-field-normalize.ts && deno run -A --node-modules-dir=auto supabase/functions/_shared/user-auth.ts && deno run -A --node-modules-dir=auto supabase/functions/_shared/idempotency.ts && deno test -A supabase/functions/_tests/service-auth.test.ts && deno test -A supabase/functions/_tests/user-auth-rbac.test.ts && deno test -A supabase/functions/_tests/migration-v3.test.ts && deno test -A supabase/functions/_tests/nitro-normalize.test.ts && deno test -A supabase/functions/_tests/planner-normalize.test.ts && deno test -A supabase/functions/_tests/legacy-field-normalize.test.ts && deno run supabase/functions/_shared/relation-match.ts && deno test -A supabase/functions/_tests/relation-match.test.ts && SMOKE_OFFLINE_ONLY=1 deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
+    "test:integration:live": "deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts",
+    "test:e2e": "bash -c '[ \"$BROKI_SKIP_E2E\" = 1 ] && { echo \"skip e2e: BROKI_SKIP_E2E=1\"; exit 0; }; [ -f web/playwright.config.ts ] && [ -d web/e2e ] || { echo \"skip e2e: no playwright config\"; exit 0; }; BASE=\"${E2E_BASE_URL:-http://127.0.0.1:3000}\"; curl -sf --max-time 5 -o /dev/null \"$BASE/login\" || { echo \"skip e2e: no dev at $BASE\"; exit 0; }; cd web && E2E_BASE_URL=\"$BASE\" E2E_EMAIL=\"${E2E_EMAIL:-}\" E2E_PASSWORD=\"${E2E_PASSWORD:-}\" npx playwright test --reporter=line'",
+    "test:e2e:release": "bash scripts/e2e-release.sh",
+    "export:verify": "node scripts/verify-export-artifact.mjs",
+    "functions:verify-manifest": "node scripts/verify-function-manifest.mjs",
+    "release:verify": "bash scripts/release-verify.sh",
+    "test:live": "npm run test:integration:live",
+    "test:remote": "bash -c 'set -a; [ -f web/.env.local ] && . web/.env.local; set +a; export SUPABASE_URL=\"${SUPABASE_URL:-$NEXT_PUBLIC_SUPABASE_URL}\"; export SUPABASE_ANON_KEY=\"${SUPABASE_ANON_KEY:-$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}\"; deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts'",
+    "test:remote:cleanup": "bash -c 'set -a; [ -f web/.env.local ] && . web/.env.local; set +a; export SUPABASE_URL=\"${SUPABASE_URL:-$NEXT_PUBLIC_SUPABASE_URL}\"; export SUPABASE_ANON_KEY=\"${SUPABASE_ANON_KEY:-$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}\"; SMOKE_CLEANUP_ONLY=1 deno run -A --node-modules-dir=none supabase/functions/_tests/smoke.ts'",
     "dev": "npm run dev --prefix web",
     "build": "npm run build --prefix web",
     "start": "npm run start --prefix web",
@@ -13,9 +28,15 @@
     "db:types": "supabase gen types typescript --local > web/src/lib/supabase/database.types.ts",
     "db:push": "supabase db push",
     "functions:deploy": "supabase functions deploy --use-api",
+    "functions:deploy:dashboard": "bash scripts/deploy-dashboard-functions.sh",
+    "secrets:generate": "node scripts/generate-broki-service-secrets.mjs",
+    "secrets:check": "node scripts/check-broki-service-secrets.mjs",
+    "secrets:push:supabase": "bash scripts/push-broki-secrets.sh",
+    "secrets:rotate": "node scripts/rotate-broki-secret.mjs",
     "functions:secrets": "supabase secrets set N8N_BASE_URL=https://n8n.airlogixai.com/webhook"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "supabase": "^2.106.0"
   }
 }

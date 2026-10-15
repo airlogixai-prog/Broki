@@ -1,24 +1,14 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nGetJson, n8nPostJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { nitroStockToLegacyRow, normalizeUbicacion } from "../_shared/legacy-nitro-stock.ts";
+import { authorizeOrRespond, assertUserCanWrite, readMutationBody, respondMutation } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
-  // ponytail: remove NITRO_USE_N8N flag after PR4 validated in staging
-  const useN8n = Deno.env.get("NITRO_USE_N8N") === "true";
+  const auth = await authorizeOrRespond(req, "nitro-stock", { mutation: req.method === "POST" });
+  if (auth instanceof Response) return auth;
 
   if (req.method === "GET") {
-    if (useN8n) {
-      try {
-        const data = await n8nGetJson("envio_nitro_stock", true);
-        return jsonResponse(req, data);
-      } catch {
-        return jsonResponse(req, { error: "upstream_error" }, 502);
-      }
-    }
-
     try {
       const supabase = createServiceClient();
       const { data, error } = await supabase
@@ -30,7 +20,7 @@ serve(async (req) => {
         console.error("[nitro-stock] GET error", error);
         return jsonResponse(req, { error: "db_error" }, 500);
       }
-      return jsonResponse(req, (data ?? []).map(nitroStockToLegacyRow));
+      return jsonResponse(req, data ?? []);
     } catch (err) {
       console.error("[nitro-stock] GET unexpected error", err);
       return jsonResponse(req, { error: "internal_error" }, 500);
@@ -38,35 +28,33 @@ serve(async (req) => {
   }
 
   if (req.method === "POST") {
-    let body: Record<string, unknown>;
-    try {
-      body = await req.json();
-    } catch {
-      return jsonResponse(req, { error: "invalid_json" }, 400);
-    }
+    const denied = assertUserCanWrite(req, auth);
+    if (denied) return denied;
 
-    if (useN8n) {
-      try {
-        const data = await n8nPostJson("Inventario", body);
-        return jsonResponse(req, data);
-      } catch {
-        return jsonResponse(req, { error: "upstream_error" }, 502);
-      }
-    }
+    const parsed = await readMutationBody(req, auth, "nitro-stock");
+    if (!parsed.ok) return parsed.response;
+    const { body, bodyText } = parsed;
 
-    // Only handle stock updates here; GSE bottle pressures go via equipment-update
     const action = String(body.action ?? "");
     if (!action.includes("nitro_stock") && action !== "update_nitro_stock") {
       return jsonResponse(req, { error: "invalid action for nitro-stock; use equipment-update for GSE pressures" }, 400);
     }
 
-    const location = normalizeUbicacion(String(body.location ?? body.ubicacion ?? ""));
+    const location = String(body.location ?? body.ubicacion ?? "").toLowerCase().trim();
     if (!location) {
       return jsonResponse(req, { error: "missing location" }, 400);
     }
 
+    if (location.length > 40 || !/^[a-z0-9 ,._-]+$/.test(location)) {
+      return jsonResponse(req, { error: "invalid location" }, 400);
+    }
     const llenas = Number(body.llenas ?? body.botellas_llenas ?? 0);
     const vacias = Number(body.vacias ?? body.botellas_vacias ?? 0);
+    for (const [field, n] of [["llenas", llenas], ["vacias", vacias]] as const) {
+      if (!Number.isInteger(n) || n < 0 || n > 9999) {
+        return jsonResponse(req, { error: `${field} debe ser un entero entre 0 y 9999`, field }, 400);
+      }
+    }
 
     try {
       const supabase = createServiceClient();
@@ -97,9 +85,9 @@ serve(async (req) => {
         location,
         llenas,
         vacias,
-      });
+      }, auth);
 
-      return jsonResponse(req, nitroStockToLegacyRow(upserted));
+      return respondMutation(req, auth, "nitro-stock", bodyText, 200, upserted);
     } catch (err) {
       console.error("[nitro-stock] POST unexpected error", err);
       return jsonResponse(req, { error: "internal_error" }, 500);

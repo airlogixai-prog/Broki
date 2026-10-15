@@ -1,5 +1,13 @@
 import Link from "next/link";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Soluciones",
+  description: "Automatización, dashboards operativos, agentes de IA e integración de datos.",
+  path: "/soluciones",
+});
 
 const SOLUTIONS = [
   { title: "Automatización de Procesos", desc: "Flujos n8n que eliminan tareas repetitivas y conectan tus sistemas." },

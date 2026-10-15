@@ -1,27 +1,31 @@
 "use client";
 
-import { useState, useRef } from "react";
-import {
-  Airplane,
-  UserCircle,
-  Van,
-  Users,
-  Clock,
-  PlusCircle,
-  X,
-  FloppyDisk,
-  FilePdf,
-} from "@phosphor-icons/react";
-import { brokiApi } from "@/lib/api/broki";
+import { useState } from "react";
+import { Airplane, UserCircle, Van, Users, Clock, PlusCircle, FloppyDisk, Eye, Check } from "@phosphor-icons/react";
+import { brokiApi, type PlannerPreviewResult } from "@/lib/api/broki";
+import { PdfDropZone } from "@/components/ui/PdfDropZone";
 import { useApp } from "@/context/AppContext";
 import type { WorkGroup } from "@/lib/types/equipment";
+import { Modal } from "@/components/ui/Modal";
+import { Button } from "@/components/ui/Button";
+import { SelectField, TextField } from "@/components/ui/FormField";
+import { InlineError } from "@/components/ui/ErrorState";
+import { Badge } from "@/components/ui/StatusBadge";
+import { arrivalPayload, combineDayAndTime } from "@/lib/planner/time";
+import { localDayKey } from "@/lib/mappers/planner";
 
 interface Props {
-  onCreated: (group: WorkGroup) => void;
+  open: boolean;
+  onCreated: (group: WorkGroup, importSummary?: string) => void;
   onCancel: () => void;
 }
 
-export function PlannerCreator({ onCreated, onCancel }: Props) {
+/**
+ * New assignment (legacy "panel de creación", previously behind a client-side
+ * PIN; now protected by Supabase Auth + RBAC on the Edge Function). With a PDF
+ * the tasks are previewed (dry run) before anything is written.
+ */
+export function PlannerCreator({ open, onCreated, onCancel }: Props) {
   const { aircraft, personal, furgonetas } = useApp();
 
   const [matricula, setMatricula] = useState("");
@@ -34,8 +38,11 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   const [selectedWorkers, setSelectedWorkers] = useState<Set<string>>(new Set());
   const [workerSearch, setWorkerSearch] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<PlannerPreviewResult | null>(null);
+  const [previewing, setPreviewing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
 
   const handleAircraftChange = (reg: string) => {
     setMatricula(reg);
@@ -49,347 +56,292 @@ export function PlannerCreator({ onCreated, onCancel }: Props) {
   const toggleWorker = (name: string) => {
     setSelectedWorkers((prev) => {
       const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
       return next;
     });
   };
 
-  const filteredWorkers = personal.filter((p) =>
-    p.name.toLowerCase().includes(workerSearch.toLowerCase()),
+  const responsables = personal.filter((p) =>
+    p.qualifications.some((q) => q.includes("B1") || q.includes("B2") || q.includes("Certificador") || q.includes("CAT-A")),
   );
+  const filteredWorkers = personal.filter((p) => p.name.toLowerCase().includes(workerSearch.toLowerCase()));
+
+  const errors = {
+    matricula: !matricula.trim() ? "Indica la matrícula" : null,
+    salida: !salida ? "Indica la hora de salida" : !combineDayAndTime(localDayKey(new Date()), salida) ? "Hora no válida (HH:MM)" : null,
+    responsable: !responsable.trim() ? "Indica el responsable" : null,
+    furgo: !furgo.trim() ? "Selecciona un vehículo" : null,
+  };
+  const valid = Object.values(errors).every((e) => !e);
+  const pdfNeedsPreview = !!pdfFile && !preview;
+
+  // Groups are always created for today (legacy board = today); times are sent
+  // as ISO timestamps because the columns are timestamptz.
+  const today = localDayKey(new Date());
+  const salidaIso = combineDayAndTime(today, salida);
+  const arrival = arrivalPayload(today, llegada);
+
+  const buildForm = (dryRun: boolean) => {
+    const workers = Array.from(selectedWorkers);
+    const formData = new FormData();
+    formData.append("id_avion", matricula.toUpperCase());
+    formData.append("matricula", matricula.toUpperCase());
+    formData.append("modelo", modelo);
+    formData.append("aerolinea", aerolinea);
+    formData.append("vehiculo", furgo);
+    formData.append("responsable", responsable);
+    formData.append("hora_salida", salidaIso ?? "");
+    formData.append("hora_llegada", arrival.hora_llegada ?? "");
+    formData.append("destino", arrival.destino ?? "");
+    formData.append("fecha_modificacion", new Date().toISOString());
+    for (let i = 1; i <= 10; i++) formData.append(`trabajador_${i}`, workers[i - 1] ?? "");
+    if (dryRun) formData.append("dry_run", "1");
+    formData.append("file", pdfFile!);
+    return formData;
+  };
+
+  const handlePreview = async () => {
+    if (!pdfFile || previewing) return;
+    setPreviewing(true);
+    setError(null);
+    try {
+      setPreview(await brokiApi.plannerPreviewForm(buildForm(true)));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo leer el PDF.");
+    } finally {
+      setPreviewing(false);
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!matricula || !salida || !responsable || !furgo) return;
+    setTouched(true);
+    if (!valid || saving || pdfNeedsPreview) return;
     setSaving(true);
-
+    setError(null);
     const workers = Array.from(selectedWorkers);
-    const newGroup: WorkGroup = {
-      id: Date.now(),
-      matricula: matricula.toUpperCase(),
-      modelo,
-      aerolinea,
-      salida,
-      responsable,
-      furgo,
-      workers,
-      tasks: [],
-    };
 
     try {
       if (pdfFile) {
-        const formData = new FormData();
-        formData.append("id_avion", newGroup.matricula);
-        formData.append("matricula", newGroup.matricula);
-        formData.append("modelo", newGroup.modelo);
-        formData.append("aerolinea", newGroup.aerolinea);
-        formData.append("vehiculo", newGroup.furgo);
-        formData.append("responsable", newGroup.responsable);
-        formData.append("hora_salida", newGroup.salida);
-        formData.append("hora_llegada", llegada);
-        formData.append("fecha_modificacion", new Date().toISOString());
-        for (let i = 1; i <= 10; i++) {
-          formData.append(`trabajador_${i}`, workers[i - 1] ?? "");
-        }
-        formData.append("file", pdfFile);
-        await brokiApi.plannerActionForm(formData);
+        const result = await brokiApi.plannerActionForm(buildForm(false));
+        const summary = result.duplicate
+          ? (result.message ?? "Este PDF ya se había importado.")
+          : `PDF importado: ${result.created ?? 0} tareas creadas, ${result.duplicates ?? 0} duplicadas, ${result.ignored ?? 0} ignoradas.`;
+        onCreated(
+          { id: "", matricula: matricula.toUpperCase(), modelo, aerolinea, salida, llegada, responsable, furgo, workers, tasks: [] },
+          summary,
+        );
       } else {
-        await brokiApi.plannerAction({
+        const created = (await brokiApi.plannerAction({
           action: "create",
-          id_avion: newGroup.matricula,
-          modelo: newGroup.modelo,
-          aerolinea: newGroup.aerolinea,
-          hora_salida: newGroup.salida,
-          hora_llegada: llegada,
-          responsable: newGroup.responsable,
-          vehiculo: newGroup.furgo,
+          id_avion: matricula.toUpperCase(),
+          modelo,
+          aerolinea,
+          hora_salida: salidaIso,
+          hora_llegada: arrival.hora_llegada,
+          destino: arrival.destino,
+          responsable,
+          vehiculo: furgo,
           timestamp: new Date().toISOString(),
-          ...workers.reduce(
-            (acc, w, i) => ({ ...acc, [`trabajador_${i + 1}`]: w }),
-            {} as Record<string, string>,
-          ),
+          ...workers.reduce((acc, w, i) => ({ ...acc, [`trabajador_${i + 1}`]: w }), {} as Record<string, string>),
+        })) as import("@/lib/api/canonical").PlannerGroupRow;
+
+        onCreated({
+          id: String(created.id ?? ""),
+          matricula: String(created.id_avion ?? matricula).toUpperCase(),
+          modelo: String(created.modelo ?? modelo),
+          aerolinea: String(created.aerolinea ?? aerolinea),
+          salida: String(created.hora_salida ?? salida),
+          llegada: String(created.hora_llegada ?? llegada),
+          responsable: String(created.responsable ?? responsable),
+          furgo: String(created.vehiculo ?? furgo),
+          workers,
+          tasks: [],
         });
       }
     } catch (e) {
-      console.error("[PlannerCreator] create error", e);
+      setError(e instanceof Error ? e.message : "No se pudo crear el grupo de trabajo.");
+    } finally {
+      setSaving(false);
     }
-
-    onCreated(newGroup);
-    setSaving(false);
   };
 
-  const fieldCls =
-    "w-full text-sm border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500";
-  const labelCls =
-    "text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1";
+  const busy = saving || previewing;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
-        <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-sm">
-          <PlusCircle size={16} className="text-brand-500" /> Nueva Asignación
-        </h3>
-        <button
-          onClick={onCancel}
-          className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-        >
-          <X size={16} />
-        </button>
-      </div>
-
-      <div className="p-5 space-y-4">
-        <div>
-          <label className={labelCls}>
-            <span className="flex items-center gap-1">
-              <Airplane size={10} /> Matrícula Avión
-            </span>
-          </label>
-          {aircraft.length > 0 ? (
-            <select
-              value={matricula}
-              onChange={(e) => handleAircraftChange(e.target.value)}
-              className={fieldCls}
-            >
-              <option value="">Seleccionar avión...</option>
-              {aircraft.map((a) => (
-                <option key={a.reg} value={a.reg}>
-                  {a.reg} · {a.airline}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={matricula}
-              onChange={(e) => setMatricula(e.target.value)}
-              className={fieldCls}
-              placeholder="EC-XXX"
-            />
-          )}
-        </div>
-
-        {(modelo || aerolinea) && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={labelCls}>Modelo</label>
-              <input
-                type="text"
-                value={modelo}
-                onChange={(e) => setModelo(e.target.value)}
-                className={fieldCls}
-              />
-            </div>
-            <div>
-              <label className={labelCls}>Aerolínea</label>
-              <input
-                type="text"
-                value={aerolinea}
-                onChange={(e) => setAerolinea(e.target.value)}
-                className={fieldCls}
-              />
-            </div>
+    <Modal
+      open={open}
+      onClose={onCancel}
+      busy={busy}
+      size="lg"
+      icon={<PlusCircle size={18} />}
+      title="Nueva asignación"
+      description="Grupo de trabajo por avión. La hoja de trabajo en PDF es opcional."
+      footer={
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <InlineError message={error} />
           </div>
+          <div className="flex shrink-0 gap-2">
+            <Button variant="secondary" onClick={onCancel} disabled={busy}>
+              Cancelar
+            </Button>
+            {pdfNeedsPreview ? (
+              <Button icon={<Eye size={16} />} loading={previewing} onClick={() => void handlePreview()}>
+                Previsualizar PDF
+              </Button>
+            ) : (
+              <Button icon={<FloppyDisk size={16} />} loading={saving} onClick={() => void handleSubmit()} disabled={touched && !valid}>
+                Crear asignación
+              </Button>
+            )}
+          </div>
+        </div>
+      }
+    >
+      <form
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (pdfNeedsPreview) void handlePreview();
+          else void handleSubmit();
+        }}
+        noValidate
+      >
+        {aircraft.length > 0 ? (
+          <SelectField label={<span className="flex items-center gap-1"><Airplane size={11} aria-hidden /> Matrícula avión</span>} value={matricula} onChange={(e) => handleAircraftChange(e.target.value)} required error={touched ? errors.matricula : null}>
+            <option value="">Seleccionar avión…</option>
+            {aircraft.map((a) => (
+              <option key={a.reg} value={a.reg}>
+                {a.reg} · {a.airline}
+              </option>
+            ))}
+          </SelectField>
+        ) : (
+          <TextField label="Matrícula avión" value={matricula} onChange={(e) => setMatricula(e.target.value.toUpperCase())} placeholder="EC-XXX" required error={touched ? errors.matricula : null} />
         )}
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className={labelCls}>
-              <span className="flex items-center gap-1">
-                <Clock size={10} /> Hora Salida
-              </span>
-            </label>
-            <input
-              type="time"
-              value={salida}
-              onChange={(e) => setSalida(e.target.value)}
-              className={fieldCls}
-            />
-          </div>
-          <div>
-            <label className={labelCls}>
-              <span className="flex items-center gap-1">
-                <Clock size={10} /> Hora Llegada
-              </span>
-            </label>
-            <input
-              type="time"
-              value={llegada}
-              onChange={(e) => setLlegada(e.target.value)}
-              className={fieldCls}
-            />
-          </div>
+          <TextField label="Modelo" value={modelo} onChange={(e) => setModelo(e.target.value)} placeholder="Airbus A330" />
+          <TextField label="Aerolínea" value={aerolinea} onChange={(e) => setAerolinea(e.target.value)} />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
+          <TextField label={<span className="flex items-center gap-1"><Clock size={11} aria-hidden /> Hora salida</span>} type="time" value={salida} onChange={(e) => setSalida(e.target.value)} required error={touched ? errors.salida : null} />
           <div>
-            <label className={labelCls}>
-              <span className="flex items-center gap-1">
-                <UserCircle size={10} /> Responsable
-              </span>
-            </label>
-            {personal.length > 0 ? (
-              <select
-                value={responsable}
-                onChange={(e) => setResponsable(e.target.value)}
-                className={fieldCls}
-              >
-                <option value="">Seleccionar...</option>
-                {personal
-                  .filter((p) =>
-                    p.qualifications.some(
-                      (q) =>
-                        q.includes("B1") ||
-                        q.includes("B2") ||
-                        q.includes("Certificador") ||
-                        q.includes("CAT-A"),
-                    ),
-                  )
-                  .map((p) => (
-                    <option key={p.id} value={p.name}>
-                      {p.name}
-                    </option>
-                  ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                value={responsable}
-                onChange={(e) => setResponsable(e.target.value)}
-                className={fieldCls}
-                placeholder="Nombre responsable"
-              />
-            )}
+            <TextField
+              label={<span className="flex items-center gap-1"><Clock size={11} aria-hidden /> Hora llegada</span>}
+              type={llegada === "BASE" || llegada === "PRE" ? "text" : "time"}
+              value={llegada}
+              onChange={(e) => setLlegada(e.target.value)}
+              hint="o marca En base / Pre-vuelo"
+            />
+            <div className="mt-1 flex gap-1.5">
+              {(["BASE", "PRE"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setLlegada(llegada === v ? "" : v)}
+                  aria-pressed={llegada === v}
+                  className={`min-h-8 rounded-md border px-2.5 text-xs font-bold ${llegada === v ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300" : "border-border bg-surface text-fg-muted hover:bg-subtle"}`}
+                >
+                  {v === "BASE" ? "En base" : "Pre-vuelo"}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
-            <label className={labelCls}>
-              <span className="flex items-center gap-1">
-                <Van size={10} /> Vehículo
-              </span>
-            </label>
-            <select
-              value={furgo}
-              onChange={(e) => setFurgo(e.target.value)}
-              className={fieldCls}
-            >
-              <option value="">Seleccionar vehículo...</option>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {responsables.length > 0 ? (
+            <SelectField label={<span className="flex items-center gap-1"><UserCircle size={11} aria-hidden /> Responsable</span>} value={responsable} onChange={(e) => setResponsable(e.target.value)} required error={touched ? errors.responsable : null} hint="Personal con B1/B2/CAT-A o certificador">
+              <option value="">Seleccionar…</option>
+              {responsables.map((p) => (
+                <option key={p.id} value={p.name}>
+                  {p.name}
+                </option>
+              ))}
+            </SelectField>
+          ) : (
+            <TextField label="Responsable" value={responsable} onChange={(e) => setResponsable(e.target.value)} placeholder="Nombre responsable" required error={touched ? errors.responsable : null} />
+          )}
+          {furgonetas.length > 0 ? (
+            <SelectField label={<span className="flex items-center gap-1"><Van size={11} aria-hidden /> Vehículo</span>} value={furgo} onChange={(e) => setFurgo(e.target.value)} required error={touched ? errors.furgo : null}>
+              <option value="">Seleccionar vehículo…</option>
               {furgonetas.map((f) => (
                 <option key={f.id} value={f.id}>
                   {f.id} · {f.model}
                 </option>
               ))}
-            </select>
-          </div>
+            </SelectField>
+          ) : (
+            <TextField label="Vehículo" value={furgo} onChange={(e) => setFurgo(e.target.value)} placeholder="FURGO-01" required error={touched ? errors.furgo : null} />
+          )}
         </div>
 
-        <div>
-          <label className={labelCls}>
-            <span className="flex items-center gap-1">
-              <Users size={10} /> Equipo ({selectedWorkers.size} sel.)
-            </span>
-          </label>
-          <input
-            type="text"
-            value={workerSearch}
-            onChange={(e) => setWorkerSearch(e.target.value)}
-            className={`${fieldCls} mb-2`}
-            placeholder="Buscar trabajador..."
-          />
-          <div className="max-h-40 overflow-y-auto space-y-1 border border-slate-200 dark:border-slate-700 rounded-lg p-2">
-            {filteredWorkers.length === 0 && (
-              <p className="text-xs text-slate-400 text-center py-2 italic">
-                Sin personal cargado.
-              </p>
-            )}
+        <fieldset>
+          <legend className="mb-1 flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">
+            <Users size={11} aria-hidden /> Equipo ({selectedWorkers.size} seleccionados)
+          </legend>
+          <TextField label="Buscar trabajador" className="mb-2 [&_label]:sr-only" value={workerSearch} onChange={(e) => setWorkerSearch(e.target.value)} placeholder="Buscar trabajador…" />
+          <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-border p-2">
+            {filteredWorkers.length === 0 && <p className="py-2 text-center text-xs text-fg-subtle">Sin personal cargado.</p>}
             {filteredWorkers.map((p) => {
               const selected = selectedWorkers.has(p.name);
               return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => toggleWorker(p.name)}
-                  className={`w-full text-left flex items-start gap-2 px-2 py-2 rounded-lg text-xs transition-colors ${
-                    selected
-                      ? "bg-brand-50 dark:bg-brand-900/20 border border-brand-300 dark:border-brand-700"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent"
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                      selected
-                        ? "bg-brand-500 border-brand-500"
-                        : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-                    }`}
-                  >
-                    {selected && <Check size={10} className="text-white" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-800 dark:text-slate-200 truncate">
-                      {p.name}
-                    </p>
-                  </div>
-                </button>
+                <label key={p.id} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${selected ? "border-brand-300 bg-brand-50 dark:border-brand-700 dark:bg-brand-900/20" : "border-transparent hover:bg-subtle"}`}>
+                  <input type="checkbox" checked={selected} onChange={() => toggleWorker(p.name)} className="h-4 w-4 accent-brand-600" />
+                  <span className="truncate font-medium text-fg">{p.name}</span>
+                  {p.qualifications.length > 0 && <span className="ml-auto truncate text-[11px] text-fg-subtle">{p.qualifications.slice(0, 2).join(", ")}</span>}
+                </label>
               );
             })}
           </div>
-        </div>
+        </fieldset>
 
         <div>
-          <label className={labelCls}>Hoja de Trabajo (PDF)</label>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="application/pdf"
-            className="hidden"
-            onChange={(e) => setPdfFile(e.target.files?.[0] ?? null)}
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">Hoja de trabajo (PDF, opcional)</p>
+          <PdfDropZone
+            file={pdfFile}
+            onFile={(f) => {
+              setPdfFile(f);
+              setPreview(null);
+            }}
+            disabled={busy}
+            label="Arrastra la hoja de trabajo (PDF)"
           />
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 text-center hover:border-brand-400 transition-colors"
-          >
-            <FilePdf size={32} className="mx-auto text-slate-400 mb-2" />
-            <p className="text-xs text-slate-500 font-medium">
-              {pdfFile ? pdfFile.name : "Arrastra la Hoja de Trabajo (PDF)"}
-            </p>
-            <span className="text-[10px] text-slate-400">o haz clic para subir</span>
-          </button>
         </div>
-      </div>
 
-      <div className="flex gap-2 justify-end px-5 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-        >
-          Cancelar
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={saving || !matricula || !salida || !responsable || !furgo}
-          className="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 disabled:opacity-50 shadow-sm flex items-center gap-2 transition-colors"
-        >
-          {saving ? (
-            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <FloppyDisk size={16} />
-          )}
-          Crear Asignación
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function Check({ size, className }: { size: number; className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 256 256"
-      className={className}
-      fill="currentColor"
-    >
-      <path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z" />
-    </svg>
+        {preview && (
+          <div className="rounded-xl border border-border bg-muted p-3" role="region" aria-label="Tareas detectadas en el PDF">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="flex items-center gap-1.5 text-xs font-bold text-fg">
+                <Check size={14} className="text-success" aria-hidden /> {preview.tasks.length} tarea{preview.tasks.length !== 1 ? "s" : ""} detectada{preview.tasks.length !== 1 ? "s" : ""}
+                {preview.matricula && <span className="font-medium text-fg-muted">· {preview.matricula}</span>}
+                {preview.fecha && <span className="font-medium text-fg-muted">· {preview.fecha}</span>}
+              </p>
+              <span className="text-[11px] text-fg-subtle">Origen: {preview.source}</span>
+            </div>
+            {preview.already_imported && <p className="mb-2 text-xs font-semibold text-warning-strong">Este PDF ya se importó antes: no se crearán tareas duplicadas.</p>}
+            {preview.tasks.length === 0 ? (
+              <p className="text-xs text-danger-strong">No se encontraron tareas. Revisa que el PDF tenga capa de texto.</p>
+            ) : (
+              <ul className="max-h-48 space-y-1 overflow-y-auto">
+                {preview.tasks.map((t, i) => (
+                  <li key={`${t.codigo}-${i}`} className="flex items-start gap-2 rounded-md bg-surface p-2 text-xs">
+                    <span className="shrink-0 rounded bg-subtle px-1.5 py-0.5 font-mono text-[11px] text-fg-muted">{t.codigo || "—"}</span>
+                    <span className="min-w-0 flex-1 text-fg">{t.descripcion}</span>
+                    <Badge tone={t.prioridad?.includes("NO_GO") ? "danger" : t.prioridad?.includes("CRITICAL") ? "warning" : "neutral"} size="sm">
+                      {t.prioridad ?? "NORMAL"}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+        <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+      </form>
+    </Modal>
   );
 }

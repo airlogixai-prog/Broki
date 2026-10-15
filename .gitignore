@@ -1,15 +1,91 @@
-.DS_Store
-*.pem
+# --- Secrets ---
+.secrets/
+*.secret.env
+broki-service-secrets.env
+.env
+.env.*
+!.env.example
+!web/.env.example
 
-# Windows metadata (WSL / descargas)
+# --- Local ops (no commitear secretos) ---
+# scripts/ versionados; .secrets/ no
+
+# --- Dependencies ---
+node_modules/
+web/node_modules/
+pnpm-lock.yaml
+yarn.lock
+web/pnpm-lock.yaml
+web/yarn.lock
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# --- Next / TypeScript ---
+web/.next/
+web/out/
+web/tsconfig.tsbuildinfo
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# --- Tests ---
+web/test-results/
+web/playwright-report/
+test-results/
+playwright-report/
+coverage/
+**/coverage/
+**/blob-report/
+**/.playwright/
+# Unit + e2e versionados (evidencia de paridad). Solo artefactos de reportes ignorados.
+
+# --- Supabase local ---
+supabase/.branches/
+supabase/.temp/
+
+# --- Exports locales ---
+*.zip
+Broki-export-*.zip
+
+# --- Tooling personal (Cursor / skills) ---
+.agents/
+skills-lock.json
+
+# --- Legacy static site (migrado a web/) ---
+# Baseline funcional/visual versionado; resto del export Hostinger fuera de git.
+public_html/**
+!public_html/broki.html
+!public_html/broki2.html
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+Desktop.ini
 *:Zone.Identifier
 
-# dependencies (Supabase CLI en la raíz)
-/node_modules
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Certs ---
+*.pem

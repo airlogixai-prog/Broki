@@ -1,90 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Cloud,
-  Thermometer,
-  Wind,
-  Gauge,
-} from "@phosphor-icons/react";
-import { brokiApi } from "@/lib/api/broki";
-import type { WeatherData } from "@/lib/alerts/buildCriticalAlerts";
+import { Cloud, Thermometer, Wind, Gauge, Snowflake } from "@phosphor-icons/react";
+import { useLemdWeather } from "@/lib/hooks/useLemdWeather";
+import { BlockSkeleton } from "@/components/ui/BlockSkeleton";
 
-export function LemdWeatherWidget() {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(true);
+/** LEMD current conditions (Open-Meteo). Failure is shown, never hidden. */
+export function LemdWeatherWidget({ className = "" }: { className?: string }) {
+  const { weather, loading } = useLemdWeather();
 
-  useEffect(() => {
-    let active = true;
-    brokiApi
-      .fetchWeather()
-      .then((data) => {
-        if (active) setWeather(data as WeatherData);
-      })
-      .catch(() => {
-        if (active) {
-          setWeather({
-            temp: "--",
-            qnh: "----",
-            wind: { dir: 0, speed: 0 },
-            raw: "WEATHER UNAVAILABLE",
-          });
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 animate-pulse h-24" />
-    );
-  }
-
+  if (loading) return <BlockSkeleton className={`h-14 ${className}`} label="Cargando meteorología" />;
   if (!weather) return null;
 
-  return (
-    <div className="bg-gradient-to-r from-sky-50 to-blue-50 dark:from-slate-800 dark:to-slate-800/80 rounded-xl border border-sky-200 dark:border-slate-700 p-4 shadow-sm">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center">
-            <Cloud size={22} className="text-sky-600 dark:text-sky-400" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
-              Meteorología LEMD
-            </p>
-            <p className="text-sm font-mono text-slate-700 dark:text-slate-300">
-              {weather.raw}
-            </p>
-          </div>
-        </div>
+  const unavailable = typeof weather.temp !== "number";
+  const freezing = typeof weather.temp === "number" && weather.temp <= 0;
 
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Thermometer size={18} className="text-orange-500" />
-            <span className="text-lg font-bold text-slate-900 dark:text-white">
-              {weather.temp}°C
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Gauge size={18} className="text-emerald-500" />
-            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-              QNH {weather.qnh}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Wind size={18} className="text-blue-500" />
-            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-              {weather.wind.dir}° / {weather.wind.speed} kt
-            </span>
-          </div>
+  return (
+    <div
+      className={`flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border px-4 py-2.5 ${
+        freezing ? "border-info/40 bg-info-muted" : "border-border bg-surface"
+      } ${className}`}
+      role="group"
+      aria-label="Meteorología LEMD"
+    >
+      <div className="flex items-center gap-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-info-muted text-info-strong" aria-hidden>
+          {freezing ? <Snowflake size={18} /> : <Cloud size={18} />}
+        </span>
+        <div className="leading-tight">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">LEMD</p>
+          <p className="font-mono text-xs text-fg-muted">{unavailable ? "Meteo no disponible" : weather.raw}</p>
         </div>
       </div>
+      {!unavailable && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+          <span className="tabular flex items-center gap-1.5 font-bold text-fg">
+            <Thermometer size={16} className="text-warning" aria-hidden /> {weather.temp} °C
+          </span>
+          <span className="tabular flex items-center gap-1.5 font-semibold text-fg-muted">
+            <Gauge size={16} className="text-success" aria-hidden /> QNH {weather.qnh}
+          </span>
+          <span className="tabular flex items-center gap-1.5 font-semibold text-fg-muted">
+            <Wind size={16} className="text-info" aria-hidden /> {weather.wind.dir}° / {weather.wind.speed} kt
+          </span>
+          {freezing && <span className="text-xs font-bold text-info-strong">Riesgo de congelación</span>}
+        </div>
+      )}
     </div>
   );
 }

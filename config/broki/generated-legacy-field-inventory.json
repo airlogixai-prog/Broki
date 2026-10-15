@@ -1,0 +1,3832 @@
+{
+  "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+  "generated_at": "2026-08-10T15:44:52.420Z",
+  "unique_attributes": 130,
+  "sources": 20,
+  "by_source": {
+    "n8n_datatable|n8n|nitro_stock": {
+      "row_count": 2,
+      "expected": 2,
+      "field_count": 6,
+      "fields": {
+        "id": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "number": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            1,
+            15
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "createdAt": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "string": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "2025-10-11T23:00:43.462Z",
+            "2026-01-04T16:45:04.583Z"
+          ],
+          "min_len": 24,
+          "max_len": 24
+        },
+        "ubicacion": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "string": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "t4S",
+            "t1,2,3"
+          ],
+          "min_len": 3,
+          "max_len": 6
+        },
+        "updatedAt": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "string": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "2026-08-04T18:18:28.089Z",
+            "2026-08-04T18:18:28.556Z"
+          ],
+          "min_len": 24,
+          "max_len": 24
+        },
+        "cantida_de_botellas_llenas": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "string": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "redacted:4b227777d4dd",
+            "redacted:e7f6c011776e"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        },
+        "cantidad_de_botellas_vacias": {
+          "present": 2,
+          "with_value": 2,
+          "nullish": 0,
+          "types": {
+            "string": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "redacted:4b227777d4dd",
+            "redacted:ef2d127de37b"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|aviones": {
+      "row_count": 18,
+      "expected": 18,
+      "field_count": 7,
+      "fields": {
+        "id": {
+          "present": 18,
+          "with_value": 18,
+          "nullish": 0,
+          "types": {
+            "number": 18
+          },
+          "distinct_approx": 18,
+          "examples_redacted": [
+            4,
+            14,
+            2
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "msn": {
+          "present": 18,
+          "with_value": 0,
+          "nullish": 18,
+          "types": {
+            "null": 18
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "motor": {
+          "present": 18,
+          "with_value": 0,
+          "nullish": 18,
+          "types": {
+            "null": 18
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "modelo": {
+          "present": 18,
+          "with_value": 18,
+          "nullish": 0,
+          "types": {
+            "string": 18
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "A350",
+            "B737",
+            "A330"
+          ],
+          "min_len": 4,
+          "max_len": 4
+        },
+        "compania": {
+          "present": 18,
+          "with_value": 18,
+          "nullish": 0,
+          "types": {
+            "string": 18
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "Wfly",
+            "AlbaStar",
+            "Wfly"
+          ],
+          "min_len": 4,
+          "max_len": 8
+        },
+        "matricula": {
+          "present": 18,
+          "with_value": 18,
+          "nullish": 0,
+          "types": {
+            "string": 18
+          },
+          "distinct_approx": 18,
+          "examples_redacted": [
+            "EC-NOI",
+            "EC-MTV",
+            "EC-OHV"
+          ],
+          "min_len": 6,
+          "max_len": 6
+        },
+        "fecha_modificacion": {
+          "present": 18,
+          "with_value": 18,
+          "nullish": 0,
+          "types": {
+            "string": 18
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "2025-12-28T21:15:10.644224",
+            "2025-12-28T21:15:10.644224",
+            "2025-12-28T21:15:10.644224"
+          ],
+          "min_len": 26,
+          "max_len": 26
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|furgonetas": {
+      "row_count": 17,
+      "expected": 17,
+      "field_count": 12,
+      "fields": {
+        "id": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "number": 17
+          },
+          "distinct_approx": 17,
+          "examples_redacted": [
+            3,
+            6,
+            8
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "avion": {
+          "present": 17,
+          "with_value": 6,
+          "nullish": 11,
+          "types": {
+            "string": 9,
+            "null": 8
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "LZD",
+            "EC-LZD",
+            "EC-MII"
+          ],
+          "min_len": 0,
+          "max_len": 6
+        },
+        "notas": {
+          "present": 17,
+          "with_value": 1,
+          "nullish": 16,
+          "types": {
+            "null": 13,
+            "string": 4
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "rueda pinchada"
+          ],
+          "min_len": 0,
+          "max_len": 14
+        },
+        "estado": {
+          "present": 17,
+          "with_value": 14,
+          "nullish": 3,
+          "types": {
+            "string": 14,
+            "null": 3
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "OCUPADO",
+            "US",
+            "DISPONIBLE"
+          ],
+          "min_len": 2,
+          "max_len": 10
+        },
+        "plazas": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "6",
+            "6",
+            "5"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        },
+        "familia": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "FURGONETAS",
+            "FURGONETAS",
+            "FURGONETAS"
+          ],
+          "min_len": 10,
+          "max_len": 10
+        },
+        "parking": {
+          "present": 17,
+          "with_value": 7,
+          "nullish": 10,
+          "types": {
+            "null": 10,
+            "string": 7
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "almacén",
+            "10",
+            "112"
+          ],
+          "min_len": 2,
+          "max_len": 7
+        },
+        "vehiculo": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 10,
+          "examples_redacted": [
+            "FORD CUSTOM",
+            "RENAULT TRAFIC",
+            "OPEL NUEVO COMBO"
+          ],
+          "min_len": 9,
+          "max_len": 20
+        },
+        "matricula": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 17,
+          "examples_redacted": [
+            "3919 MLM",
+            "2588 NFH",
+            "4857 MYP"
+          ],
+          "min_len": 8,
+          "max_len": 8
+        },
+        "combustible": {
+          "present": 17,
+          "with_value": 5,
+          "nullish": 12,
+          "types": {
+            "number": 5,
+            "null": 12
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            100,
+            100,
+            100
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "trabajadores": {
+          "present": 17,
+          "with_value": 14,
+          "nullish": 3,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 13,
+          "examples_redacted": [
+            "Alejandro Núñez Martínez ",
+            "Marcos Burruezo Escobar",
+            "Jesús Ayala Serrano "
+          ],
+          "min_len": 0,
+          "max_len": 31
+        },
+        "identificador": {
+          "present": 17,
+          "with_value": 17,
+          "nullish": 0,
+          "types": {
+            "string": 17
+          },
+          "distinct_approx": 17,
+          "examples_redacted": [
+            "G2-6",
+            "G7-6",
+            "P3-5"
+          ],
+          "min_len": 4,
+          "max_len": 5
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|grupo_trabajo": {
+      "row_count": 30,
+      "expected": 30,
+      "field_count": 20,
+      "fields": {
+        "id": {
+          "present": 30,
+          "with_value": 30,
+          "nullish": 0,
+          "types": {
+            "number": 30
+          },
+          "distinct_approx": 30,
+          "examples_redacted": [
+            23,
+            18,
+            21
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "modelo": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "Airbus A350",
+            "Airbus A330",
+            "AIRBUS A350-900"
+          ],
+          "min_len": 4,
+          "max_len": 15
+        },
+        "destino": {
+          "present": 30,
+          "with_value": 0,
+          "nullish": 30,
+          "types": {
+            "null": 30
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_avion": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "EC-NTB",
+            "EC-NOI",
+            "EC-NTB"
+          ],
+          "min_len": 6,
+          "max_len": 6
+        },
+        "vehiculo": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "G7-6",
+            "L2-3",
+            "G5-6"
+          ],
+          "min_len": 4,
+          "max_len": 4
+        },
+        "aerolinea": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "Wfly",
+            "Wfly",
+            "WORLD2FLY"
+          ],
+          "min_len": 3,
+          "max_len": 9
+        },
+        "hora_salida": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 19,
+          "examples_redacted": [
+            "2026-01-02T22:29:00",
+            "2026-01-02T20:06:00",
+            "2025-12-31T18:01:00"
+          ],
+          "min_len": 19,
+          "max_len": 19
+        },
+        "responsable": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 10,
+          "examples_redacted": [
+            "Joaquin Leocadio",
+            "Alejandro Nunez Martinez",
+            "DAVID RONALDO SILVA TORRES"
+          ],
+          "min_len": 16,
+          "max_len": 26
+        },
+        "hora_llegada": {
+          "present": 30,
+          "with_value": 5,
+          "nullish": 25,
+          "types": {
+            "null": 25,
+            "string": 5
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "2026-01-02T23:30:00",
+            "2026-01-05T12:26:00",
+            "2026-01-05T02:06:00"
+          ],
+          "min_len": 19,
+          "max_len": 19
+        },
+        "trabajador_1": {
+          "present": 30,
+          "with_value": 19,
+          "nullish": 11,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Adrian Plaza Romero",
+            "Adrian Plaza Romero",
+            "Adrian Plaza Romero"
+          ],
+          "min_len": 19,
+          "max_len": 20
+        },
+        "trabajador_2": {
+          "present": 30,
+          "with_value": 17,
+          "nullish": 13,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alejandro Gordillo Sanchez",
+            "Alejandro Gordillo Sanchez",
+            "Alejandro Gordillo Sanchez"
+          ],
+          "min_len": 0,
+          "max_len": 26
+        },
+        "trabajador_3": {
+          "present": 30,
+          "with_value": 14,
+          "nullish": 16,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alejandro Morales Soriano",
+            "Alejandro Morales Soriano",
+            "Alejandro Morales Soriano"
+          ],
+          "min_len": 0,
+          "max_len": 25
+        },
+        "trabajador_4": {
+          "present": 30,
+          "with_value": 6,
+          "nullish": 24,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alejandro Nunez Martinez",
+            "Alejandro Nunez Martinez",
+            "Alejandro Nunez Martinez"
+          ],
+          "min_len": 0,
+          "max_len": 24
+        },
+        "trabajador_5": {
+          "present": 30,
+          "with_value": 6,
+          "nullish": 24,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alfredo Pineiro Guillen",
+            "Alfredo Pineiro Guillen",
+            "Alfredo Pineiro Guillen"
+          ],
+          "min_len": 0,
+          "max_len": 27
+        },
+        "trabajador_6": {
+          "present": 30,
+          "with_value": 4,
+          "nullish": 26,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "Alvaro Javier Cordova Guevara",
+            "Alvaro Javier Cordova Guevara",
+            "Alvaro Javier Cordova Guevara"
+          ],
+          "min_len": 0,
+          "max_len": 29
+        },
+        "trabajador_7": {
+          "present": 30,
+          "with_value": 4,
+          "nullish": 26,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "Carlos Brazuelo Nunez",
+            "Carlos Brazuelo Nunez",
+            "Carlos Brazuelo Nunez"
+          ],
+          "min_len": 0,
+          "max_len": 21
+        },
+        "trabajador_8": {
+          "present": 30,
+          "with_value": 1,
+          "nullish": 29,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "Carlos Casco"
+          ],
+          "min_len": 0,
+          "max_len": 12
+        },
+        "trabajador_9": {
+          "present": 30,
+          "with_value": 0,
+          "nullish": 30,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": 0,
+          "max_len": 0
+        },
+        "trabajador_10": {
+          "present": 30,
+          "with_value": 0,
+          "nullish": 30,
+          "types": {
+            "null": 11,
+            "string": 19
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": 0,
+          "max_len": 0
+        },
+        "fecha_modificacion": {
+          "present": 30,
+          "with_value": 11,
+          "nullish": 19,
+          "types": {
+            "string": 11,
+            "null": 19
+          },
+          "distinct_approx": 11,
+          "examples_redacted": [
+            "2026-01-04T18:05:59.36",
+            "2026-01-02T17:24:49.469",
+            "2026-01-02T16:02:39.805"
+          ],
+          "min_len": 22,
+          "max_len": 23
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|gse": {
+      "row_count": 77,
+      "expected": 77,
+      "field_count": 11,
+      "fields": {
+        "id": {
+          "present": 77,
+          "with_value": 77,
+          "nullish": 0,
+          "types": {
+            "number": 77
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            77,
+            44,
+            78
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "brk": {
+          "present": 77,
+          "with_value": 77,
+          "nullish": 0,
+          "types": {
+            "string": 77
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "TABLET-1",
+            "BRK-402",
+            "TABLET-9"
+          ],
+          "min_len": 7,
+          "max_len": 12
+        },
+        "avion": {
+          "present": 77,
+          "with_value": 7,
+          "nullish": 70,
+          "types": {
+            "null": 68,
+            "string": 9
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "EC-NGY",
+            "EC-MII",
+            "EC-CNBO"
+          ],
+          "min_len": 0,
+          "max_len": 7
+        },
+        "notas": {
+          "present": 77,
+          "with_value": 9,
+          "nullish": 68,
+          "types": {
+            "null": 68,
+            "string": 9
+          },
+          "distinct_approx": 9,
+          "examples_redacted": [
+            "manómetro de baja presión inoperativo en carro de nitrógeno",
+            "Inserviciable, llevar lunes a Serpista para reparar",
+            "inoperativo, requiere taller"
+          ],
+          "min_len": 15,
+          "max_len": 61
+        },
+        "estado": {
+          "present": 77,
+          "with_value": 70,
+          "nullish": 7,
+          "types": {
+            "string": 70,
+            "null": 7
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "DISPONIBLE",
+            "Disponible",
+            "Disponible"
+          ],
+          "min_len": 6,
+          "max_len": 11
+        },
+        "familia": {
+          "present": 77,
+          "with_value": 56,
+          "nullish": 21,
+          "types": {
+            "string": 77
+          },
+          "distinct_approx": 11,
+          "examples_redacted": [
+            "TABLET",
+            "TABLET",
+            "GPU/GRUPO"
+          ],
+          "min_len": 0,
+          "max_len": 19
+        },
+        "parking": {
+          "present": 77,
+          "with_value": 4,
+          "nullish": 73,
+          "types": {
+            "null": 72,
+            "string": 5
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "GSE",
+            "60",
+            "ÁREA_T4S"
+          ],
+          "min_len": 0,
+          "max_len": 8
+        },
+        "combustible": {
+          "present": 77,
+          "with_value": 2,
+          "nullish": 75,
+          "types": {
+            "null": 75,
+            "number": 2
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            100,
+            60
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "descripcion": {
+          "present": 77,
+          "with_value": 77,
+          "nullish": 0,
+          "types": {
+            "string": 77
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "TABLET 1",
+            "ESCALERA FURGONETA",
+            "TABLET 9"
+          ],
+          "min_len": 5,
+          "max_len": 51
+        },
+        "trabajadores": {
+          "present": 77,
+          "with_value": 28,
+          "nullish": 49,
+          "types": {
+            "string": 34,
+            "null": 43
+          },
+          "distinct_approx": 12,
+          "examples_redacted": [
+            "Cristian Masa Fernández",
+            "steven villavicencio",
+            "Raul Garcia Muñoz"
+          ],
+          "min_len": 0,
+          "max_len": 28
+        },
+        "ubicacion_habitual": {
+          "present": 77,
+          "with_value": 77,
+          "nullish": 0,
+          "types": {
+            "string": 77
+          },
+          "distinct_approx": 24,
+          "examples_redacted": [
+            "OFICINA",
+            "5358LRD",
+            "OFICINA"
+          ],
+          "min_len": 3,
+          "max_len": 27
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|historial": {
+      "row_count": 0,
+      "expected": 0,
+      "field_count": 0,
+      "fields": {},
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|incidencias": {
+      "row_count": 34,
+      "expected": 34,
+      "field_count": 7,
+      "fields": {
+        "id": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "number": 34
+          },
+          "distinct_approx": 34,
+          "examples_redacted": [
+            109,
+            3,
+            98
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "estado": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "number": 34
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            1,
+            0,
+            1
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_objeto": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "string": 34
+          },
+          "distinct_approx": 20,
+          "examples_redacted": [
+            "G7-3",
+            "G7-3",
+            "BRK-458"
+          ],
+          "min_len": 4,
+          "max_len": 7
+        },
+        "trabajador": {
+          "present": 34,
+          "with_value": 24,
+          "nullish": 10,
+          "types": {
+            "string": 24,
+            "null": 10
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            ",n",
+            "BAYTON",
+            "BAYTON"
+          ],
+          "min_len": 2,
+          "max_len": 7
+        },
+        "descripcion": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "string": 34
+          },
+          "distinct_approx": 31,
+          "examples_redacted": [
+            "khvhvjhv",
+            "INC-262070",
+            " EN TALLERES ESTABAN "
+          ],
+          "min_len": 3,
+          "max_len": 148
+        },
+        "id_incidencia": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "string": 34
+          },
+          "distinct_approx": 25,
+          "examples_redacted": [
+            "i-G7-3-1",
+            "INC-262070",
+            "i-BRK-458-1"
+          ],
+          "min_len": 8,
+          "max_len": 11
+        },
+        "fecha_modificacion": {
+          "present": 34,
+          "with_value": 34,
+          "nullish": 0,
+          "types": {
+            "string": 34
+          },
+          "distinct_approx": 34,
+          "examples_redacted": [
+            "2026-06-15T16:25:28.085",
+            "2025-12-28T22:28:14.128678",
+            "2026-04-23T08:02:59.966"
+          ],
+          "min_len": 22,
+          "max_len": 26
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|inventario": {
+      "row_count": 94,
+      "expected": 94,
+      "field_count": 18,
+      "fields": {
+        "id": {
+          "present": 94,
+          "with_value": 94,
+          "nullish": 0,
+          "types": {
+            "number": 94
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            82,
+            94,
+            9
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "avion": {
+          "present": 94,
+          "with_value": 8,
+          "nullish": 86,
+          "types": {
+            "null": 86,
+            "string": 8
+          },
+          "distinct_approx": 7,
+          "examples_redacted": [
+            "Sichuan",
+            "EC-KCP",
+            "T1"
+          ],
+          "min_len": 2,
+          "max_len": 7
+        },
+        "notas": {
+          "present": 94,
+          "with_value": 0,
+          "nullish": 94,
+          "types": {
+            "null": 94
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "adblue": {
+          "present": 94,
+          "with_value": 52,
+          "nullish": 42,
+          "types": {
+            "null": 42,
+            "string": 52
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "¬",
+            "¬",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 2
+        },
+        "estado": {
+          "present": 94,
+          "with_value": 94,
+          "nullish": 0,
+          "types": {
+            "string": 94
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "Disponible",
+            "Disponible",
+            "Disponible"
+          ],
+          "min_len": 10,
+          "max_len": 10
+        },
+        "plazas": {
+          "present": 94,
+          "with_value": 73,
+          "nullish": 21,
+          "types": {
+            "null": 21,
+            "string": 73
+          },
+          "distinct_approx": 5,
+          "examples_redacted": [
+            "¬",
+            "6",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        },
+        "familia": {
+          "present": 94,
+          "with_value": 73,
+          "nullish": 21,
+          "types": {
+            "string": 94
+          },
+          "distinct_approx": 12,
+          "examples_redacted": [
+            "TARJETA COMBUSTIBLE",
+            "FURGONETAS",
+            "GENERADORES ELEC."
+          ],
+          "min_len": 0,
+          "max_len": 19
+        },
+        "parking": {
+          "present": 94,
+          "with_value": 10,
+          "nullish": 84,
+          "types": {
+            "null": 84,
+            "string": 10
+          },
+          "distinct_approx": 7,
+          "examples_redacted": [
+            "74",
+            "BASE",
+            "61"
+          ],
+          "min_len": 2,
+          "max_len": 7
+        },
+        "matricula": {
+          "present": 94,
+          "with_value": 71,
+          "nullish": 23,
+          "types": {
+            "null": 23,
+            "string": 71
+          },
+          "distinct_approx": 18,
+          "examples_redacted": [
+            "¬",
+            "6488 NGP",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 8
+        },
+        "trabajador": {
+          "present": 94,
+          "with_value": 0,
+          "nullish": 94,
+          "types": {
+            "null": 94
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "combustible": {
+          "present": 94,
+          "with_value": 67,
+          "nullish": 27,
+          "types": {
+            "null": 27,
+            "string": 67
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "¬",
+            "70",
+            "80"
+          ],
+          "min_len": 1,
+          "max_len": 3
+        },
+        "descripcion": {
+          "present": 94,
+          "with_value": 94,
+          "nullish": 0,
+          "types": {
+            "string": 94
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "ESCALERA FURGONETA",
+            "TARJETA COMBUSTIBLE IBEROJET",
+            "FURGONETA"
+          ],
+          "min_len": 5,
+          "max_len": 51
+        },
+        "nitrogeno_1": {
+          "present": 94,
+          "with_value": 70,
+          "nullish": 24,
+          "types": {
+            "null": 24,
+            "string": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "¬",
+            "¬",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        },
+        "nitrogeno_2": {
+          "present": 94,
+          "with_value": 70,
+          "nullish": 24,
+          "types": {
+            "null": 24,
+            "string": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "¬",
+            "¬",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 4
+        },
+        "nitrogeno_3": {
+          "present": 94,
+          "with_value": 70,
+          "nullish": 24,
+          "types": {
+            "null": 24,
+            "string": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "¬",
+            "¬",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 4
+        },
+        "nitrogeno_4": {
+          "present": 94,
+          "with_value": 70,
+          "nullish": 24,
+          "types": {
+            "null": 24,
+            "string": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "¬",
+            "¬",
+            "¬"
+          ],
+          "min_len": 1,
+          "max_len": 4
+        },
+        "identificador": {
+          "present": 94,
+          "with_value": 94,
+          "nullish": 0,
+          "types": {
+            "string": 94
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "BRK-408",
+            "TC-IBEROJET",
+            "G9-6"
+          ],
+          "min_len": 4,
+          "max_len": 12
+        },
+        "ubicacion_habitual": {
+          "present": 94,
+          "with_value": 94,
+          "nullish": 0,
+          "types": {
+            "string": 94
+          },
+          "distinct_approx": 25,
+          "examples_redacted": [
+            "3919MLM",
+            "OFICINA",
+            "BASE"
+          ],
+          "min_len": 3,
+          "max_len": 27
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|n8n_chat_histories": {
+      "row_count": 6906,
+      "expected": 6906,
+      "field_count": 3,
+      "fields": {
+        "id": {
+          "present": 6906,
+          "with_value": 6906,
+          "nullish": 0,
+          "types": {
+            "number": 6906
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            7260,
+            6760,
+            1511
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "message": {
+          "present": 6906,
+          "with_value": 6906,
+          "nullish": 0,
+          "types": {
+            "object": 6906
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "redacted:32b736eeb207",
+            "redacted:c9c50b947aae",
+            "redacted:5680ca6f3c42"
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "session_id": {
+          "present": 6906,
+          "with_value": 6906,
+          "nullish": 0,
+          "types": {
+            "string": 6906
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "464650559",
+            "1662738363",
+            "218932041"
+          ],
+          "min_len": 6,
+          "max_len": 15
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|no_existe_telefono": {
+      "row_count": 22,
+      "expected": 22,
+      "field_count": 7,
+      "fields": {
+        "id": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "number": 22
+          },
+          "distinct_approx": 22,
+          "examples_redacted": [
+            11,
+            4,
+            20
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_chat": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 8,
+          "examples_redacted": [
+            "566932796",
+            "113348218",
+            "1064756972"
+          ],
+          "min_len": 9,
+          "max_len": 10
+        },
+        "mensaje": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 16,
+          "examples_redacted": [
+            "redacted:85feda6ea2d5",
+            "redacted:2e86cb0f8fdc",
+            "redacted:e633f4fc79ba"
+          ],
+          "min_len": 4,
+          "max_len": 119
+        },
+        "telefono": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 8,
+          "examples_redacted": [
+            "redacted:bb1b9733e367",
+            "redacted:688831660ebf",
+            "redacted:12d86fe645e6"
+          ],
+          "min_len": 12,
+          "max_len": 12
+        },
+        "last_name": {
+          "present": 22,
+          "with_value": 6,
+          "nullish": 16,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "redacted:8b1663da576e",
+            "redacted:1096d5b23cfe",
+            "redacted:8b1663da576e"
+          ],
+          "min_len": 0,
+          "max_len": 6
+        },
+        "first_name": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 7,
+          "examples_redacted": [
+            "redacted:a1187e822212",
+            "redacted:db74c940d447",
+            "redacted:e7d280175ba2"
+          ],
+          "min_len": 2,
+          "max_len": 9
+        },
+        "fecha_modificacion": {
+          "present": 22,
+          "with_value": 22,
+          "nullish": 0,
+          "types": {
+            "string": 22
+          },
+          "distinct_approx": 22,
+          "examples_redacted": [
+            "2025-11-26T15:40:40.821195",
+            "2025-11-21T10:32:57.523591",
+            "2025-12-05T09:13:18.99239"
+          ],
+          "min_len": 25,
+          "max_len": 26
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|personal": {
+      "row_count": 70,
+      "expected": 70,
+      "field_count": 46,
+      "fields": {
+        "b1": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "boolean": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            false,
+            false,
+            true
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "boolean": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            false,
+            false,
+            false
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "id": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            1,
+            29,
+            59
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "cat_a": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "boolean": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            false,
+            true,
+            false
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "n_bac": {
+          "present": 70,
+          "with_value": 34,
+          "nullish": 36,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 34,
+          "examples_redacted": [
+            "BAC-A-389",
+            "BAC-362",
+            "BAC-240"
+          ],
+          "min_len": 0,
+          "max_len": 19
+        },
+        "correo": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:ac8fc083a800",
+            "redacted:ad242820f6ec",
+            "redacted:03b771a0b976"
+          ],
+          "min_len": 16,
+          "max_len": 28
+        },
+        "estado": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            1,
+            1,
+            1
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "helper": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "boolean": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            true,
+            false,
+            false
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "nombre": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:fb4d2df451e9",
+            "redacted:27a1c27780ca",
+            "redacted:8891b72e04ef"
+          ],
+          "min_len": 6,
+          "max_len": 31
+        },
+        "a_otros": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_chat": {
+          "present": 70,
+          "with_value": 0,
+          "nullish": 70,
+          "types": {
+            "null": 70
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_otros": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_otros": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "telefono": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:be9990707123",
+            "redacted:588d11496edc",
+            "redacted:185df82139bc"
+          ],
+          "min_len": 9,
+          "max_len": 9
+        },
+        "fecha_alta": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 25,
+          "examples_redacted": [
+            "2025-11-10",
+            "2025-11-12",
+            "2025-12-02"
+          ],
+          "min_len": 10,
+          "max_len": 10
+        },
+        "fecha_baja": {
+          "present": 70,
+          "with_value": 0,
+          "nullish": 70,
+          "types": {
+            "null": 70
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_atr_42_72": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_boeing_737": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_boeing_777": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_boeing_787": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_atr_42_72": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_atr_42_72": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "certificador": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "boolean": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            false,
+            false,
+            false
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_a320_family": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_airbus_a330": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            1,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_airbus_a350": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            1,
+            1
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_boeing_737": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_boeing_777": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_boeing_787": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_boeing_737": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_boeing_777": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_boeing_787": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_a320_family": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_airbus_a330": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            1
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_airbus_a350": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_a320_family": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_airbus_a330": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_airbus_a350": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_embraer_e_jet": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "a_bombardier_crj": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_embraer_e_jet": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_embraer_e_jet": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b1_bombardier_crj": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "b2_bombardier_crj": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "number": 70
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "cod_empleado_aena": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "568857",
+            "323732",
+            "507700"
+          ],
+          "min_len": 5,
+          "max_len": 6
+        },
+        "fecha_modificacion": {
+          "present": 70,
+          "with_value": 70,
+          "nullish": 0,
+          "types": {
+            "string": 70
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "2025-11-10T21:29:57.935536",
+            "2025-11-12T14:51:57.334143",
+            "2025-12-02T09:05:59.251727"
+          ],
+          "min_len": 25,
+          "max_len": 26
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|registro_comunicaciones": {
+      "row_count": 1476,
+      "expected": 1476,
+      "field_count": 8,
+      "fields": {
+        "id": {
+          "present": 1476,
+          "with_value": 1476,
+          "nullish": 0,
+          "types": {
+            "number": 1476
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            1124,
+            267,
+            1119
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_chat": {
+          "present": 1476,
+          "with_value": 1476,
+          "nullish": 0,
+          "types": {
+            "string": 1476
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "1161242532",
+            "1257457688",
+            "1835943239"
+          ],
+          "min_len": 6,
+          "max_len": 15
+        },
+        "telefono": {
+          "present": 1476,
+          "with_value": 1476,
+          "nullish": 0,
+          "types": {
+            "string": 1476
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:5fb448fa7dbe",
+            "redacted:c5593cc54c4a",
+            "redacted:26af27f2b65d"
+          ],
+          "min_len": 9,
+          "max_len": 9
+        },
+        "mensaje_in": {
+          "present": 1476,
+          "with_value": 1476,
+          "nullish": 0,
+          "types": {
+            "string": 1476
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:f66417f2766f",
+            "redacted:e8c57baef912",
+            "redacted:66b7f153f016"
+          ],
+          "min_len": 1,
+          "max_len": 261
+        },
+        "respondido": {
+          "present": 1476,
+          "with_value": 1476,
+          "nullish": 0,
+          "types": {
+            "boolean": 1476
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            true,
+            true,
+            true
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "mensaje_out": {
+          "present": 1476,
+          "with_value": 1472,
+          "nullish": 4,
+          "types": {
+            "string": 1472,
+            "null": 4
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:157f2a125e10",
+            "redacted:8a82b1cdf90e",
+            "redacted:acda5348b907"
+          ],
+          "min_len": 55,
+          "max_len": 2254
+        },
+        "fecha_mensaje_in": {
+          "present": 1476,
+          "with_value": 1473,
+          "nullish": 3,
+          "types": {
+            "string": 1473,
+            "null": 3
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:3cb74752ab63",
+            "redacted:ae9c306b8e59",
+            "redacted:4e2fa83b3f39"
+          ],
+          "min_len": 19,
+          "max_len": 23
+        },
+        "fecha_mensaje_out": {
+          "present": 1476,
+          "with_value": 1471,
+          "nullish": 5,
+          "types": {
+            "string": 1471,
+            "null": 5
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:3eed86eb88ce",
+            "redacted:be2c03ad046f",
+            "redacted:f5a7f89d79b6"
+          ],
+          "min_len": 19,
+          "max_len": 23
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|tareas": {
+      "row_count": 57,
+      "expected": 57,
+      "field_count": 11,
+      "fields": {
+        "id": {
+          "present": 57,
+          "with_value": 57,
+          "nullish": 0,
+          "types": {
+            "number": 57
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            24,
+            14,
+            2
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "fecha": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "2026-01-01",
+            "2025-12-31",
+            "2025-12-31"
+          ],
+          "min_len": 10,
+          "max_len": 10
+        },
+        "notas": {
+          "present": 57,
+          "with_value": 9,
+          "nullish": 48,
+          "types": {
+            "string": 30,
+            "null": 27
+          },
+          "distinct_approx": 9,
+          "examples_redacted": [
+            "prueba 2",
+            ".ÑKNPK",
+            "lekn"
+          ],
+          "min_len": 0,
+          "max_len": 8
+        },
+        "codigo": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 24,
+          "examples_redacted": [
+            "NTB002142",
+            "008627",
+            "008627"
+          ],
+          "min_len": 5,
+          "max_len": 16
+        },
+        "estado": {
+          "present": 57,
+          "with_value": 57,
+          "nullish": 0,
+          "types": {
+            "number": 57
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "prioridad": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "STANDARD",
+            "STANDARD",
+            "STANDARD"
+          ],
+          "min_len": 5,
+          "max_len": 8
+        },
+        "tipo_tarea": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "CFD",
+            "Work Order",
+            "Work Order"
+          ],
+          "min_len": 3,
+          "max_len": 11
+        },
+        "descripcion": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 18,
+          "examples_redacted": [
+            "CM2 KCCU SPACE BUTTON LOOSE | REPLACE",
+            "REPLACE EMK***2L-1***",
+            "REPLACE EMK***2L-1***"
+          ],
+          "min_len": 5,
+          "max_len": 148
+        },
+        "matricula_avion": {
+          "present": 57,
+          "with_value": 56,
+          "nullish": 1,
+          "types": {
+            "string": 56,
+            "null": 1
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "EC-NTB",
+            "EC-NTB",
+            "EC-NTB"
+          ],
+          "min_len": 6,
+          "max_len": 6
+        },
+        "id_grupo_trabajo": {
+          "present": 57,
+          "with_value": 29,
+          "nullish": 28,
+          "types": {
+            "number": 29,
+            "null": 28
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "fecha_modificacion": {
+          "present": 57,
+          "with_value": 30,
+          "nullish": 27,
+          "types": {
+            "string": 30,
+            "null": 27
+          },
+          "distinct_approx": 8,
+          "examples_redacted": [
+            "2026-01-01T21:46:38.565",
+            "2025-12-31T12:59:11.997",
+            "2025-12-31T12:32:14.543"
+          ],
+          "min_len": 23,
+          "max_len": 23
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|tool_control": {
+      "row_count": 3,
+      "expected": 3,
+      "field_count": 11,
+      "fields": {
+        "id": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "number": 3
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            5,
+            4,
+            6
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "avion": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "EC-NAB",
+            "EC-OND",
+            "EC-OND"
+          ],
+          "min_len": 6,
+          "max_len": 6
+        },
+        "tma_in": {
+          "present": 3,
+          "with_value": 2,
+          "nullish": 1,
+          "types": {
+            "string": 2,
+            "null": 1
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alejandro Gordillo Sanchez",
+            "Jesús García Sánchez bayton "
+          ],
+          "min_len": 26,
+          "max_len": 28
+        },
+        "date_in": {
+          "present": 3,
+          "with_value": 2,
+          "nullish": 1,
+          "types": {
+            "string": 2,
+            "null": 1
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "2026-01-14T16:38:01.038",
+            "2026-01-13T15:21:32.693"
+          ],
+          "min_len": 23,
+          "max_len": 23
+        },
+        "remarks": {
+          "present": 3,
+          "with_value": 0,
+          "nullish": 3,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": 0,
+          "max_len": 0
+        },
+        "tma_out": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Alejandro Gordillo Sanchez",
+            "Jesús García Sánchez bayton ",
+            "Jesús García Sánchez bayton "
+          ],
+          "min_len": 26,
+          "max_len": 28
+        },
+        "bac_bact": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "BAC2504",
+            "BAC1268",
+            "BAC2341"
+          ],
+          "min_len": 7,
+          "max_len": 7
+        },
+        "date_out": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "2026-01-14T15:37:27.726",
+            "2026-01-13T14:21:14.91",
+            "2026-02-18T20:08:12.802"
+          ],
+          "min_len": 22,
+          "max_len": 23
+        },
+        "complete_in": {
+          "present": 3,
+          "with_value": 2,
+          "nullish": 1,
+          "types": {
+            "string": 2,
+            "null": 1
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "good",
+            "good"
+          ],
+          "min_len": 4,
+          "max_len": 4
+        },
+        "descripcion": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "COMPOSITE REPAIR HOT BONDER",
+            "VERIFICATION SYSTEMS",
+            "MANOMETER 0-4500PSI"
+          ],
+          "min_len": 19,
+          "max_len": 27
+        },
+        "complete_out": {
+          "present": 3,
+          "with_value": 3,
+          "nullish": 0,
+          "types": {
+            "string": 3
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "good",
+            "good",
+            "good"
+          ],
+          "min_len": 4,
+          "max_len": 4
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_pro|pro|tooling": {
+      "row_count": 344,
+      "expected": 344,
+      "field_count": 17,
+      "fields": {
+        "id": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "number": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            3,
+            294,
+            325
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "tipo": {
+          "present": 344,
+          "with_value": 343,
+          "nullish": 1,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "CALIBRATION",
+            "TOOL",
+            "TOOL"
+          ],
+          "min_len": 0,
+          "max_len": 29
+        },
+        "avion": {
+          "present": 344,
+          "with_value": 0,
+          "nullish": 344,
+          "types": {
+            "null": 344
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "notas": {
+          "present": 344,
+          "with_value": 46,
+          "nullish": 298,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 35,
+          "examples_redacted": [
+            "INCLUDED IN BRK-442",
+            "INCLUDED IN BRK-442",
+            "FABRICANTE BAHCO"
+          ],
+          "min_len": 0,
+          "max_len": 56
+        },
+        "rango": {
+          "present": 344,
+          "with_value": 157,
+          "nullish": 187,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 44,
+          "examples_redacted": [
+            "0-4500PSI",
+            "0",
+            "B737"
+          ],
+          "min_len": 0,
+          "max_len": 39
+        },
+        "estado": {
+          "present": 344,
+          "with_value": 343,
+          "nullish": 1,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "SERVICEABLE",
+            "UNSERVICEABLE",
+            "SERVICEABLE"
+          ],
+          "min_len": 0,
+          "max_len": 13
+        },
+        "parking": {
+          "present": 344,
+          "with_value": 0,
+          "nullish": 344,
+          "types": {
+            "null": 344
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "supplier": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "GESA",
+            "MADRIFERR",
+            "IFLY GSE"
+          ],
+          "min_len": 2,
+          "max_len": 17
+        },
+        "tipo_tool": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "BAC",
+            "BACT",
+            "BACT"
+          ],
+          "min_len": 3,
+          "max_len": 4
+        },
+        "trabajador": {
+          "present": 344,
+          "with_value": 0,
+          "nullish": 344,
+          "types": {
+            "null": 344
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "descripcion": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "MANOMETER 0-4500PSI",
+            "ENGRASADORA SAMOA DE PEDAL",
+            "B737 - SPL-13800 TOOL DRIVER BIT SCREW TAMPER PROOF"
+          ],
+          "min_len": 3,
+          "max_len": 68
+        },
+        "part_number": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "0-4500PSI",
+            "SAMOA ENGRASADORA DE PIE",
+            "D72D72684-111"
+          ],
+          "min_len": 3,
+          "max_len": 30
+        },
+        "manufacturer": {
+          "present": 344,
+          "with_value": 87,
+          "nullish": 257,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 17,
+          "examples_redacted": [
+            "MACNAUGHT",
+            "STAHLWILLE",
+            "BOSCH"
+          ],
+          "min_len": 0,
+          "max_len": 17
+        },
+        "identificador": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "BAC2340",
+            "BACT-2811",
+            "BACT-2894"
+          ],
+          "min_len": 6,
+          "max_len": 11
+        },
+        "serial_number": {
+          "present": 344,
+          "with_value": 331,
+          "nullish": 13,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "09012025/2",
+            "BACT-2811",
+            "BACT-2273"
+          ],
+          "min_len": 0,
+          "max_len": 19
+        },
+        "fecha_calibracion": {
+          "present": 344,
+          "with_value": 0,
+          "nullish": 344,
+          "types": {
+            "null": 344
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "ubicacion_habitual": {
+          "present": 344,
+          "with_value": 344,
+          "nullish": 0,
+          "types": {
+            "string": 344
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "BACT-1990",
+            "QUARENTENA",
+            "T17"
+          ],
+          "min_len": 2,
+          "max_len": 23
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_public|public|public__furgonetas": {
+      "row_count": 16,
+      "expected": 16,
+      "field_count": 11,
+      "fields": {
+        "id": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "number": 16
+          },
+          "distinct_approx": 16,
+          "examples_redacted": [
+            2,
+            5,
+            16
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "avion": {
+          "present": 16,
+          "with_value": 0,
+          "nullish": 16,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": 0,
+          "max_len": 0
+        },
+        "notas": {
+          "present": 16,
+          "with_value": 1,
+          "nullish": 15,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "Uso asignado a BAYTON."
+          ],
+          "min_len": 0,
+          "max_len": 22
+        },
+        "estado": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Disponible",
+            "Disponible",
+            "Disponible"
+          ],
+          "min_len": 7,
+          "max_len": 10
+        },
+        "plazas": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "6",
+            "6",
+            "6"
+          ],
+          "min_len": 1,
+          "max_len": 1
+        },
+        "parking": {
+          "present": 16,
+          "with_value": 15,
+          "nullish": 1,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 3,
+          "examples_redacted": [
+            "BASE",
+            "BASE",
+            "BASE"
+          ],
+          "min_len": 0,
+          "max_len": 5
+        },
+        "vehiculo": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 10,
+          "examples_redacted": [
+            "FORD CUSTOM",
+            "FORD CUSTOM",
+            "FURGONETA"
+          ],
+          "min_len": 9,
+          "max_len": 20
+        },
+        "matricula": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 16,
+          "examples_redacted": [
+            "3909 MLM",
+            "7736 MXS",
+            "6488 NGP"
+          ],
+          "min_len": 8,
+          "max_len": 8
+        },
+        "combustible": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "100",
+            "100",
+            "100"
+          ],
+          "min_len": 3,
+          "max_len": 3
+        },
+        "trabajadores": {
+          "present": 16,
+          "with_value": 1,
+          "nullish": 15,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "BAYTON"
+          ],
+          "min_len": 0,
+          "max_len": 6
+        },
+        "identificador": {
+          "present": 16,
+          "with_value": 16,
+          "nullish": 0,
+          "types": {
+            "string": 16
+          },
+          "distinct_approx": 16,
+          "examples_redacted": [
+            "G1-6",
+            "G5-6",
+            "G9-6"
+          ],
+          "min_len": 4,
+          "max_len": 4
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_public|public|public__gse": {
+      "row_count": 53,
+      "expected": 53,
+      "field_count": 10,
+      "fields": {
+        "id": {
+          "present": 53,
+          "with_value": 53,
+          "nullish": 0,
+          "types": {
+            "number": 53
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            37,
+            14,
+            5
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "brk": {
+          "present": 53,
+          "with_value": 53,
+          "nullish": 0,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "BRK-440",
+            "BRK-403",
+            "BRK-227"
+          ],
+          "min_len": 7,
+          "max_len": 7
+        },
+        "avion": {
+          "present": 53,
+          "with_value": 3,
+          "nullish": 50,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "EC-KCP",
+            "EC-KCP",
+            "EC-KCP"
+          ],
+          "min_len": 0,
+          "max_len": 6
+        },
+        "notas": {
+          "present": 53,
+          "with_value": 4,
+          "nullish": 49,
+          "types": {
+            "null": 46,
+            "string": 7
+          },
+          "distinct_approx": 4,
+          "examples_redacted": [
+            "Actualización solicitada por usuario",
+            "A veces falla y pierde presión. Requiere…",
+            "Rueda floja detectada. Operador: Antonio."
+          ],
+          "min_len": 0,
+          "max_len": 91
+        },
+        "estado": {
+          "present": 53,
+          "with_value": 53,
+          "nullish": 0,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Disponible",
+            "Disponible",
+            "Disponible"
+          ],
+          "min_len": 8,
+          "max_len": 10
+        },
+        "parking": {
+          "present": 53,
+          "with_value": 2,
+          "nullish": 51,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "77",
+            "77"
+          ],
+          "min_len": 0,
+          "max_len": 2
+        },
+        "combustible": {
+          "present": 53,
+          "with_value": 0,
+          "nullish": 53,
+          "types": {
+            "null": 52,
+            "string": 1
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": 0,
+          "max_len": 0
+        },
+        "descripcion": {
+          "present": 53,
+          "with_value": 48,
+          "nullish": 5,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 30,
+          "examples_redacted": [
+            "SCISSOR LADDER",
+            "AIR COMPRESSOR",
+            "Escalera"
+          ],
+          "min_len": 0,
+          "max_len": 57
+        },
+        "trabajadores": {
+          "present": 53,
+          "with_value": 2,
+          "nullish": 51,
+          "types": {
+            "null": 49,
+            "string": 4
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "Bayton",
+            "Antonio"
+          ],
+          "min_len": 0,
+          "max_len": 7
+        },
+        "ubicacion_habitual": {
+          "present": 53,
+          "with_value": 50,
+          "nullish": 3,
+          "types": {
+            "string": 53
+          },
+          "distinct_approx": 23,
+          "examples_redacted": [
+            "8800MCV",
+            "GSE AREA",
+            "GSE AREA_T4S"
+          ],
+          "min_len": 0,
+          "max_len": 22
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_public|public|public__personal": {
+      "row_count": 86,
+      "expected": 86,
+      "field_count": 11,
+      "fields": {
+        "id": {
+          "present": 86,
+          "with_value": 86,
+          "nullish": 0,
+          "types": {
+            "number": 86
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            43,
+            9,
+            19
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "alias": {
+          "present": 86,
+          "with_value": 0,
+          "nullish": 86,
+          "types": {
+            "null": 86
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "airbus": {
+          "present": 86,
+          "with_value": 29,
+          "nullish": 57,
+          "types": {
+            "string": 85,
+            "null": 1
+          },
+          "distinct_approx": 13,
+          "examples_redacted": [
+            "AIRBUS 320",
+            "AIRBUS 320N / 330",
+            "AIRBUS 320N/330/350"
+          ],
+          "min_len": 0,
+          "max_len": 24
+        },
+        "boeing": {
+          "present": 86,
+          "with_value": 12,
+          "nullish": 74,
+          "types": {
+            "string": 85,
+            "null": 1
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "BOEING 737M",
+            "BOEING 737",
+            "BOEING 787"
+          ],
+          "min_len": 0,
+          "max_len": 16
+        },
+        "correo": {
+          "present": 86,
+          "with_value": 6,
+          "nullish": 80,
+          "types": {
+            "null": 80,
+            "string": 6
+          },
+          "distinct_approx": 6,
+          "examples_redacted": [
+            "redacted:7807ce95f9e5",
+            "redacted:be9990707123",
+            "redacted:b5a2c9625061"
+          ],
+          "min_len": 5,
+          "max_len": 24
+        },
+        "nombre": {
+          "present": 86,
+          "with_value": 86,
+          "nullish": 0,
+          "types": {
+            "string": 86
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:994b1507496a",
+            "redacted:22bf61380ccd",
+            "redacted:bb4c8bcc54d0"
+          ],
+          "min_len": 12,
+          "max_len": 40
+        },
+        "id_chat": {
+          "present": 86,
+          "with_value": 0,
+          "nullish": 86,
+          "types": {
+            "null": 86
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "telefono": {
+          "present": 86,
+          "with_value": 86,
+          "nullish": 0,
+          "types": {
+            "string": 86
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "redacted:9940ec5de468",
+            "redacted:08c0bcfc5683",
+            "redacted:64c6f620c996"
+          ],
+          "min_len": 9,
+          "max_len": 9
+        },
+        "registrado": {
+          "present": 86,
+          "with_value": 86,
+          "nullish": 0,
+          "types": {
+            "number": 86
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            0,
+            0,
+            0
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "cod_empleado": {
+          "present": 86,
+          "with_value": 83,
+          "nullish": 3,
+          "types": {
+            "string": 85,
+            "null": 1
+          },
+          "distinct_approx": 50,
+          "examples_redacted": [
+            "519734",
+            "329061",
+            "514696"
+          ],
+          "min_len": 0,
+          "max_len": 7
+        },
+        "certificacion": {
+          "present": 86,
+          "with_value": 86,
+          "nullish": 0,
+          "types": {
+            "string": 86
+          },
+          "distinct_approx": 15,
+          "examples_redacted": [
+            "B1 / B2",
+            "HELP",
+            "B1"
+          ],
+          "min_len": 1,
+          "max_len": 13
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_public|public|public__registro_comunicaciones": {
+      "row_count": 11,
+      "expected": 11,
+      "field_count": 8,
+      "fields": {
+        "id": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "number": 11
+          },
+          "distinct_approx": 11,
+          "examples_redacted": [
+            3,
+            1,
+            4
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "fecha": {
+          "present": 11,
+          "with_value": 0,
+          "nullish": 11,
+          "types": {
+            "null": 11
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "id_chat": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "string": 11
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "1441460780",
+            "1441460780",
+            "1441460780"
+          ],
+          "min_len": 10,
+          "max_len": 10
+        },
+        "telefono": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "string": 11
+          },
+          "distinct_approx": 2,
+          "examples_redacted": [
+            "redacted:6cfc2eca9d9e",
+            "redacted:6cfc2eca9d9e",
+            "redacted:6cfc2eca9d9e"
+          ],
+          "min_len": 12,
+          "max_len": 12
+        },
+        "mensaje_in": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "string": 11
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            "redacted:44093600f9dd",
+            "redacted:44093600f9dd",
+            "redacted:44093600f9dd"
+          ],
+          "min_len": 5,
+          "max_len": 5
+        },
+        "respondido": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "boolean": 11
+          },
+          "distinct_approx": 1,
+          "examples_redacted": [
+            false,
+            false,
+            false
+          ],
+          "min_len": null,
+          "max_len": null
+        },
+        "mensaje_out": {
+          "present": 11,
+          "with_value": 0,
+          "nullish": 11,
+          "types": {
+            "null": 11
+          },
+          "distinct_approx": 0,
+          "examples_redacted": [],
+          "min_len": null,
+          "max_len": null
+        },
+        "fecha_modificacion": {
+          "present": 11,
+          "with_value": 11,
+          "nullish": 0,
+          "types": {
+            "string": 11
+          },
+          "distinct_approx": 11,
+          "examples_redacted": [
+            "2025-10-25T18:29:24.929301",
+            "2025-10-25T18:28:18.568279",
+            "2025-10-25T18:32:14.575923"
+          ],
+          "min_len": 26,
+          "max_len": 26
+        }
+      },
+      "variant_clusters": []
+    },
+    "n8n_postgres_public|public|public__tool_control": {
+      "row_count": 0,
+      "expected": 0,
+      "field_count": 0,
+      "fields": {},
+      "variant_clusters": []
+    }
+  },
+  "watchlist_hits": {
+    "cantida_de_botellas_llenas": [
+      "n8n_datatable|n8n|nitro_stock::cantida_de_botellas_llenas"
+    ],
+    "cantidad_de_botellas_vacias": [
+      "n8n_datatable|n8n|nitro_stock::cantidad_de_botellas_vacias"
+    ],
+    "msn": [
+      "n8n_postgres_pro|pro|aviones::msn"
+    ],
+    "motor": [
+      "n8n_postgres_pro|pro|aviones::motor"
+    ],
+    "modelo": [
+      "n8n_postgres_pro|pro|aviones::modelo",
+      "n8n_postgres_pro|pro|grupo_trabajo::modelo"
+    ],
+    "matricula": [
+      "n8n_postgres_pro|pro|aviones::matricula",
+      "n8n_postgres_pro|pro|furgonetas::matricula",
+      "n8n_postgres_pro|pro|inventario::matricula",
+      "n8n_postgres_pro|pro|tareas::matricula_avion",
+      "n8n_postgres_public|public|public__furgonetas::matricula"
+    ],
+    "fecha": [
+      "n8n_postgres_pro|pro|aviones::fecha_modificacion",
+      "n8n_postgres_pro|pro|grupo_trabajo::fecha_modificacion",
+      "n8n_postgres_pro|pro|incidencias::fecha_modificacion",
+      "n8n_postgres_pro|pro|no_existe_telefono::fecha_modificacion",
+      "n8n_postgres_pro|pro|personal::fecha_alta",
+      "n8n_postgres_pro|pro|personal::fecha_baja",
+      "n8n_postgres_pro|pro|personal::fecha_modificacion",
+      "n8n_postgres_pro|pro|registro_comunicaciones::fecha_mensaje_in",
+      "n8n_postgres_pro|pro|registro_comunicaciones::fecha_mensaje_out",
+      "n8n_postgres_pro|pro|tareas::fecha",
+      "n8n_postgres_pro|pro|tareas::fecha_modificacion",
+      "n8n_postgres_pro|pro|tooling::fecha_calibracion",
+      "n8n_postgres_public|public|public__registro_comunicaciones::fecha",
+      "n8n_postgres_public|public|public__registro_comunicaciones::fecha_modificacion"
+    ],
+    "estado": [
+      "n8n_postgres_pro|pro|furgonetas::estado",
+      "n8n_postgres_pro|pro|gse::estado",
+      "n8n_postgres_pro|pro|incidencias::estado",
+      "n8n_postgres_pro|pro|inventario::estado",
+      "n8n_postgres_pro|pro|personal::estado",
+      "n8n_postgres_pro|pro|tareas::estado",
+      "n8n_postgres_pro|pro|tooling::estado",
+      "n8n_postgres_public|public|public__furgonetas::estado",
+      "n8n_postgres_public|public|public__gse::estado"
+    ],
+    "vehiculo": [
+      "n8n_postgres_pro|pro|furgonetas::vehiculo",
+      "n8n_postgres_pro|pro|grupo_trabajo::vehiculo",
+      "n8n_postgres_public|public|public__furgonetas::vehiculo"
+    ],
+    "trabajador": [
+      "n8n_postgres_pro|pro|furgonetas::trabajadores",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_1",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_2",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_3",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_4",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_5",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_6",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_7",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_8",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_9",
+      "n8n_postgres_pro|pro|grupo_trabajo::trabajador_10",
+      "n8n_postgres_pro|pro|gse::trabajadores",
+      "n8n_postgres_pro|pro|incidencias::trabajador",
+      "n8n_postgres_pro|pro|inventario::trabajador",
+      "n8n_postgres_pro|pro|tooling::trabajador",
+      "n8n_postgres_public|public|public__furgonetas::trabajadores",
+      "n8n_postgres_public|public|public__gse::trabajadores"
+    ],
+    "trabajadores": [
+      "n8n_postgres_pro|pro|furgonetas::trabajadores",
+      "n8n_postgres_pro|pro|gse::trabajadores",
+      "n8n_postgres_public|public|public__furgonetas::trabajadores",
+      "n8n_postgres_public|public|public__gse::trabajadores"
+    ],
+    "aerolinea": [
+      "n8n_postgres_pro|pro|grupo_trabajo::aerolinea"
+    ],
+    "hora_salida": [
+      "n8n_postgres_pro|pro|grupo_trabajo::hora_salida"
+    ],
+    "hora_llegada": [
+      "n8n_postgres_pro|pro|grupo_trabajo::hora_llegada"
+    ],
+    "descripcion": [
+      "n8n_postgres_pro|pro|gse::descripcion",
+      "n8n_postgres_pro|pro|incidencias::descripcion",
+      "n8n_postgres_pro|pro|inventario::descripcion",
+      "n8n_postgres_pro|pro|tareas::descripcion",
+      "n8n_postgres_pro|pro|tool_control::descripcion",
+      "n8n_postgres_pro|pro|tooling::descripcion",
+      "n8n_postgres_public|public|public__gse::descripcion"
+    ],
+    "correo": [
+      "n8n_postgres_pro|pro|personal::correo",
+      "n8n_postgres_public|public|public__personal::correo"
+    ],
+    "cod_empleado": [
+      "n8n_postgres_pro|pro|personal::cod_empleado_aena",
+      "n8n_postgres_public|public|public__personal::cod_empleado"
+    ],
+    "cod_empleado_aena": [
+      "n8n_postgres_pro|pro|personal::cod_empleado_aena"
+    ],
+    "id_grupo_trabajo": [
+      "n8n_postgres_pro|pro|tareas::id_grupo_trabajo"
+    ],
+    "registrado": [
+      "n8n_postgres_public|public|public__personal::registrado"
+    ],
+    "certificacion": [
+      "n8n_postgres_public|public|public__personal::certificacion"
+    ]
+  }
+}

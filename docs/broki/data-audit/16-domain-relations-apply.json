@@ -1,0 +1,21 @@
+{
+  "dry_run": false,
+  "at": "2026-08-10T15:28:34.945Z",
+  "before": {
+    "ok": false,
+    "recoverable_orphans": 127
+  },
+  "result": {
+    "ok": true,
+    "linked": 130,
+    "run_id": "8cbfb3d7-0a8d-47a6-b9e5-80ffb7c2075e",
+    "applied": true,
+    "dry_run": false,
+    "manual_review": 0,
+    "historical_unresolvable": 247
+  },
+  "after": {
+    "ok": true,
+    "recoverable_orphans": 0
+  }
+}

@@ -1,78 +1,104 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
 import { AppProvider, useApp } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { useEquipment } from "@/lib/hooks/useEquipment";
+import { EquipmentModalHost } from "@/lib/hooks/useEquipmentModal";
+import { PwaRegister } from "@/components/pwa/PwaRegister";
+import { ToastProvider } from "@/components/ui/Toast";
+import { ShortcutsHelp, NAV_SHORTCUTS } from "@/components/layout/ShortcutsHelp";
+import { useRouter } from "next/navigation";
+import { useHydrated } from "@/lib/hooks/useHydrated";
+import { AutocompleteLists } from "@/components/equipment/AutocompleteLists";
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { darkMode, theme } = useApp();
+  const [helpOpen, setHelpOpen] = useState(false);
+  const { darkMode, refreshRef, compactMode } = useApp();
+  const router = useRouter();
+  const hydrated = useHydrated();
 
-  // Sync dark mode + theme on mount
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
-    if (theme !== "default") {
-      document.documentElement.setAttribute("data-theme", theme);
-    } else {
-      document.documentElement.removeAttribute("data-theme");
-    }
-  }, [darkMode, theme]);
+  }, [darkMode]);
 
-  // Keyboard shortcuts
   useEffect(() => {
+    // Two search boxes exist (desktop row / mobile row); focus the one that is laid out.
+    const focusSearch = () => {
+      const boxes = Array.from(document.querySelectorAll<HTMLInputElement>('[aria-label="Buscar en el dashboard"]'));
+      boxes.find((b) => b.offsetParent !== null)?.focus();
+    };
     const handler = (e: KeyboardEvent) => {
       const isTyping = ["INPUT", "TEXTAREA"].includes(
-        (e.target as HTMLElement).tagName
+        (e.target as HTMLElement).tagName,
       );
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
-        document.querySelector<HTMLInputElement>('[placeholder*="Buscar"]')?.focus();
+        focusSearch();
       }
-      if (e.key === "Escape") {
-        document
-          .querySelectorAll<HTMLDialogElement>("dialog[open]")
-          .forEach((d) => d.close());
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        refreshRef.current?.();
       }
+      if (e.key === "Escape") setMobileOpen(false);
       if (e.key === "/" && !isTyping) {
         e.preventDefault();
-        document.querySelector<HTMLInputElement>('[placeholder*="Buscar"]')?.focus();
+        focusSearch();
+      }
+      // Legacy Ctrl+1..9 navigation and Ctrl+? help.
+      if (e.ctrlKey && !e.altKey && /^[1-9]$/.test(e.key)) {
+        const target = NAV_SHORTCUTS[Number(e.key) - 1];
+        if (target) {
+          e.preventDefault();
+          router.push(target);
+        }
+      }
+      if (e.key === "?" && (e.ctrlKey || (!isTyping && e.shiftKey))) {
+        e.preventDefault();
+        setHelpOpen((o) => !o);
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, []);
+  }, [refreshRef, router]);
 
-  // Data fetching
   useEquipment();
 
   return (
-    <div className="flex h-full min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-72 fixed inset-y-0 z-40">
+    <div className="broki-shell">
+      <PwaRegister scope="dashboard" />
+      <aside className="broki-shell__sidebar">
         <Sidebar />
       </aside>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 md:hidden"
+            className="broki-shell__overlay md:hidden"
             onClick={() => setMobileOpen(false)}
+            aria-hidden
           />
-          <aside className="fixed inset-y-0 left-0 z-50 w-72 md:hidden flex flex-col shadow-xl">
+          <aside className="broki-shell__sidebar broki-shell__sidebar--mobile md:hidden">
             <Sidebar onClose={() => setMobileOpen(false)} />
           </aside>
         </>
       )}
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col md:pl-72 min-h-screen">
+      <div className="broki-shell__main">
         <Topbar onMenuToggle={() => setMobileOpen((o) => !o)} />
-        <main className="flex-1 p-4 md:p-6 overflow-auto">{children}</main>
+        <main className={`broki-shell__content broki-scrollbar${hydrated && compactMode ? " compact-view" : ""}`}>
+          {children}
+        </main>
       </div>
+
+      <Suspense fallback={null}>
+        <EquipmentModalHost />
+      </Suspense>
+      <AutocompleteLists />
+      <ShortcutsHelp open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }
@@ -85,7 +111,9 @@ export default function DashboardLayout({
   return (
     <AuthProvider>
       <AppProvider>
-        <DashboardShell>{children}</DashboardShell>
+        <ToastProvider>
+          <DashboardShell>{children}</DashboardShell>
+        </ToastProvider>
       </AppProvider>
     </AuthProvider>
   );

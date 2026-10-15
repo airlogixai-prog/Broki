@@ -1,0 +1,21 @@
+{
+  "messages_table_count": 0,
+  "conclusion": "C",
+  "explanation": "Legacy model (pro.incidencias + broki.html) does not use a separate messages entity. UI builds messages[] from descripcion/defect/message fields or client-side memory; n8n may insert additional incidencias rows (estado updates) as history, not child messages. broki_incident_messages is a Broki-native table seeded for demos; normalize_incidents never writes to it. Not a migration loss of a legacy messages table.",
+  "alternatives_ruled_out": {
+    "A_never_had_legacy_messages_table": true,
+    "B_json_messages_column": true,
+    "D_lost_in_normalization": false
+  },
+  "raw_incidencia_keys": [
+    "id",
+    "estado",
+    "id_objeto",
+    "trabajador",
+    "descripcion",
+    "id_incidencia",
+    "fecha_modificacion"
+  ],
+  "multi_row_same_id_incidencia": 7,
+  "note_html": "public_html/broki.html processIncidents constructs msgs from descripcion; treats multiple rows per id_objeto as current/history, not broki_incident_messages"
+}

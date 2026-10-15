@@ -1,26 +1,15 @@
 import { serve } from "../_shared/handler.ts";
-import { n8nGetJson } from "../_shared/n8n.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
-import { catalogToLegacyRow, movementToLegacyRow } from "../_shared/legacy-tooling.ts";
+import { authorizeOrRespond } from "../_shared/request-auth.ts";
 
 serve(async (req) => {
   if (req.method !== "GET") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
 
-  // ponytail: remove TOOLING_USE_N8N flag after PR5 validated in staging
-  if (Deno.env.get("TOOLING_USE_N8N") === "true") {
-    try {
-      const [catalog, movements] = await Promise.all([
-        n8nGetJson("tooling"),
-        n8nGetJson("registro_tooling"),
-      ]);
-      return jsonResponse(req, { catalog, movements });
-    } catch {
-      return jsonResponse(req, { error: "upstream_error" }, 502);
-    }
-  }
+  const auth = await authorizeOrRespond(req, "tooling-list");
+  if (auth instanceof Response) return auth;
 
   try {
     const supabase = createServiceClient();
@@ -42,8 +31,8 @@ serve(async (req) => {
     }
 
     return jsonResponse(req, {
-      catalog: (catRes.data ?? []).map(catalogToLegacyRow),
-      movements: (movRes.data ?? []).map(movementToLegacyRow),
+      catalog: catRes.data ?? [],
+      movements: movRes.data ?? [],
     });
   } catch (err) {
     console.error("[tooling-list] unexpected error", err);

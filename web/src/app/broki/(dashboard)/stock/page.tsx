@@ -1,299 +1,340 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  Cylinder,
-  ArrowsClockwise,
-  PencilSimple,
-  FloppyDisk,
-  Wrench,
-} from "@phosphor-icons/react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Cylinder, ArrowsClockwise, PencilSimple, FloppyDisk, Wrench, X } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
 import { NitroStockCard } from "@/components/stock/NitroStockCard";
 import { useApp } from "@/context/AppContext";
-import { getStatusClass } from "@/lib/mappers/equipment";
+import { useBrokiRealtime } from "@/lib/hooks/useBrokiRealtime";
+import { OperationalSyncBar } from "@/components/ui/OperationalSyncBar";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button, IconButton } from "@/components/ui/Button";
+import { ErrorState, InlineError } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { BlockSkeleton } from "@/components/ui/BlockSkeleton";
+import { KpiCard } from "@/components/ui/KpiCard";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { TextField } from "@/components/ui/FormField";
+import { useToast } from "@/components/ui/Toast";
+import { openEquipment } from "@/lib/hooks/useEquipmentModal";
+import { rowsToLocations, validateCounts, type StockLocation, type StockRow, type CountErrors } from "@/lib/stock/nitro";
+import { isNitrogen, nitrogenReadings, N2_CRITICAL_PSI, N2_LOW_PSI } from "@/lib/equipment/kpis";
 
-interface StockEntry {
-  ubicacion: string;
-  full: number;
-  empty: number;
+type Draft = Record<string, { full: string; empty: string }>;
+
+function psiTone(v: number | null): string {
+  if (v == null) return "text-fg-subtle";
+  if (v >= 1500) return "text-success-strong";
+  if (v >= N2_LOW_PSI) return "text-warning-strong";
+  if (v > 0 && v < N2_CRITICAL_PSI) return "text-danger-strong";
+  if (v === 0) return "text-fg-subtle";
+  return "text-warning-strong";
 }
 
-const KEY_T4S = "t4s";
-const KEY_T123 = "t1,2,3";
-
-function parseEntry(obj: any): { full: number; empty: number } {
-  if (!obj) return { full: 0, empty: 0 };
-  const full =
-    parseInt(obj.cantida_de_botellas_llenas ?? obj.cantidad_de_botellas_llenas ?? 0) || 0;
-  const empty = parseInt(obj.cantidad_de_botellas_vacias ?? 0) || 0;
-  return { full, empty };
-}
-
+/**
+ * Nitrogen stock per location (broki_nitro_stock, one row per ubicacion) plus
+ * bottle pressures of the nitrogen GSE units (broki_assets.nitrogeno_1..4).
+ * Only changed rows are written; failures are shown per row (G-04).
+ */
 export default function StockPage() {
-  const { gse } = useApp();
-  const [t4s, setT4s] = useState({ full: 0, empty: 0 });
-  const [t123, setT123] = useState({ full: 0, empty: 0 });
+  const { gse, refreshRef } = useApp();
+  const toast = useToast();
+  const [locations, setLocations] = useState<StockLocation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [editingStock, setEditingStock] = useState(false);
-  const [editingGse, setEditingGse] = useState(false);
+  const [draft, setDraft] = useState<Draft>({});
+  const [saveErrors, setSaveErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
-  const [gsePressures, setGsePressures] = useState<Record<string, number[]>>({});
+  const [editingGse, setEditingGse] = useState(false);
+  // Draft per item + the updated_at seen when editing started (sent as expected_updated_at).
+  const [pressureEdits, setPressureEdits] = useState<Record<string, string[]>>({});
+  const [editTokens, setEditTokens] = useState<Record<string, string | null>>({});
+  const [gseErrors, setGseErrors] = useState<Record<string, string>>({});
 
-  const nitroGse = gse.filter((item) => {
-    const fam = (item.family ?? "").toUpperCase();
-    const model = (item.model ?? "").toUpperCase();
-    return fam.includes("NITRO") || model.includes("NITRO") || model.includes("N2");
-  });
+  const nitroGse = useMemo(() => gse.filter((item) => isNitrogen(item) || (item.model ?? "").toUpperCase().includes("N2")), [gse]);
 
-  const fetchStock = useCallback(async () => {
-    setLoading(true);
+  const fetchStock = useCallback(async (alive: () => boolean = () => true) => {
     try {
       const data = await brokiApi.fetchStock();
-      if (Array.isArray(data)) {
-        const t4sRaw = data.find(
-          (x: any) => x.ubicacion?.toLowerCase() === KEY_T4S
-        );
-        const t123Raw = data.find((x: any) =>
-          x.ubicacion?.toLowerCase().includes(KEY_T123.split(",")[0])
-        );
-        setT4s(parseEntry(t4sRaw));
-        setT123(parseEntry(t123Raw));
-      }
+      if (!alive()) return;
+      setLocations(rowsToLocations(Array.isArray(data) ? (data as StockRow[]) : []));
+      setError(null);
     } catch (e) {
-      console.error("[StockPage] fetch error", e);
+      if (alive()) setError(e instanceof Error ? e.message : "No se pudo cargar el stock.");
     }
-    setLoading(false);
+    if (alive()) setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchStock();
+    let alive = true;
+    void (async () => {
+      await fetchStock(() => alive);
+    })();
+    return () => {
+      alive = false;
+    };
   }, [fetchStock]);
 
-  // Init GSE pressures from context
-  useEffect(() => {
-    const init: Record<string, number[]> = {};
-    nitroGse.forEach((item) => {
-      init[item.id] = item.pressures?.length ? [...item.pressures] : [0, 0, 0, 0];
-    });
-    setGsePressures(init);
-  }, [gse]);
+  // While editing, Realtime refreshes must not overwrite the draft (legacy bug: 30 s refresh wiped edits).
+  const realtime = useBrokiRealtime(["broki_nitro_stock"], () => (editingStock ? Promise.resolve() : fetchStock()));
 
-  const handleSaveStock = async () => {
-    setSaving(true);
-    try {
-      await brokiApi.updateStock({
-        action: "update_nitro_stock",
-        type: "stock",
-        location: "t4S",
-        llenas: t4s.full,
-        vacias: t4s.empty,
-      });
-      await brokiApi.updateStock({
-        action: "update_nitro_stock",
-        type: "stock",
-        location: "t1,2,3",
-        llenas: t123.full,
-        vacias: t123.empty,
-      });
-      setEditingStock(false);
-    } catch (e) {
-      console.error("[StockPage] save stock error", e);
-    }
-    setSaving(false);
+  const totalFull = locations.reduce((n, l) => n + l.full, 0);
+  const totalEmpty = locations.reduce((n, l) => n + l.empty, 0);
+
+  const startEdit = () => {
+    setDraft(Object.fromEntries(locations.map((l) => [l.key, { full: String(l.full), empty: String(l.empty) }])));
+    setSaveErrors({});
+    setEditingStock(true);
   };
 
-  const handleSaveGse = async () => {
+  const cancelEdit = () => {
+    setEditingStock(false);
+    setDraft({});
+    setSaveErrors({});
+    void fetchStock();
+  };
+
+  const draftErrors: Record<string, CountErrors> = Object.fromEntries(Object.entries(draft).map(([k, v]) => [k, validateCounts(v)]));
+  const draftValid = Object.values(draftErrors).every((e) => !e.full && !e.empty);
+  const changed = locations.filter((l) => {
+    const d = draft[l.key];
+    return d && (Number(d.full) !== l.full || Number(d.empty) !== l.empty);
+  });
+
+  const handleSaveStock = async () => {
+    if (!draftValid || saving) return;
+    if (changed.length === 0) {
+      setEditingStock(false);
+      toast.info("Sin cambios", "No había nada que guardar.");
+      return;
+    }
     setSaving(true);
-    try {
-      for (const item of nitroGse) {
-        const p = gsePressures[item.id] ?? [0, 0, 0, 0];
+    const errs: Record<string, string> = {};
+    let ok = 0;
+    for (const loc of changed) {
+      const d = draft[loc.key];
+      try {
+        await brokiApi.updateStock({ action: "update_nitro_stock", type: "stock", location: loc.key, llenas: Number(d.full), vacias: Number(d.empty) });
+        ok++;
+      } catch (e) {
+        errs[loc.key] = e instanceof Error ? e.message : "No se pudo guardar";
+      }
+    }
+    setSaving(false);
+    setSaveErrors(errs);
+    await fetchStock();
+    if (Object.keys(errs).length === 0) {
+      setEditingStock(false);
+      setDraft({});
+      toast.success("Stock guardado", `${ok} ubicación${ok !== 1 ? "es" : ""} actualizada${ok !== 1 ? "s" : ""}.`);
+    } else {
+      toast.error("Error al guardar", `${Object.keys(errs).length} ubicación(es) no se guardaron.`);
+    }
+  };
+
+  const pressuresDraft = (id: string): string[] => pressureEdits[id] ?? nitrogenReadings(nitroGse.find((i) => i.id === id)!).map(String).concat(["", "", "", ""]).slice(0, 4);
+
+  const handleSaveGse = async () => {
+    if (saving) return;
+    const errs: Record<string, string> = {};
+    const toSave = nitroGse.filter((item) => pressureEdits[item.id]);
+    for (const item of toSave) {
+      const bad = pressureEdits[item.id].some((v) => v.trim() !== "" && (!Number.isFinite(Number(v)) || Number(v) < 0 || Number(v) > 6000));
+      if (bad) errs[item.id] = "Las presiones deben ser números entre 0 y 6000 PSI";
+    }
+    setGseErrors(errs);
+    if (Object.keys(errs).length > 0) return;
+    if (toSave.length === 0) {
+      setEditingGse(false);
+      toast.info("Sin cambios", "No había presiones modificadas.");
+      return;
+    }
+    setSaving(true);
+    let ok = 0;
+    for (const item of toSave) {
+      const p = pressureEdits[item.id];
+      try {
         await brokiApi.updateEquipment({
           action: "update_equipment",
           item_id: item.id,
           type: item.type,
-          updates: {
-            nitrogeno_1: p[0],
-            nitrogeno_2: p[1],
-            nitrogeno_3: p[2],
-            nitrogeno_4: p[3],
-          },
-          timestamp: new Date().toISOString(),
+          expected_updated_at: editTokens[item.id] ?? null,
+          updates: { nitrogeno_1: p[0], nitrogeno_2: p[1], nitrogeno_3: p[2], nitrogeno_4: p[3] },
         });
+        ok++;
+        // Saved rows leave the draft so a retry after a partial failure does not resend them.
+        setPressureEdits((prev) => {
+          const next = { ...prev };
+          delete next[item.id];
+          return next;
+        });
+      } catch (e) {
+        errs[item.id] = e instanceof Error ? e.message : "No se pudo guardar";
       }
-      setEditingGse(false);
-    } catch (e) {
-      console.error("[StockPage] save gse error", e);
     }
     setSaving(false);
-  };
-
-  const setPressure = (itemId: string, idx: number, val: number) => {
-    setGsePressures((prev) => {
-      const arr = [...(prev[itemId] ?? [0, 0, 0, 0])];
-      arr[idx] = val;
-      return { ...prev, [itemId]: arr };
-    });
+    setGseErrors(errs);
+    refreshRef.current?.();
+    if (Object.keys(errs).length === 0) {
+      setPressureEdits({});
+      setEditTokens({});
+      setEditingGse(false);
+      toast.success("Presiones guardadas", `${ok} equipo${ok !== 1 ? "s" : ""}.`);
+    } else {
+      toast.error("Error al guardar", `${Object.keys(errs).length} equipo(s) no se guardaron.`);
+    }
   };
 
   return (
-    <div className="space-y-8 pb-10">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <Cylinder size={28} className="text-brand-500" /> Stock de Nitrógeno
-        </h1>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={fetchStock}
-            disabled={loading}
-            className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50"
-          >
-            <ArrowsClockwise size={18} className={loading ? "animate-spin" : ""} />
-          </button>
-          {!editingStock ? (
-            <button
-              onClick={() => setEditingStock(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-bold border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm"
-            >
-              <PencilSimple size={16} /> Editar Stock
-            </button>
-          ) : (
-            <button
-              onClick={handleSaveStock}
-              disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-60 shadow-sm transition-colors ring-2 ring-emerald-500 ring-offset-2"
-            >
-              {saving ? (
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <FloppyDisk size={16} />
-              )}
-              Confirmar
-            </button>
-          )}
-        </div>
-      </div>
-
-      {loading && (
-        <div className="flex items-center justify-center h-32">
-          <ArrowsClockwise size={28} className="text-brand-500 animate-spin" />
-        </div>
-      )}
-
-      {/* Terminal cards */}
-      {!loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <NitroStockCard
-            name="Terminal T4S"
-            locationId="t4s"
-            full={t4s.full}
-            empty={t4s.empty}
-            color="brand"
-            editing={editingStock}
-            onFullChange={(v) => setT4s((s) => ({ ...s, full: v }))}
-            onEmptyChange={(v) => setT4s((s) => ({ ...s, empty: v }))}
-          />
-          <NitroStockCard
-            name="Terminales T1, T2, T3"
-            locationId="t123"
-            full={t123.full}
-            empty={t123.empty}
-            color="blue"
-            editing={editingStock}
-            onFullChange={(v) => setT123((s) => ({ ...s, full: v }))}
-            onEmptyChange={(v) => setT123((s) => ({ ...s, empty: v }))}
-          />
-        </div>
-      )}
-
-      {/* Nitro GSE section */}
-      {nitroGse.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-              <Wrench size={20} className="text-slate-400" /> Equipos de Nitrógeno (GSE)
-            </h3>
-            {!editingGse ? (
-              <button
-                onClick={() => setEditingGse(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition-colors shadow-sm"
-              >
-                <PencilSimple size={14} /> Editar GSE
-              </button>
+    <div className="space-y-5 pb-10">
+      <PageHeader
+        title="Stock de nitrógeno"
+        subtitle={`${locations.length} ubicaciones · ${nitroGse.length} equipos de nitrógeno`}
+        icon={<Cylinder size={22} />}
+        actions={
+          <>
+            <IconButton label="Refrescar stock" onClick={() => void fetchStock()} disabled={loading || editingStock}>
+              <ArrowsClockwise size={18} className={loading ? "animate-spin" : ""} />
+            </IconButton>
+            {!editingStock ? (
+              <Button variant="secondary" icon={<PencilSimple size={16} />} onClick={startEdit} disabled={loading || locations.length === 0}>
+                Editar stock
+              </Button>
             ) : (
-              <button
-                onClick={handleSaveGse}
-                disabled={saving}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-60 shadow-sm transition-colors"
-              >
-                <FloppyDisk size={14} /> Confirmar
-              </button>
+              <>
+                <Button variant="secondary" icon={<X size={16} />} onClick={cancelEdit} disabled={saving}>
+                  Cancelar
+                </Button>
+                <Button variant="success" icon={<FloppyDisk size={16} />} loading={saving} disabled={!draftValid} onClick={() => void handleSaveStock()}>
+                  Confirmar{changed.length > 0 ? ` (${changed.length})` : ""}
+                </Button>
+              </>
+            )}
+          </>
+        }
+      >
+        <OperationalSyncBar syncMode={realtime.syncMode} lastUpdate={realtime.lastUpdate} updating={realtime.updating || loading} />
+      </PageHeader>
+
+      {error && <ErrorState message={error} onRetry={() => void fetchStock()} />}
+
+      {loading ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2" aria-busy="true">
+          <BlockSkeleton className="h-40" label="Cargando stock" />
+          <BlockSkeleton className="h-40" label="Cargando stock" />
+        </div>
+      ) : locations.length === 0 ? (
+        <EmptyState compact icon={<Cylinder size={24} />} title="Sin ubicaciones de stock" description="No hay filas en broki_nitro_stock. Importa el stock o créalo desde la base de datos." />
+      ) : (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            <KpiCard label="Botellas llenas" value={totalFull} icon={<Cylinder size={18} />} tone="success" />
+            <KpiCard label="Botellas vacías" value={totalEmpty} icon={<Cylinder size={18} />} tone="warning" />
+            <KpiCard label="Total" value={totalFull + totalEmpty} sub={totalFull + totalEmpty > 0 ? `${Math.round((totalFull / (totalFull + totalEmpty)) * 100)} % llenas` : undefined} icon={<Cylinder size={18} />} tone="neutral" />
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {locations.map((loc) => (
+              <div key={loc.key} className="space-y-1">
+                <NitroStockCard
+                  name={loc.label}
+                  full={editingStock && draft[loc.key] ? Number(draft[loc.key].full) || 0 : loc.full}
+                  empty={editingStock && draft[loc.key] ? Number(draft[loc.key].empty) || 0 : loc.empty}
+                  editing={editingStock}
+                  dirty={changed.some((c) => c.key === loc.key)}
+                  draft={draft[loc.key]}
+                  errors={draftErrors[loc.key]}
+                  onFullChange={(v) => setDraft((d) => ({ ...d, [loc.key]: { ...d[loc.key], full: v } }))}
+                  onEmptyChange={(v) => setDraft((d) => ({ ...d, [loc.key]: { ...d[loc.key], empty: v } }))}
+                />
+                <InlineError message={saveErrors[loc.key]} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {nitroGse.length > 0 && (
+        <section aria-label="Equipos de nitrógeno">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+            <h2 className="flex items-center gap-2 text-base font-bold text-fg sm:text-lg">
+              <Wrench size={18} className="text-fg-muted" aria-hidden /> Equipos de nitrógeno (GSE)
+              <span className="tabular rounded-full bg-subtle px-2 py-0.5 text-xs font-bold text-fg-muted">{nitroGse.length}</span>
+            </h2>
+            {!editingGse ? (
+              <Button variant="secondary" size="sm" icon={<PencilSimple size={14} />} onClick={() => setEditingGse(true)}>
+                Editar presiones
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" icon={<X size={14} />} onClick={() => { setEditingGse(false); setPressureEdits({}); setEditTokens({}); setGseErrors({}); }} disabled={saving}>
+                  Cancelar
+                </Button>
+                <Button variant="success" size="sm" icon={<FloppyDisk size={14} />} loading={saving} onClick={() => void handleSaveGse()}>
+                  Confirmar{Object.keys(pressureEdits).length > 0 ? ` (${Object.keys(pressureEdits).length})` : ""}
+                </Button>
+              </div>
             )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <p className="mb-3 text-xs text-fg-muted">
+            Presión por botella en PSI. Umbrales: <span className="text-warning-strong">&lt; {N2_LOW_PSI} baja</span>, <span className="text-danger-strong">&lt; {N2_CRITICAL_PSI} crítica</span>, 0 = vacía.
+          </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {nitroGse.map((item) => {
-              const pressures = gsePressures[item.id] ?? [0, 0, 0, 0];
+              const readings = nitrogenReadings(item);
+              const dirty = !!pressureEdits[item.id];
               return (
-                <div
-                  key={item.id}
-                  className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 shadow-sm"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <span className="text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 px-2 py-0.5 rounded">
+                <div key={item.id} className={`rounded-xl border bg-surface p-4 shadow-sm ${dirty ? "border-brand-400" : "border-border"}`}>
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <button type="button" onClick={() => openEquipment(item)} className="rounded bg-brand-50 px-2 py-0.5 text-xs font-bold text-brand-700 hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-300">
                         {item.id}
-                      </span>
-                      <p className="text-sm font-bold text-slate-800 dark:text-white mt-1">
-                        {item.plate || item.model}
-                      </p>
+                      </button>
+                      <p className="mt-1 truncate text-sm font-semibold text-fg">{item.model}</p>
+                      <p className="truncate text-xs text-fg-muted">{item.usualLocation || item.location || "Sin ubicación"}{item.plane ? ` · ${item.plane}` : ""}</p>
                     </div>
-                    <span
-                      className={`w-3 h-3 rounded-full shadow-sm ${getStatusClass(item.status)}`}
-                    />
+                    <StatusBadge status={item.status} size="sm" />
                   </div>
-
-                  <div className="grid grid-cols-4 gap-2 bg-slate-50 dark:bg-slate-700/50 p-2 rounded-lg border border-slate-100 dark:border-slate-600/50">
+                  <div className="grid grid-cols-4 gap-2 rounded-lg border border-border-subtle bg-muted p-2">
                     {[0, 1, 2, 3].map((i) => {
-                      const val = pressures[i] ?? 0;
-                      const hue = Math.min(Math.max(val, 0) / 3000, 1) * 120;
+                      const val = readings[i] ?? null;
                       return (
-                        <div key={i} className="flex flex-col gap-1 items-center">
-                          <span className="text-[9px] uppercase font-bold text-slate-400">
-                            #{i + 1}
-                          </span>
+                        <div key={i} className="flex flex-col items-center gap-1">
+                          <span className="text-[11px] font-bold uppercase text-fg-subtle">#{i + 1}</span>
                           {editingGse ? (
-                            <input
+                            <TextField
+                              label={`${item.id} botella ${i + 1} (PSI)`}
+                              className="w-full [&_label]:sr-only [&_input]:px-1 [&_input]:text-center"
                               type="number"
+                              inputMode="numeric"
                               min={0}
-                              value={val}
-                              onChange={(e) =>
-                                setPressure(item.id, i, Number(e.target.value))
-                              }
-                              className="w-full text-center text-xs font-bold border-b-2 border-slate-300 dark:border-slate-600 bg-transparent py-1 focus:border-brand-500 outline-none transition-colors text-slate-900 dark:text-white"
+                              value={pressuresDraft(item.id)[i]}
+                              onChange={(e) => {
+                                setEditTokens((prev) => (item.id in prev ? prev : { ...prev, [item.id]: item.updatedAt ?? null }));
+                                setPressureEdits((prev) => {
+                                  const arr = [...pressuresDraft(item.id)];
+                                  arr[i] = e.target.value;
+                                  return { ...prev, [item.id]: arr };
+                                });
+                              }}
                             />
                           ) : (
-                            <div
-                              className="text-center font-black text-sm"
-                              style={{ color: `hsl(${hue}, 85%, 45%)` }}
-                            >
-                              {val}
-                              <span className="text-[9px] text-slate-400 font-bold block">
-                                PSI
-                              </span>
+                            <div className={`tabular text-center text-sm font-black ${psiTone(val)}`}>
+                              {val ?? "—"}
+                              <span className="block text-[11px] font-bold text-fg-subtle">PSI</span>
                             </div>
                           )}
                         </div>
                       );
                     })}
                   </div>
+                  <InlineError message={gseErrors[item.id]} />
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );

@@ -8,27 +8,9 @@ import React, {
   useRef,
   type ReactNode,
 } from "react";
-import type {
-  Equipment,
-  Personnel,
-  Aircraft,
-  Theme,
-  IncidentState,
-} from "@/lib/types/equipment";
+import type { Equipment, Personnel, Aircraft, IncidentState } from "@/lib/types/equipment";
 
-export type ViewId =
-  | "dashboard"
-  | "furgonetas"
-  | "gse"
-  | "aviones"
-  | "incidencias"
-  | "analytics"
-  | "planner"
-  | "roster"
-  | "fleet"
-  | "stock"
-  | "tooling"
-  | "mapa";
+export type SyncMode = "loading" | "realtime" | "polling" | "error" | "idle";
 
 interface AppState {
   furgonetas: Equipment[];
@@ -44,8 +26,9 @@ interface AppState {
   statusFilter: string;
   familyFilter: string;
   compactMode: boolean;
-  theme: Theme;
   darkMode: boolean;
+  autoRefresh: boolean;
+  syncMode: SyncMode;
 }
 
 interface AppContextValue extends AppState {
@@ -54,23 +37,25 @@ interface AppContextValue extends AppState {
   setStatusFilter: (v: string) => void;
   setFamilyFilter: (v: string) => void;
   setCompactMode: (v: boolean) => void;
-  setTheme: (t: Theme) => void;
   setDarkMode: (v: boolean) => void;
+  setAutoRefresh: (v: boolean) => void;
   setLoading: (v: boolean) => void;
   setFetchError: (v: string | null) => void;
   setInventory: (
-    data: Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">
+    data: Partial<Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">>
   ) => void;
   setIncidentsMemory: (m: Record<string, IncidentState>) => void;
+  /** Functional per-equipment update: safe against stale closures and concurrent refreshes. */
+  patchIncidentState: (itemId: string, state: IncidentState) => void;
+  setSyncMode: (m: SyncMode | ((current: SyncMode) => SyncMode)) => void;
+  patchEquipment: (id: string, patch: Partial<Equipment>) => void;
+  setAircraft: (aircraft: Aircraft[]) => void;
+  restoreInventory: (data: Pick<AppState, "furgonetas" | "gse">) => void;
   refreshRef: React.MutableRefObject<(() => void) | null>;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "default";
-  return (localStorage.getItem("broki_theme") as Theme) ?? "default";
-}
 function getInitialDark(): boolean {
   if (typeof window === "undefined") return false;
   return localStorage.getItem("broki_dark_mode") === "true";
@@ -78,6 +63,11 @@ function getInitialDark(): boolean {
 function getInitialCompact(): boolean {
   if (typeof window === "undefined") return false;
   return localStorage.getItem("broki_compact_mode") === "true";
+}
+function getInitialAutoRefresh(): boolean {
+  if (typeof window === "undefined") return true;
+  // Polling is on unless the user turned it off.
+  return localStorage.getItem("broki_auto_refresh") !== "false";
 }
 
 function getInitialFilters() {
@@ -115,8 +105,9 @@ function saveFilters(filters: {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const initialFilters = getInitialFilters();
-  const [state, setState] = useState<AppState>({
+  const [state, setState] = useState<AppState>(() => {
+    const initialFilters = getInitialFilters();
+    return {
     furgonetas: [],
     gse: [],
     personal: [],
@@ -130,8 +121,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     statusFilter: initialFilters.statusFilter,
     familyFilter: initialFilters.familyFilter,
     compactMode: getInitialCompact(),
-    theme: getInitialTheme(),
     darkMode: getInitialDark(),
+    autoRefresh: getInitialAutoRefresh(),
+    syncMode: "loading",
+    };
   });
 
   const refreshRef = useRef<(() => void) | null>(null);
@@ -164,15 +157,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("broki_compact_mode", String(v));
     setState((s) => ({ ...s, compactMode: v }));
   }, []);
-  const setTheme = useCallback((t: Theme) => {
-    localStorage.setItem("broki_theme", t);
-    document.documentElement.setAttribute("data-theme", t === "default" ? "" : t);
-    setState((s) => ({ ...s, theme: t }));
-  }, []);
   const setDarkMode = useCallback((v: boolean) => {
     localStorage.setItem("broki_dark_mode", String(v));
     document.documentElement.classList.toggle("dark", v);
     setState((s) => ({ ...s, darkMode: v }));
+  }, []);
+  const setAutoRefresh = useCallback((v: boolean) => {
+    localStorage.setItem("broki_auto_refresh", String(v));
+    setState((s) => ({ ...s, autoRefresh: v }));
   }, []);
   const setLoading = useCallback(
     (v: boolean) => setState((s) => ({ ...s, loading: v })),
@@ -183,13 +175,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     []
   );
   const setInventory = useCallback(
-    (data: Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">) =>
+    (data: Partial<Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">>) =>
       setState((s) => ({ ...s, ...data, lastUpdate: new Date() })),
     []
   );
   const setIncidentsMemory = useCallback(
     (m: Record<string, IncidentState>) =>
       setState((s) => ({ ...s, incidentsMemory: m })),
+    []
+  );
+  const patchIncidentState = useCallback(
+    (itemId: string, incident: IncidentState) =>
+      setState((s) => ({ ...s, incidentsMemory: { ...s.incidentsMemory, [itemId]: incident } })),
+    []
+  );
+  const setSyncMode = useCallback(
+    (next: SyncMode | ((current: SyncMode) => SyncMode)) =>
+      setState((s) => ({ ...s, syncMode: typeof next === "function" ? next(s.syncMode) : next })),
+    []
+  );
+  const patchEquipment = useCallback((id: string, patch: Partial<Equipment>) => {
+    setState((s) => ({
+      ...s,
+      furgonetas: s.furgonetas.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+      gse: s.gse.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    }));
+  }, []);
+  const setAircraft = useCallback((aircraft: Aircraft[]) => setState((s) => ({ ...s, aircraft })), []);
+  const restoreInventory = useCallback(
+    (data: Pick<AppState, "furgonetas" | "gse">) =>
+      setState((s) => ({ ...s, ...data })),
     []
   );
 
@@ -202,12 +217,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setStatusFilter,
         setFamilyFilter,
         setCompactMode,
-        setTheme,
         setDarkMode,
+        setAutoRefresh,
         setLoading,
         setFetchError,
         setInventory,
         setIncidentsMemory,
+        patchIncidentState,
+        setSyncMode,
+        patchEquipment,
+        setAircraft,
+        restoreInventory,
         refreshRef,
       }}
     >

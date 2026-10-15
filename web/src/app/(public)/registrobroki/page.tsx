@@ -1,26 +1,36 @@
 import Link from "next/link";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { RegistroForm } from "@/components/public/RegistroForm";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Registro personal BROKI",
+  description:
+    "Registro de personal y certificaciones aeronáuticas para operaciones BROKI.",
+  path: "/registrobroki",
+});
 
 export default function RegistroBrokiPage() {
   return (
     <PublicPageShell>
-      <section className="container mx-auto max-w-2xl px-4 py-16 sm:px-6">
-        <h1 className="text-3xl font-bold text-white mb-4">Registro BROKI</h1>
-        <p className="text-[#a8b2d1] mb-8">
-          El acceso al dashboard BROKI está restringido. Si necesitas una cuenta de operaciones,
-          contacta con un administrador de AIRLOGIX AI.
+      <section className="container mx-auto max-w-3xl px-4 py-16 sm:px-6">
+        <h1 className="mb-4 text-3xl font-bold text-white">Registro BROKI</h1>
+        <p className="mb-8 text-[#a8b2d1]">
+          Completa tus datos profesionales y certificaciones aeronáuticas para tu
+          integración en el sistema BROKI de gestión de recursos de Brok-Air Aviation
+          Group. Toda la información es confidencial y se trata conforme al RGPD.
         </p>
-        <div className="rounded-xl bg-[#172a45] p-6 border border-[#2a3f5f] space-y-4">
-          <p className="text-sm text-[#ccd6f6]">
-            Usuarios existentes pueden iniciar sesión directamente.
-          </p>
-          <Link
-            href="/login"
-            className="inline-block rounded-full bg-[#41ead4] px-8 py-3 font-bold text-[#0d1b2a] hover:bg-[#31b59d]"
-          >
-            Iniciar sesión
+
+        <RegistroForm />
+
+        <p className="mt-8 text-sm text-[#8892b0]">
+          ¿Ya tienes cuenta de operaciones?{" "}
+          <Link href="/login" className="font-bold text-[#41ead4] underline">
+            Inicia sesión
           </Link>
-        </div>
+          .
+        </p>
       </section>
     </PublicPageShell>
   );

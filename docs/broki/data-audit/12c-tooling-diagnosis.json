@@ -1,0 +1,102 @@
+{
+  "moves": [
+    {
+      "id": "34158396-6851-4140-a171-7999c4b59430",
+      "external_id": "checkout-BAC-SMK-0ffa-1785696969435",
+      "bac_bact": "BAC-SMK-0ffa",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "f9022038-e73d-40cd-afdd-40e7443e80d2",
+      "external_id": "checkout-BAC-SMK-f7b5-1785697045382",
+      "bac_bact": "BAC-SMK-f7b5",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "aa9ecbeb-9dd1-43a4-b96e-169ae798a99a",
+      "external_id": "checkout-BAC-SMK-d7bf-1785697085910",
+      "bac_bact": "BAC-SMK-d7bf",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "33cd5838-db39-48e1-b8ac-9da7bbb21052",
+      "external_id": "checkout-BAC-SMK-0ffa-1785696968211",
+      "bac_bact": "BAC-SMK-0ffa",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "1826563e-d715-425f-b3e2-48d6e04cc073",
+      "external_id": "checkout-BAC-SMK-d7bf-1785697085456",
+      "bac_bact": "BAC-SMK-d7bf",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "c691c2fa-5b70-4757-a1cf-dc4d2abd8087",
+      "external_id": "checkout-BAC-SMK-f7b5-1785697044984",
+      "bac_bact": "BAC-SMK-f7b5",
+      "tool_id": null,
+      "classification": "SMOKE",
+      "catalog_match": false
+    },
+    {
+      "id": "238eb8a8-e40b-4b84-b317-1d13d4b0d52f",
+      "external_id": "4",
+      "bac_bact": "BAC1268",
+      "tool_id": null,
+      "classification": "BROKEN_RELATION",
+      "catalog_match": true
+    },
+    {
+      "id": "24092c2a-b341-4cde-af22-99021a7b6978",
+      "external_id": "6",
+      "bac_bact": "BAC2341",
+      "tool_id": null,
+      "classification": "BROKEN_RELATION",
+      "catalog_match": true
+    },
+    {
+      "id": "a6f81d8a-1076-4240-bd5d-de773cceb67b",
+      "external_id": "5",
+      "bac_bact": "BAC2504",
+      "tool_id": null,
+      "classification": "BROKEN_RELATION",
+      "catalog_match": true
+    }
+  ],
+  "toolingFieldsOps": {
+    "tipo": {
+      "operational": true,
+      "action": "MAP_EXISTING_COLUMN / expose in catalog"
+    },
+    "supplier": {
+      "operational": true,
+      "action": "ADD_CANONICAL_COLUMN — present on 100% tooling raw"
+    },
+    "manufacturer": {
+      "operational": true,
+      "action": "ADD_CANONICAL_COLUMN"
+    },
+    "part_number": {
+      "operational": true,
+      "action": "already raw_only_columns in field-map — promote if UI needs"
+    },
+    "serial_number": {
+      "operational": true,
+      "action": "raw_only — promote if UI needs"
+    },
+    "ubicacion_habitual": {
+      "operational": true,
+      "action": "raw_only — promote if UI needs"
+    }
+  }
+}

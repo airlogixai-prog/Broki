@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Crea un zip del repo excluyendo artefactos pesados y secretos.
+# Crea un zip del repo listo para arrancar (sin node_modules).
+# Excluye artefactos de build, .git, env locales y secretos.
+# Tras descomprimir: npm install && npm install --prefix web
 # Uso: ./export-repo-zip.sh [nombre.zip]
+# Verificar: npm run export:verify
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
@@ -21,36 +24,50 @@ fi
 
 echo "Exportando repo -> $OUTPUT"
 
-zip -r "$OUTPUT" . \
-  -x "./node_modules/*" \
-  -x "./web/node_modules/*" \
-  -x "./web/.next/*" \
-  -x "./web/out/*" \
-  -x "./web/build/*" \
-  -x "./web/coverage/*" \
-  -x "./web/.vercel/*" \
-  -x "./.git/*" \
-  -x "./*.zip" \
-  -x "./_airlogixai.com.zip" \
-  -x "./supabase/.temp/*" \
-  -x "./supabase/.branches/*" \
-  -x "./.env" \
-  -x "./.env.*" \
-  -x "./web/.env" \
-  -x "./web/.env.*" \
-  -x "./supabase/.env" \
-  -x "./supabase/.env.*" \
-  -x "./*:Zone.Identifier" \
-  -x "./web/*:Zone.Identifier" \
-  -x "./.DS_Store" \
-  -x "./**/.DS_Store" \
-  -x "./**/npm-debug.log*" \
-  -x "./**/yarn-debug.log*" \
-  -x "./**/yarn-error.log*" \
-  -x "./**/.pnpm-debug.log*" \
-  -x "./**/*.tsbuildinfo"
+# ponytail: find + zip -@ — exclusiones explícitas; zip -x es frágil con ./
+find . -type f \
+  ! -path './node_modules/*' \
+  ! -path './web/node_modules/*' \
+  ! -path './web/.next/*' \
+  ! -path './web/out/*' \
+  ! -path './web/build/*' \
+  ! -path './web/coverage/*' \
+  ! -path './coverage/*' \
+  ! -path './web/.vercel/*' \
+  ! -path './.git/*' \
+  ! -path './.secrets/*' \
+  ! -path './.env' \
+  ! -path './.env.local' \
+  ! \( -path './.env.*' ! -path './.env.example' \) \
+  ! -path './web/.env' \
+  ! -path './web/.env.local' \
+  ! \( -path './web/.env.*' ! -path './web/.env.example' \) \
+  ! -path './supabase/.env' \
+  ! -path './supabase/.env.local' \
+  ! \( -path './supabase/.env.*' ! -path './supabase/.env.example' \) \
+  ! -path './supabase/.temp/*' \
+  ! -path './supabase/.branches/*' \
+  ! -path './web/test-results/*' \
+  ! -path './web/playwright-report/*' \
+  ! -path './graphify-out/*' \
+  ! -name '*.zip' \
+  ! -name '*:Zone.Identifier' \
+  ! -name '.DS_Store' \
+  ! -name 'npm-debug.log*' \
+  ! -name 'yarn-debug.log*' \
+  ! -name 'yarn-error.log*' \
+  ! -name '.pnpm-debug.log*' \
+  ! -name '*.tsbuildinfo' \
+  -print | zip -q -@ "$OUTPUT"
 
 BYTES="$(stat -c%s "$OUTPUT" 2>/dev/null || stat -f%z "$OUTPUT")"
 MB="$(awk "BEGIN { printf \"%.1f\", $BYTES / 1024 / 1024 }")"
+
+echo "Verificando que no haya secretos..."
+if ! node "$ROOT/scripts/verify-export-artifact.mjs" "$OUTPUT"; then
+  rm -f "$OUTPUT"
+  echo "Export abortado: el zip contenía rutas o patrones prohibidos" >&2
+  exit 1
+fi
 
 echo "Listo: $OUTPUT (${MB} MB)"

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "project_ref": "mjtuxabpjsgggezrsdrw",
+  "groups": {
+    "DASHBOARD_FUNCTIONS": [
+      "inventory-list",
+      "personnel-list",
+      "aircraft-list",
+      "aircraft-action",
+      "tooling-list",
+      "tooling-action",
+      "planner-groups",
+      "planner-tasks",
+      "planner-action",
+      "incidents",
+      "nitro-stock",
+      "relays",
+      "roster-upload",
+      "equipment-update",
+      "personnel-register"
+    ],
+    "PUBLIC_FUNCTIONS": [
+      "personnel-register",
+      "marketing-lead"
+    ],
+    "ETL_FUNCTIONS": [
+      "broki-import-batch"
+    ],
+    "WHATSAPP_FUNCTIONS": [
+      "broki-whatsapp-inbound"
+    ]
+  },
+  "deploy_dashboard_includes_etl": true,
+  "notes": "WHATSAPP_FUNCTIONS must not be in default dashboard deploy while gated off."
+}

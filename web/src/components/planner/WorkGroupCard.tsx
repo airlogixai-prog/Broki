@@ -1,289 +1,230 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Airplane,
-  User,
-  Van,
-  UserCircle,
-  Check,
-  Trash,
-  ArrowLineDown,
-} from "@phosphor-icons/react";
+import { Airplane, User, Van, UserCircle, Trash, Clock, AirplaneLanding, AirplaneTakeoff } from "@phosphor-icons/react";
 import { brokiApi } from "@/lib/api/broki";
 import type { WorkGroup, WorkTask } from "@/lib/types/equipment";
+import { Badge } from "@/components/ui/StatusBadge";
+import { IconButton } from "@/components/ui/Button";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { InlineError } from "@/components/ui/ErrorState";
+import { useToast } from "@/components/ui/Toast";
 
 function formatTime(val: string | undefined | null): string | null {
   if (!val) return null;
   const d = new Date(val);
-  if (!isNaN(d.getTime()) && val.includes("T")) {
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
-  }
+  if (!isNaN(d.getTime()) && val.includes("T")) return d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", hour12: false });
   if (/^\d{1,2}:\d{2}/.test(val)) return val.substring(0, 5);
   return val;
 }
 
-function priorityColors(priority: string): string {
+function priorityTone(priority: string): "danger" | "warning" | "success" | "neutral" {
   const p = priority.toUpperCase();
-  if (p.includes("NO_GO"))
-    return "border-red-500 text-red-700 bg-red-50 dark:bg-red-900/20 dark:text-red-400";
-  if (p.includes("CRITICAL"))
-    return "border-amber-500 text-amber-700 bg-amber-50 dark:bg-amber-900/20 dark:text-amber-400";
-  return "border-emerald-500 text-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 dark:text-emerald-400";
+  if (p.includes("NO_GO") || p.includes("NO GO")) return "danger";
+  if (p.includes("CRITICAL") || p.includes("CRÍTIC")) return "warning";
+  if (p.includes("GO_IF")) return "warning";
+  return "success";
 }
 
-interface TaskRowProps {
-  task: WorkTask;
-  onToggle: () => void;
-  onDelete: () => void;
-}
-
-function TaskRow({ task, onToggle, onDelete }: TaskRowProps) {
+function TaskRow({ task, busy, onToggle, onDelete }: { task: WorkTask; busy: boolean; onToggle: () => void; onDelete: () => void }) {
+  const id = `task-${task.db_id || task.code}`;
   return (
-    <div
-      className={`group/task flex items-start gap-3 p-2 rounded-lg transition-colors ${
-        task.done
-          ? "bg-slate-50 dark:bg-slate-900/50 opacity-60"
-          : "hover:bg-slate-50 dark:hover:bg-slate-700/50"
-      }`}
-    >
-      <button
-        onClick={onToggle}
-        className={`mt-0.5 relative flex items-center justify-center w-5 h-5 border-2 rounded shrink-0 transition-colors ${
-          task.done
-            ? "border-slate-400 bg-slate-400"
-            : "border-slate-300 dark:border-slate-500"
-        }`}
-      >
-        {task.done && <Check size={10} className="text-white" weight="bold" />}
-      </button>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start gap-2">
-          <p
-            className={`text-sm font-medium ${
-              task.done
-                ? "text-slate-500 line-through"
-                : "text-slate-800 dark:text-slate-200"
-            }`}
-          >
-            {task.desc}
-          </p>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 shrink-0">
-            {task.code}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 mt-1">
-          <span
-            className={`text-[10px] px-1.5 py-0.5 rounded border font-bold uppercase tracking-wider ${priorityColors(task.priority)}`}
-          >
+    <li className={`group/task flex items-start gap-3 rounded-lg p-2 transition-colors ${task.done ? "bg-muted opacity-70" : "hover:bg-subtle"}`}>
+      <input
+        id={id}
+        type="checkbox"
+        checked={task.done}
+        disabled={busy}
+        onChange={onToggle}
+        className="mt-1 h-5 w-5 shrink-0 accent-brand-600"
+        aria-label={`${task.done ? "Reabrir" : "Completar"} tarea ${task.code || task.desc}`}
+      />
+      <label htmlFor={id} className="min-w-0 flex-1 cursor-pointer">
+        <span className="flex items-start justify-between gap-2">
+          <span className={`text-sm font-medium ${task.done ? "text-fg-muted line-through" : "text-fg"}`}>{task.desc || task.code}</span>
+          {task.code && <span className="shrink-0 rounded bg-subtle px-1.5 py-0.5 font-mono text-[11px] text-fg-muted">{task.code}</span>}
+        </span>
+        <span className="mt-1 flex flex-wrap items-center gap-2">
+          <Badge tone={priorityTone(task.priority)} size="sm">
             {task.priority.replace("_", " ")}
-          </span>
-          <span className="text-[10px] text-slate-400">{task.type}</span>
-        </div>
-        {task.notes && (
-          <p className="mt-1 text-xs text-brand-600 dark:text-brand-400">
-            {task.notes}
-          </p>
-        )}
-      </div>
-
-      <button
-        onClick={onDelete}
-        className="opacity-0 group-hover/task:opacity-100 p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all"
-      >
+          </Badge>
+          {task.type && <span className="text-[11px] text-fg-subtle">{task.type}</span>}
+        </span>
+        {task.notes && <span className="mt-1 block text-xs text-brand-700 dark:text-brand-300">{task.notes}</span>}
+      </label>
+      <IconButton size="sm" label={`Eliminar tarea ${task.code || task.desc}`} className="hover:text-danger sm:opacity-0 sm:group-hover/task:opacity-100 sm:focus-visible:opacity-100" onClick={onDelete} disabled={busy}>
         <Trash size={14} />
-      </button>
-    </div>
+      </IconButton>
+    </li>
   );
 }
 
 interface Props {
   group: WorkGroup;
   onUpdate: (updated: WorkGroup) => void;
-  onDelete: (id: string | number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function WorkGroupCard({ group, onUpdate, onDelete }: Props) {
+  const toast = useToast();
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{ kind: "group" } | { kind: "task"; idx: number } | null>(null);
 
   const totalTasks = group.tasks.length;
   const doneTasks = group.tasks.filter((t) => t.done).length;
   const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
-
-  const jobTime = formatTime(group.salida) ?? "--:--";
-  const progressColor = progress === 100 ? "bg-emerald-500" : "bg-brand-500";
+  const salida = formatTime(group.salida);
+  const llegadaRaw = (group.llegada || "").toUpperCase();
+  const llegada = llegadaRaw === "BASE" || llegadaRaw === "PRE" ? llegadaRaw : formatTime(group.llegada);
 
   const handleToggleTask = async (idx: number) => {
+    if (saving) return;
     const task = group.tasks[idx];
-    const updatedTasks = group.tasks.map((t, i) =>
-      i === idx ? { ...t, done: !t.done } : t
-    );
-    onUpdate({ ...group, tasks: updatedTasks });
-
+    if (!task.db_id) {
+      setError("Tarea sin identificador. Recarga la página.");
+      return;
+    }
+    const prev = group.tasks;
+    onUpdate({ ...group, tasks: group.tasks.map((t, i) => (i === idx ? { ...t, done: !t.done } : t)) });
     setSaving(true);
+    setError(null);
     try {
-      await brokiApi.plannerAction({
-        action: "toggle_task",
-        task_db_id: task.db_id,
-        codigo: task.code,
-        matricula_avion: group.matricula,
-        estado: task.done ? 0 : 1,
-        timestamp: new Date().toISOString(),
-      });
+      await brokiApi.plannerAction({ action: "toggle_task", task_id: task.db_id, estado: task.done ? 0 : 1, timestamp: new Date().toISOString() });
     } catch (e) {
-      console.error("[WorkGroupCard] toggle task error", e);
+      onUpdate({ ...group, tasks: prev });
+      setError(e instanceof Error ? e.message : "No se pudo actualizar la tarea.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
-  const handleDeleteTask = async (idx: number) => {
-    if (!confirm("¿Eliminar esta tarea?")) return;
+  const deleteTask = async (idx: number) => {
     const task = group.tasks[idx];
-    const updatedTasks = group.tasks.filter((_, i) => i !== idx);
-    onUpdate({ ...group, tasks: updatedTasks });
-
-    try {
-      await brokiApi.plannerAction({
-        action: "delete_task",
-        codigo: task.code,
-        matricula_avion: group.matricula,
-      });
-    } catch (e) {
-      console.error("[WorkGroupCard] delete task error", e);
-    }
+    if (!task.db_id) throw new Error("Tarea sin identificador. Recarga la página.");
+    await brokiApi.plannerAction({ action: "delete_task", task_id: task.db_id });
+    onUpdate({ ...group, tasks: group.tasks.filter((_, i) => i !== idx) });
+    toast.success("Tarea eliminada", task.code || task.desc);
   };
 
-  const handleDeleteGroup = async () => {
-    if (!confirm(`¿Eliminar asignación del avión ${group.matricula}?`)) return;
+  const deleteGroup = async () => {
+    if (!group.id) throw new Error("Grupo sin identificador. Recarga la página.");
+    await brokiApi.plannerAction({ action: "delete", group_id: group.id });
     onDelete(group.id);
-
-    try {
-      await brokiApi.plannerAction({
-        action: "delete",
-        matricula: group.matricula,
-        fecha: new Date().toISOString(),
-      });
-    } catch (e) {
-      console.error("[WorkGroupCard] delete group error", e);
-    }
+    toast.success("Asignación eliminada", group.matricula);
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all relative">
-      {saving && (
-        <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-      )}
-
-      {/* Header */}
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-600">
-            <Airplane size={20} className="text-slate-500 dark:text-slate-400" />
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white">
-              {group.matricula}
-            </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              {group.modelo}
-              {group.aerolinea && ` · ${group.aerolinea}`}
+    <article className="relative rounded-xl border border-border bg-surface p-4 shadow-sm sm:p-5" aria-label={`Asignación ${group.matricula}`}>
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-subtle text-fg-muted" aria-hidden>
+            <Airplane size={20} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="text-base font-bold leading-tight text-fg">{group.matricula}</h3>
+            <p className="truncate text-xs text-fg-muted">
+              {[group.modelo, group.aerolinea].filter(Boolean).join(" · ") || "Sin modelo"}
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <span
-            className={`px-2 py-1 rounded text-xs font-bold ${
-              progress === 100
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
-            }`}
-          >
-            {jobTime}
-          </span>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <Badge tone={progress === 100 ? "success" : "info"} icon={<AirplaneTakeoff size={12} aria-hidden />}>
+            Salida {salida ?? "--:--"}
+          </Badge>
+          {llegada && (
+            <Badge tone="neutral" size="sm" icon={<AirplaneLanding size={12} aria-hidden />}>
+              {llegada === "BASE" ? "En base" : llegada === "PRE" ? "Pre-vuelo" : `ETA ${llegada}`}
+            </Badge>
+          )}
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 mb-4 overflow-hidden">
-        <div
-          className={`${progressColor} h-2 rounded-full transition-all duration-500`}
-          style={{ width: `${progress}%` }}
-        />
+      <div className="mb-3 flex items-center gap-2">
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-subtle" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label="Progreso de tareas">
+          <div className={`h-2 rounded-full transition-all duration-500 ${progress === 100 ? "bg-success" : "bg-brand-500"}`} style={{ width: `${progress}%` }} />
+        </div>
+        <span className="tabular text-xs font-semibold text-fg-muted">
+          {doneTasks}/{totalTasks} · {progress} %
+        </span>
       </div>
 
-      {/* Meta */}
-      <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-        <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-700">
-          <span className="text-slate-400 block text-[10px] uppercase mb-1">
-            Responsable
-          </span>
-          <span className="font-medium text-slate-700 dark:text-slate-300 truncate flex items-center gap-1.5">
-            <UserCircle size={14} className="text-purple-500 shrink-0" />
-            {group.responsable || "--"}
-          </span>
+      <dl className="mb-3 grid grid-cols-2 gap-2 text-xs">
+        <div className="rounded-lg border border-border-subtle bg-muted p-2">
+          <dt className="mb-0.5 text-[11px] uppercase tracking-wide text-fg-subtle">Responsable</dt>
+          <dd className="flex items-center gap-1.5 truncate font-medium text-fg">
+            <UserCircle size={14} className="shrink-0 text-brand-500" aria-hidden />
+            {group.responsable || "—"}
+          </dd>
         </div>
-        <div className="p-2 bg-slate-50 dark:bg-slate-900/50 rounded border border-slate-100 dark:border-slate-700">
-          <span className="text-slate-400 block text-[10px] uppercase mb-1">
-            Furgoneta
-          </span>
-          <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-            <Van size={14} className="text-brand-500 shrink-0" />
-            {group.furgo || "--"}
-          </span>
+        <div className="rounded-lg border border-border-subtle bg-muted p-2">
+          <dt className="mb-0.5 text-[11px] uppercase tracking-wide text-fg-subtle">Furgoneta</dt>
+          <dd className="flex items-center gap-1.5 truncate font-medium text-fg">
+            <Van size={14} className="shrink-0 text-brand-500" aria-hidden />
+            {group.furgo || "—"}
+          </dd>
         </div>
-      </div>
+      </dl>
 
-      {/* Workers */}
       {group.workers.length > 0 && (
-        <div className="mb-3 px-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5 block">
-            Equipo
-          </span>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="mb-3">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">Equipo ({group.workers.length})</p>
+          <ul className="flex flex-wrap gap-1.5">
             {group.workers.map((w, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600"
-              >
-                <User size={10} /> {w}
-              </span>
+              <li key={i} className="inline-flex items-center gap-1 rounded-md border border-border bg-subtle px-1.5 py-0.5 text-[11px] font-medium text-fg-muted">
+                <User size={10} aria-hidden /> {w}
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
 
-      {/* Tasks */}
+      <InlineError message={error} />
+
       {totalTasks > 0 ? (
-        <div className="mt-4 space-y-1 border-t border-slate-100 dark:border-slate-700 pt-3">
+        <ul className="mt-3 space-y-1 border-t border-border-subtle pt-3" aria-label="Tareas">
           {group.tasks.map((task, idx) => (
-            <TaskRow
-              key={task.code || idx}
-              task={task}
-              onToggle={() => handleToggleTask(idx)}
-              onDelete={() => handleDeleteTask(idx)}
-            />
+            <TaskRow key={task.db_id || `${task.code}-${idx}`} task={task} busy={saving} onToggle={() => void handleToggleTask(idx)} onDelete={() => setConfirm({ kind: "task", idx })} />
           ))}
-          <p className="text-[10px] text-slate-400 text-right pt-1">
-            {doneTasks}/{totalTasks} · {progress}%
-          </p>
-        </div>
+        </ul>
       ) : (
-        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 text-center">
-          <p className="text-xs text-slate-400 italic">Sin tareas vinculadas.</p>
-        </div>
+        <p className="mt-3 border-t border-border-subtle pt-3 text-center text-xs text-fg-subtle">Sin tareas vinculadas.</p>
       )}
 
-      {/* Footer */}
-      <div className="mt-4 flex justify-end border-t border-slate-100 dark:border-slate-700 pt-3">
-        <button
-          onClick={handleDeleteGroup}
-          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-          title="Eliminar asignación"
-        >
+      <div className="mt-3 flex items-center justify-between border-t border-border-subtle pt-3 text-[11px] text-fg-subtle">
+        <span className="flex items-center gap-1">
+          <Clock size={12} aria-hidden /> {saving ? "Guardando…" : "Sincronizado"}
+        </span>
+        <IconButton size="sm" label={`Eliminar asignación ${group.matricula}`} className="hover:text-danger" onClick={() => setConfirm({ kind: "group" })}>
           <Trash size={16} />
-        </button>
+        </IconButton>
       </div>
-    </div>
+
+      <ConfirmDialog
+        open={confirm?.kind === "group"}
+        danger
+        title="Eliminar asignación"
+        message={`Se eliminará la asignación de ${group.matricula} con sus ${totalTasks} tarea${totalTasks !== 1 ? "s" : ""}.`}
+        confirmLabel="Eliminar"
+        onCancel={() => setConfirm(null)}
+        onConfirm={async () => {
+          await deleteGroup();
+          setConfirm(null);
+        }}
+      />
+      <ConfirmDialog
+        open={confirm?.kind === "task"}
+        danger
+        title="Eliminar tarea"
+        message={confirm?.kind === "task" ? `${group.tasks[confirm.idx]?.code || ""} ${group.tasks[confirm.idx]?.desc || ""}`.trim() : undefined}
+        confirmLabel="Eliminar"
+        onCancel={() => setConfirm(null)}
+        onConfirm={async () => {
+          if (confirm?.kind !== "task") return;
+          await deleteTask(confirm.idx);
+          setConfirm(null);
+        }}
+      />
+    </article>
   );
 }

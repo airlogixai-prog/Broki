@@ -1,4 +1,12 @@
 import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Sobre Nosotros",
+  description: "AIRLOGIX AI — automatización, IA y el dashboard operativo BROKI.",
+  path: "/sobre-nosotros",
+});
 
 export default function SobreNosotrosPage() {
   return (

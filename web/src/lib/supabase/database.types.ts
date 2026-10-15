@@ -44,6 +44,8 @@ export type Database = {
           legacy_id: number | null
           matricula: string | null
           modelo: string | null
+          msn: string | null
+          motor: string | null
           raw_payload: Json
           source_system: string
           source_table: string
@@ -59,6 +61,8 @@ export type Database = {
           legacy_id?: number | null
           matricula?: string | null
           modelo?: string | null
+          msn?: string | null
+          motor?: string | null
           raw_payload?: Json
           source_system?: string
           source_table?: string
@@ -74,6 +78,8 @@ export type Database = {
           legacy_id?: number | null
           matricula?: string | null
           modelo?: string | null
+          msn?: string | null
+          motor?: string | null
           raw_payload?: Json
           source_system?: string
           source_table?: string
@@ -1156,10 +1162,16 @@ export type Database = {
           familia: string | null
           id: string
           legacy_id: number | null
+          manufacturer: string | null
+          part_number: string | null
           raw_payload: Json
+          serial_number: string | null
           source_system: string
           source_table: string
+          supplier: string | null
           synced_at: string | null
+          tipo: string | null
+          ubicacion_habitual: string | null
           updated_at: string
         }
         Insert: {
@@ -1172,10 +1184,16 @@ export type Database = {
           familia?: string | null
           id?: string
           legacy_id?: number | null
+          manufacturer?: string | null
+          part_number?: string | null
           raw_payload?: Json
+          serial_number?: string | null
           source_system?: string
           source_table?: string
+          supplier?: string | null
           synced_at?: string | null
+          tipo?: string | null
+          ubicacion_habitual?: string | null
           updated_at?: string
         }
         Update: {
@@ -1188,10 +1206,16 @@ export type Database = {
           familia?: string | null
           id?: string
           legacy_id?: number | null
+          manufacturer?: string | null
+          part_number?: string | null
           raw_payload?: Json
+          serial_number?: string | null
           source_system?: string
           source_table?: string
+          supplier?: string | null
           synced_at?: string | null
+          tipo?: string | null
+          ubicacion_habitual?: string | null
           updated_at?: string
         }
         Relationships: []
