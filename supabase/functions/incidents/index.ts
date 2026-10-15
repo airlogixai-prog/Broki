@@ -2,7 +2,7 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { authorizeOrRespond } from "../_shared/request-auth.ts";
+import { authorizeOrRespond, assertUserCanWrite, readMutationBody, respondMutation } from "../_shared/request-auth.ts";
 
 type IncidentRow = {
   id: string;
@@ -87,12 +87,12 @@ serve(async (req) => {
   }
 
   if (req.method === "POST") {
-    let body: Record<string, unknown>;
-    try {
-      body = await req.json();
-    } catch {
-      return jsonResponse(req, { error: "invalid_json" }, 400);
-    }
+    const denied = assertUserCanWrite(req, auth);
+    if (denied) return denied;
+
+    const parsed = await readMutationBody(req, auth, "incidents");
+    if (!parsed.ok) return parsed.response;
+    const { body, bodyText } = parsed;
 
     if (!body?.action || !body?.item_id) {
       return jsonResponse(req, { error: "missing action or item_id" }, 400);
@@ -100,10 +100,11 @@ serve(async (req) => {
 
     const action = String(body.action);
     const itemId = String(body.item_id);
-    const incidentId = String(body.incident_id ?? "");
+    const incidentId = String(body.incident_id ?? "").slice(0, 120);
+    // Timestamps are always the server's: the browser clock is not trusted.
     const now = new Date().toISOString();
-    const worker = String(body.worker ?? "Operario").trim() || "Operario";
-    const messageText = String(body.message ?? body.defect ?? "").trim();
+    const worker = (String(body.worker ?? "Operario").trim() || "Operario").slice(0, 120);
+    const messageText = String(body.message ?? body.defect ?? "").trim().slice(0, 2000);
 
     try {
       const supabase = createServiceClient();
@@ -123,32 +124,73 @@ serve(async (req) => {
           return jsonResponse(req, { error: "missing defect text" }, 400);
         }
 
-        const code = incidentId || `${itemId}-${Date.now()}`;
-        const openedAt = String(body.timestamp ?? now);
+        const openedAt = now;
 
-        const { data: inserted, error } = await supabase
+        // One open incident per equipment (legacy rule): a double click or a
+        // second operator reporting the same unit must not create a duplicate.
+        const { data: alreadyOpen } = await supabase
           .from("broki_incidents")
-          .insert({
-            source_system: "edge_function",
-            source_table: "broki_incidents",
-            external_id: code,
-            incident_code: code,
-            id_objeto: itemId,
-            asset_id: assetId,
-            descripcion: messageText,
-            estado: 1,
-            status_text: "abierta",
-            trabajador_text: worker,
-            fecha_apertura: openedAt,
-            raw_payload: {},
-          })
           .select("*, broki_incident_messages(author_text, message_text, created_at)")
-          .single();
+          .eq("id_objeto", itemId)
+          .eq("estado", 1)
+          .order("fecha_apertura", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (alreadyOpen) {
+          return jsonResponse(req, { error: "incident_already_open", incident: toClientIncident(alreadyOpen as IncidentRow) }, 409);
+        }
 
-        if (error || !inserted) {
-          console.error("[incidents] open_incident error", error);
+        // The client proposes a code (i-{item}-{n}); two sessions may propose the
+        // same one, so a unique violation is retried with a server suffix and the
+        // code actually stored is returned in the row.
+        const proposed = incidentId || `${itemId}-${Date.now()}`;
+        let inserted: IncidentRow | null = null;
+        let lastError: { code?: string; message?: string } | null = null;
+        for (let attempt = 0; attempt < 3 && !inserted; attempt++) {
+          const code = attempt === 0 ? proposed : `${proposed}-${Date.now().toString(36)}${attempt}`;
+          const { data, error } = await supabase
+            .from("broki_incidents")
+            .insert({
+              source_system: "edge_function",
+              source_table: "broki_incidents",
+              external_id: code,
+              incident_code: code,
+              id_objeto: itemId,
+              asset_id: assetId,
+              descripcion: messageText,
+              estado: 1,
+              status_text: "abierta",
+              trabajador_text: worker,
+              fecha_apertura: openedAt,
+              raw_payload: {},
+            })
+            .select("*, broki_incident_messages(author_text, message_text, created_at)")
+            .single();
+          if (!error && data) {
+            inserted = data as IncidentRow;
+            break;
+          }
+          lastError = error;
+          // Trigger broki_incidents_single_open: someone opened one for this asset meanwhile.
+          if (error?.message?.includes("incident_already_open")) {
+            const { data: winner } = await supabase
+              .from("broki_incidents")
+              .select("*, broki_incident_messages(author_text, message_text, created_at)")
+              .eq("id_objeto", itemId)
+              .eq("estado", 1)
+              .order("fecha_apertura", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            return jsonResponse(req, { error: "incident_already_open", incident: winner ? toClientIncident(winner as IncidentRow) : null }, 409);
+          }
+          if (error?.code !== "23505") break;
+        }
+
+        if (!inserted) {
+          console.error("[incidents] open_incident error", lastError);
           return jsonResponse(req, { error: "db_error" }, 500);
         }
+        const code = String(inserted.incident_code ?? proposed);
 
         const { error: msgErr } = await supabase.from("broki_incident_messages").insert({
           incident_id: inserted.id,
@@ -174,7 +216,14 @@ serve(async (req) => {
           .eq("id", inserted.id)
           .single();
 
-        return jsonResponse(req, toClientIncident((withMsgs ?? inserted) as IncidentRow));
+        return respondMutation(
+          req,
+          auth,
+          "incidents",
+          bodyText,
+          200,
+          toClientIncident((withMsgs ?? inserted) as IncidentRow),
+        );
       }
 
       if (action === "update_incident" || action === "close_incident") {
@@ -182,10 +231,16 @@ serve(async (req) => {
           return jsonResponse(req, { error: "missing incident_id" }, 400);
         }
 
+        // Only the open incident of this equipment can be updated or closed:
+        // closing twice or appending to a closed one is refused.
         const { data: existing, error: findErr } = await supabase
           .from("broki_incidents")
           .select("*")
           .eq("incident_code", incidentId)
+          .eq("id_objeto", itemId)
+          .eq("estado", 1)
+          .order("fecha_apertura", { ascending: false })
+          .limit(1)
           .maybeSingle();
 
         if (findErr || !existing) {
@@ -197,7 +252,7 @@ serve(async (req) => {
             incident_id: existing.id,
             author_text: worker,
             message_text: messageText,
-            created_at: String(body.timestamp ?? now),
+            created_at: now,
           });
           if (msgErr) {
             console.error("[incidents] message insert error", msgErr);
@@ -209,7 +264,7 @@ serve(async (req) => {
         if (action === "close_incident") {
           patch.estado = 0;
           patch.status_text = "cerrada";
-          patch.fecha_cierre = String(body.timestamp ?? now);
+          patch.fecha_cierre = now;
         }
 
         let updatedRow = existing;
@@ -239,7 +294,14 @@ serve(async (req) => {
           .eq("id", existing.id)
           .single();
 
-        return jsonResponse(req, toClientIncident((withMsgs ?? updatedRow) as IncidentRow));
+        return respondMutation(
+          req,
+          auth,
+          "incidents",
+          bodyText,
+          200,
+          toClientIncident((withMsgs ?? updatedRow) as IncidentRow),
+        );
       }
 
       return jsonResponse(req, { error: "unknown_action" }, 400);

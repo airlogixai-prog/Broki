@@ -1,0 +1,571 @@
+{
+  "master": {
+    "phase": 9,
+    "verdict": "FAIL",
+    "definition_of_done": {
+      "source_vs_v7_known": false,
+      "duplicates_have_cause": true,
+      "missing_unresolved": 0,
+      "unknown_unresolved": 0,
+      "tasks_classified": true,
+      "personnel_extras_classified": true,
+      "tooling_moves_classified": true,
+      "incident_messages_explained": true,
+      "zombies_have_action": true,
+      "remediation_plan_exists": true
+    },
+    "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+    "source_vs_v7": "UNKNOWN",
+    "counts": {
+      "DELETE_CANDIDATE": 210,
+      "KEEP": 220,
+      "BACKFILL": 13,
+      "REBUILD": 1
+    },
+    "field_gaps": [
+      {
+        "source": "pro.furgonetas",
+        "field": "trabajadores",
+        "legacy_type": "text",
+        "pct_with_value": 0.8235294117647058,
+        "destino_actual": null,
+        "destino_propuesto": "broki_assets.current_worker_text (+ current_worker_id via links)",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "broki_normalize_assets — add alias trabajadores/TRABAJADORES",
+        "function": "inventory-list",
+        "mapper": "web/src/lib/mappers/equipment.ts worker fallback",
+        "ui": "furgonetas / fleet",
+        "backfill": true,
+        "test": "parity trabajadores_lost=0"
+      },
+      {
+        "source": "pro.furgonetas",
+        "field": "vehiculo",
+        "legacy_type": "text",
+        "pct_with_value": 1,
+        "destino_actual": null,
+        "destino_propuesto": "Map vehiculo → descripcion when descripcion/nombre_equipo empty; keep raw_payload.vehiculo. If product needs both labels, escalate to ADD_CANONICAL_COLUMN.",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "map vehiculo → descripcion if descripcion null, else add column",
+        "function": "inventory-list",
+        "mapper": "equipment.ts model: descripcion|nombre_equipo|vehiculo",
+        "ui": "furgonetas card title",
+        "backfill": true,
+        "test": "van.vehiculo visible",
+        "note": "Legacy HTML uses vehiculo as display; prefer MAP to descripcion if empty else ADD_CANONICAL_COLUMN vehiculo",
+        "preferred": "MAP_EXISTING_COLUMN → descripcion when empty; else ADD_CANONICAL_COLUMN"
+      },
+      {
+        "source": "pro.gse",
+        "field": "trabajadores",
+        "legacy_type": "text",
+        "pct_with_value": 0.36363636363636365,
+        "destino_actual": null,
+        "destino_propuesto": "broki_assets.current_worker_text",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "alias trabajadores",
+        "function": "inventory-list",
+        "mapper": "equipment.ts",
+        "ui": "gse",
+        "backfill": true,
+        "test": "gse worker"
+      },
+      {
+        "source": "pro.gse",
+        "field": "brk",
+        "legacy_type": "text",
+        "pct_with_value": 1,
+        "destino_actual": "identifier may come from identificador/id not brk",
+        "destino_propuesto": "broki_assets.identifier coalesce(identificador, brk, id)",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "broki_normalize_assets identifier keys + brk",
+        "function": "inventory-list",
+        "mapper": "legacy HTML uses g.brk as id",
+        "ui": "gse id",
+        "backfill": true,
+        "test": "identifier==brk"
+      },
+      {
+        "source": "pro.aviones",
+        "field": "compania",
+        "legacy_type": "text",
+        "pct_with_value": 1,
+        "destino_actual": "aerolinea (null; normalize only reads aerolinea)",
+        "destino_propuesto": "broki_aircraft.aerolinea",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "add alias compania/COMPANIA",
+        "function": "aircraft-list",
+        "mapper": "equipment aircraft",
+        "ui": "aviones",
+        "backfill": true,
+        "test": "aerolinea==compania"
+      },
+      {
+        "source": "pro.aviones",
+        "field": "msn",
+        "legacy_type": "text",
+        "pct_with_value": 0,
+        "destino_actual": "column msn exists; normalize coalesces into matricula",
+        "destino_propuesto": "broki_aircraft.msn (dedicated)",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "stop coalesce; write msn column",
+        "function": "aircraft-list / aircraft-action",
+        "mapper": "a.msn",
+        "ui": "aviones",
+        "backfill": true,
+        "test": "msn not mixed into matricula"
+      },
+      {
+        "source": "pro.aviones",
+        "field": "motor",
+        "legacy_type": "text",
+        "pct_with_value": 0,
+        "destino_actual": "column motor exists; normalize coalesces into modelo",
+        "destino_propuesto": "broki_aircraft.motor",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "stop coalesce; write motor column",
+        "function": "aircraft-list",
+        "mapper": "a.motor",
+        "ui": "aviones",
+        "backfill": true,
+        "test": "motor dedicated"
+      },
+      {
+        "source": "pro.tooling",
+        "field": "tipo",
+        "legacy_type": "text",
+        "pct_with_value": 0.997093023255814,
+        "destino_actual": "raw_only / tipo_tool partial",
+        "destino_propuesto": "broki_tooling_catalog — map tipo→tipo_tool or add tipo",
+        "classification": "MAP_EXISTING_COLUMN",
+        "normalizer": "include tipo in catalog columns or alias tipo_tool",
+        "function": "tooling-list",
+        "mapper": "tooling UI",
+        "ui": "tooling",
+        "backfill": true,
+        "test": "tipo present",
+        "operational": true
+      },
+      {
+        "source": "pro.tooling",
+        "field": "supplier",
+        "legacy_type": "text",
+        "pct_with_value": 1,
+        "destino_actual": null,
+        "destino_propuesto": "ADD column broki_tooling_catalog.supplier OR raw_payload-only if UI unused",
+        "classification": "ADD_CANONICAL_COLUMN",
+        "normalizer": "new column",
+        "function": "tooling-list",
+        "mapper": "TBD",
+        "ui": "tooling detail — legacy may show",
+        "backfill": true,
+        "test": "supplier",
+        "operational": true
+      },
+      {
+        "source": "pro.tooling",
+        "field": "manufacturer",
+        "legacy_type": "text",
+        "pct_with_value": 0.25290697674418605,
+        "destino_actual": null,
+        "destino_propuesto": "ADD column broki_tooling_catalog.manufacturer",
+        "classification": "ADD_CANONICAL_COLUMN",
+        "normalizer": "new column",
+        "function": "tooling-list",
+        "mapper": "TBD",
+        "ui": "tooling",
+        "backfill": true,
+        "test": "manufacturer",
+        "operational": true
+      },
+      {
+        "source": "n8n.nitro_stock",
+        "field": "createdAt",
+        "legacy_type": "timestamptz/string",
+        "pct_with_value": 1,
+        "destino_actual": null,
+        "destino_propuesto": "created_at already on table; do not map DataTable meta unless needed",
+        "classification": "RAW_ONLY_APPROVED",
+        "normalizer": "none",
+        "function": "nitro-stock",
+        "mapper": "n/a",
+        "ui": "n/a",
+        "backfill": false,
+        "test": "doc only"
+      },
+      {
+        "source": "n8n.nitro_stock",
+        "field": "updatedAt",
+        "legacy_type": "timestamptz/string",
+        "pct_with_value": 1,
+        "destino_actual": null,
+        "destino_propuesto": "updated_at / synced_at",
+        "classification": "RAW_ONLY_APPROVED",
+        "normalizer": "none",
+        "function": "nitro-stock",
+        "mapper": "n/a",
+        "ui": "n/a",
+        "backfill": false,
+        "test": "doc only"
+      }
+    ],
+    "planner": {
+      "SOURCE_GROUP_NULL": 20
+    },
+    "personal_extras": [
+      {
+        "id": "a8fdc012-d6d9-408a-9e90-d2d5932d29ec",
+        "external_id": "reg-+34651920860",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-07-31T17:33:28.675891+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "32ac5d28-f6b3-4482-89ee-58bfd40d9fa7",
+        "external_id": "reg-+34658160355",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-01T10:53:23.928229+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "e0689c8e-fdd9-4c21-ba53-2734cd4cc6b8",
+        "external_id": "reg-+34658176264",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-01T10:56:03.799258+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "69c8af5d-f93b-466b-b4c6-69cf5c89ca32",
+        "external_id": "reg-+34658182237",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-01T10:57:02.740296+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "24482fbb-8743-4403-b2cf-44a5d5fd818c",
+        "external_id": "reg-+34660860668",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-01T18:23:27.569602+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "f75c1ec4-e7e9-48ca-bea3-d7a9df0770a8",
+        "external_id": "reg-+34660862372",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-01T18:23:44.149935+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "a492eba3-579d-4aff-a456-58eda52115f8",
+        "external_id": "reg-+34669698295",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-02T18:56:24.308512+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "6c1ba23c-1a82-451b-bcd7-d6759cf203a2",
+        "external_id": "reg-+34669705320",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-02T18:57:33.636779+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "27b62378-2892-4050-ba9b-5fc560e3abff",
+        "external_id": "reg-+34669709436",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-02T18:58:14.764625+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      },
+      {
+        "id": "341e91ee-2afc-4b69-9999-22f01dbcc1fe",
+        "external_id": "reg-+34669519108",
+        "source_system": "public_registration",
+        "source_table": "registrobroki",
+        "created_at": "2026-08-04T18:52:01.413974+00:00",
+        "has_telefono": true,
+        "has_correo": true,
+        "estado": 0,
+        "classification": "WEB_REGISTRATION"
+      }
+    ],
+    "tooling_moves": [
+      {
+        "id": "34158396-6851-4140-a171-7999c4b59430",
+        "external_id": "checkout-BAC-SMK-0ffa-1785696969435",
+        "bac_bact": "BAC-SMK-0ffa",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "f9022038-e73d-40cd-afdd-40e7443e80d2",
+        "external_id": "checkout-BAC-SMK-f7b5-1785697045382",
+        "bac_bact": "BAC-SMK-f7b5",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "aa9ecbeb-9dd1-43a4-b96e-169ae798a99a",
+        "external_id": "checkout-BAC-SMK-d7bf-1785697085910",
+        "bac_bact": "BAC-SMK-d7bf",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "33cd5838-db39-48e1-b8ac-9da7bbb21052",
+        "external_id": "checkout-BAC-SMK-0ffa-1785696968211",
+        "bac_bact": "BAC-SMK-0ffa",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "1826563e-d715-425f-b3e2-48d6e04cc073",
+        "external_id": "checkout-BAC-SMK-d7bf-1785697085456",
+        "bac_bact": "BAC-SMK-d7bf",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "c691c2fa-5b70-4757-a1cf-dc4d2abd8087",
+        "external_id": "checkout-BAC-SMK-f7b5-1785697044984",
+        "bac_bact": "BAC-SMK-f7b5",
+        "tool_id": null,
+        "classification": "SMOKE",
+        "catalog_match": false
+      },
+      {
+        "id": "238eb8a8-e40b-4b84-b317-1d13d4b0d52f",
+        "external_id": "4",
+        "bac_bact": "BAC1268",
+        "tool_id": null,
+        "classification": "BROKEN_RELATION",
+        "catalog_match": true
+      },
+      {
+        "id": "24092c2a-b341-4cde-af22-99021a7b6978",
+        "external_id": "6",
+        "bac_bact": "BAC2341",
+        "tool_id": null,
+        "classification": "BROKEN_RELATION",
+        "catalog_match": true
+      },
+      {
+        "id": "a6f81d8a-1076-4240-bd5d-de773cceb67b",
+        "external_id": "5",
+        "bac_bact": "BAC2504",
+        "tool_id": null,
+        "classification": "BROKEN_RELATION",
+        "catalog_match": true
+      }
+    ],
+    "incident_messages": {
+      "messages_table_count": 0,
+      "conclusion": "C",
+      "explanation": "Legacy model (pro.incidencias + broki.html) does not use a separate messages entity. UI builds messages[] from descripcion/defect/message fields or client-side memory; n8n may insert additional incidencias rows (estado updates) as history, not child messages. broki_incident_messages is a Broki-native table seeded for demos; normalize_incidents never writes to it. Not a migration loss of a legacy messages table.",
+      "alternatives_ruled_out": {
+        "A_never_had_legacy_messages_table": true,
+        "B_json_messages_column": true,
+        "D_lost_in_normalization": false
+      },
+      "raw_incidencia_keys": [
+        "id",
+        "estado",
+        "id_objeto",
+        "trabajador",
+        "descripcion",
+        "id_incidencia",
+        "fecha_modificacion"
+      ],
+      "multi_row_same_id_incidencia": 7,
+      "note_html": "public_html/broki.html processIncidents constructs msgs from descripcion; treats multiple rows per id_objeto as current/history, not broki_incident_messages"
+    },
+    "classifications_path": "13-remediation-classifications.json",
+    "verdict_reason": "DoD requires known YES/NO for current source vs V7; agent lacks legacy Postgres access → UNKNOWN"
+  },
+  "remediation": {
+    "p0": [
+      {
+        "id": "R9-P0-01",
+        "severity": "P0",
+        "type": "NORMALIZER",
+        "cause": "trabajadores plural not mapped",
+        "fix": "alias in broki_normalize_assets",
+        "migration": "forward SQL replace function",
+        "backfill": "from broki_legacy_rows V7",
+        "cleanup": "no",
+        "tests": "parity workers"
+      },
+      {
+        "id": "R9-P0-02",
+        "severity": "P0",
+        "type": "NORMALIZER",
+        "cause": "compania not mapped to aerolinea",
+        "fix": "alias compania in broki_normalize_aircraft",
+        "migration": "forward SQL",
+        "backfill": "yes",
+        "cleanup": "no",
+        "tests": "aerolinea filled"
+      },
+      {
+        "id": "R9-P0-03",
+        "severity": "P0",
+        "type": "NORMALIZER",
+        "cause": "brk not in identifier coalesce",
+        "fix": "identifier keys + brk",
+        "migration": "forward SQL",
+        "backfill": "yes",
+        "cleanup": "no",
+        "tests": "gse id=brk"
+      },
+      {
+        "id": "R9-P0-04",
+        "severity": "P0",
+        "type": "DEDUP",
+        "cause": "normalize ignores last_migration_id → ×2 assets",
+        "fix": "normalize filter last_migration_id OR cleanup zombies then constrain",
+        "migration": "forward SQL + optional cleanup migration",
+        "backfill": "rebuild from V7 raw",
+        "cleanup": "DELETE_CANDIDATE old-run assets",
+        "tests": "canonical count == V7 raw per table"
+      },
+      {
+        "id": "R9-P0-05",
+        "severity": "P0",
+        "type": "RELATION",
+        "cause": "tasks without group_id + orphan groups",
+        "fix": "fix link in normalize_planner_tasks; cleanup orphan groups/tasks",
+        "migration": "forward SQL",
+        "backfill": "yes from id_grupo_trabajo",
+        "cleanup": "orphan DELETE_CANDIDATE",
+        "tests": "tasks_without_group for V7 = only SOURCE_GROUP_NULL"
+      },
+      {
+        "id": "R9-P0-06",
+        "severity": "P0",
+        "type": "CLEANUP",
+        "cause": "BAC-SMK smoke movements",
+        "fix": "delete smoke movements after audit sign-off",
+        "migration": "cleanup SQL audited",
+        "backfill": "no",
+        "cleanup": "yes",
+        "tests": "no BAC-SMK open"
+      }
+    ],
+    "p1": [
+      {
+        "id": "R9-P1-01",
+        "severity": "P1",
+        "type": "SCHEMA",
+        "cause": "vehiculo / tooling supplier|manufacturer",
+        "fix": "map or add columns",
+        "migration": "forward",
+        "backfill": "yes",
+        "cleanup": "no",
+        "tests": "field contracts"
+      },
+      {
+        "id": "R9-P1-02",
+        "severity": "P1",
+        "type": "NORMALIZER",
+        "cause": "msn/motor coalesce",
+        "fix": "dedicated columns",
+        "migration": "forward",
+        "backfill": "yes when values exist",
+        "cleanup": "no",
+        "tests": "no concept mix"
+      },
+      {
+        "id": "R9-P1-03",
+        "severity": "P1",
+        "type": "RELATION",
+        "cause": "tool_control movements tool_id null for legacy BAC",
+        "fix": "broki_normalize_legacy_links by bac",
+        "migration": "forward",
+        "backfill": "yes",
+        "cleanup": "no",
+        "tests": "movements_no_tool=0 for legacy"
+      },
+      {
+        "id": "R9-P1-04",
+        "severity": "P1",
+        "type": "CLEANUP",
+        "cause": "213 obsolete raw + orphan personnel review",
+        "fix": "obsolete raw archive; personnel MANUAL_REVIEW",
+        "migration": "cleanup",
+        "backfill": "no",
+        "cleanup": "yes",
+        "tests": "obsolete=0 after"
+      }
+    ],
+    "p2": [
+      {
+        "id": "R9-P2-01",
+        "severity": "P2",
+        "type": "RUNTIME",
+        "cause": "incident_messages empty by design",
+        "fix": "document OR derive thread from multi-row incidencias if product wants",
+        "migration": "optional",
+        "backfill": "optional",
+        "cleanup": "no",
+        "tests": "contract doc"
+      },
+      {
+        "id": "R9-P2-02",
+        "severity": "P2",
+        "type": "TEST",
+        "cause": "source freshness UNKNOWN",
+        "fix": "add LEGACY_DATABASE_URL audit job information_schema diff",
+        "migration": "no",
+        "backfill": "no",
+        "cleanup": "no",
+        "tests": "9.1 YES/NO gate"
+      }
+    ]
+  },
+  "action_counts": {
+    "DELETE_CANDIDATE": 210,
+    "KEEP": 220,
+    "BACKFILL": 13,
+    "REBUILD": 1
+  }
+}

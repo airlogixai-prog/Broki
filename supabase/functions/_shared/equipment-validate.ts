@@ -41,10 +41,26 @@ function assertPsi(value: unknown, field: string) {
   }
 }
 
+/** Canonical operational states (same list as the dashboard select). */
+export const EQUIPMENT_STATUSES = ["Disponible", "En Uso", "Reservado", "Mantenimiento", "Inoperativo"];
+
+function normStatus(s: unknown): string {
+  return String(s ?? "").trim().toLowerCase();
+}
+
 export function validateEquipmentUpdates(
   updates: Record<string, unknown>,
   _type: string,
+  opts: { currentStatus?: string | null } = {},
 ): void {
+  if (assertPresent("status", updates)) {
+    const wanted = normStatus(updates.status);
+    const allowed = EQUIPMENT_STATUSES.map(normStatus);
+    // Legacy rows may carry a non-canonical state; keeping it unchanged is fine, inventing a new one is not.
+    if (wanted && !allowed.includes(wanted) && wanted !== normStatus(opts.currentStatus)) {
+      throw new EquipmentValidationError(`status no válido (usa ${EQUIPMENT_STATUSES.join(", ")})`, "status");
+    }
+  }
   if (assertPresent("fuel", updates)) assertPercent(updates.fuel, "fuel");
   if (assertPresent("adblue", updates)) assertPercent(updates.adblue, "adblue");
   for (const n of ["nitrogeno_1", "nitrogeno_2", "nitrogeno_3", "nitrogeno_4"] as const) {
@@ -81,6 +97,9 @@ if (import.meta.main) {
 
   ok(() => validateEquipmentUpdates({ fuel: 50 }, "furgo"));
   ok(() => validateEquipmentUpdates({ parking: "542" }, "gse"));
+  ok(() => validateEquipmentUpdates({ status: "en uso" }, "gse"));
+  ok(() => validateEquipmentUpdates({ status: "Raro" }, "gse", { currentStatus: "Raro" }));
+  assert(() => validateEquipmentUpdates({ status: "Raro" }, "gse", { currentStatus: "Disponible" }), "non-canonical status");
   assert(() => validateEquipmentUpdates({ fuel: 150 }, "furgo"), "fuel > 100");
   assert(() => validateEquipmentUpdates({ nitrogeno_1: -1 }, "gse"), "negative psi");
   assert(() => validateEquipmentUpdates({ nitrogeno_1: NaN }, "gse"), "nan psi");

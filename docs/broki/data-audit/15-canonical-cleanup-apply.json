@@ -1,0 +1,43 @@
+{
+  "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+  "dry_run": false,
+  "at": "2026-08-10T15:19:52.648Z",
+  "before": {
+    "ok": false,
+    "assets_count": 376,
+    "orphan_tasks": 22,
+    "orphan_groups": 16,
+    "smoke_movements": 6,
+    "legacy_rows_intact": 9529,
+    "logical_asset_dups": 94,
+    "open_checkout_dups": 0,
+    "broken_tool_relations": 3
+  },
+  "result": {
+    "ok": true,
+    "run_id": "992eac55-65c4-4110-b8c2-86fa4535e9ba",
+    "applied": true,
+    "dry_run": false,
+    "assets_keep": 94,
+    "fk_repoints": 57,
+    "assets_merge": 282,
+    "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+    "assets_deleted": 282,
+    "moves_deleted_or_planned": 6,
+    "moves_rebuilt_or_planned": 3,
+    "tasks_deleted_or_planned": 22,
+    "groups_deleted_or_planned": 16,
+    "open_dup_closed_or_planned": 0
+  },
+  "after": {
+    "ok": true,
+    "assets_count": 94,
+    "orphan_tasks": 0,
+    "orphan_groups": 0,
+    "smoke_movements": 0,
+    "legacy_rows_intact": 9529,
+    "logical_asset_dups": 0,
+    "open_checkout_dups": 0,
+    "broken_tool_relations": 0
+  }
+}

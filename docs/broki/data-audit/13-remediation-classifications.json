@@ -1,0 +1,5664 @@
+[
+  {
+    "entity_type": "asset",
+    "canonical_id": "db0a850f-009d-4967-983c-4c52d57e49de",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G4-6",
+      "external_id=G4-6",
+      "last_migration_id=null",
+      "identifier=G4-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4a0afc2c-b260-4c1b-803b-c7ca780a13fd",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G3-6",
+      "external_id=G3-6",
+      "last_migration_id=null",
+      "identifier=G3-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62e676ed-2b25-41dd-8970-e4f81db08a1b",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G5-6",
+      "external_id=G5-6",
+      "last_migration_id=null",
+      "identifier=G5-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1ff45eea-99e8-4e08-ae3b-93e3fd64f643",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G2-6",
+      "external_id=G2-6",
+      "last_migration_id=null",
+      "identifier=G2-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "45841946-66ec-48a3-bd19-47df82d047a0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G7-3",
+      "external_id=G7-3",
+      "last_migration_id=null",
+      "identifier=G7-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "00ba434f-483a-4e40-be10-c20deac2c819",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G7-6",
+      "external_id=G7-6",
+      "last_migration_id=null",
+      "identifier=G7-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7bfdba45-63e9-4cf4-a731-b1c8968ffb59",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:P1-5",
+      "external_id=P1-5",
+      "last_migration_id=null",
+      "identifier=P1-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7649f378-cb94-4016-bc67-2c44bfb3d822",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G8-6",
+      "external_id=G8-6",
+      "last_migration_id=null",
+      "identifier=G8-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d2078db2-4054-4681-9cee-075c67226a14",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G6-3",
+      "external_id=G6-3",
+      "last_migration_id=null",
+      "identifier=G6-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "deec52fe-bca1-4b85-9a11-2f3993978ec0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G9-6",
+      "external_id=G9-6",
+      "last_migration_id=null",
+      "identifier=G9-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "cc5a616d-05c0-44ac-ae79-cae759b012fa",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:P4-5",
+      "external_id=P4-5",
+      "last_migration_id=null",
+      "identifier=P4-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1e926670-d8ba-4fd6-b9e7-838c9243fc87",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:P3-5",
+      "external_id=P3-5",
+      "last_migration_id=null",
+      "identifier=P3-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a6776e59-a9b1-4a18-aa7b-04e95ac73ff3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:L2-3",
+      "external_id=L2-3",
+      "last_migration_id=null",
+      "identifier=L2-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "651e8164-e24f-457c-b4fa-6d1b66ca1479",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G10-6",
+      "external_id=G10-6",
+      "last_migration_id=null",
+      "identifier=G10-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "eb866d4e-ce12-433d-aa08-2e53643c9d2a",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:G1-6",
+      "external_id=G1-6",
+      "last_migration_id=null",
+      "identifier=G1-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3314d279-273d-4733-b400-794427fa4bcc",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:L1-3",
+      "external_id=L1-3",
+      "last_migration_id=null",
+      "identifier=L1-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "16b83b81-dafd-4eee-9706-52c25c8cba44",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=van:P5-2",
+      "external_id=P5-2",
+      "last_migration_id=null",
+      "identifier=P5-2",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0ca1b913-0da0-42d6-b780-8f90a1911811",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-005",
+      "external_id=BRK-005",
+      "last_migration_id=null",
+      "identifier=8",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2b5c9190-5461-478c-abea-61b227ac4b3e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-126",
+      "external_id=BRK-126",
+      "last_migration_id=null",
+      "identifier=34",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0fae7825-663c-4e78-82c8-ae4ce9d94946",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-101",
+      "external_id=BRK-101",
+      "last_migration_id=null",
+      "identifier=24",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4c3f32af-8eb3-4848-9edc-fb1da945bfb3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-202",
+      "external_id=BRK-202",
+      "last_migration_id=null",
+      "identifier=28",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9c4c5f0e-d0da-43f9-ba7c-7a195d598e7f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-180",
+      "external_id=BRK-180",
+      "last_migration_id=null",
+      "identifier=2",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "622522fe-48ce-4a59-931a-ebe422e2e98e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-167",
+      "external_id=BRK-167",
+      "last_migration_id=null",
+      "identifier=49",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f123a847-0404-4f5f-99ac-4263503eb2a0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-9",
+      "external_id=TABLET-9",
+      "last_migration_id=null",
+      "identifier=78",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3a48b50a-d28b-4a23-b24c-5056002171a0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-467",
+      "external_id=BRK-467",
+      "last_migration_id=null",
+      "identifier=79",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1500e712-2507-4eed-aba8-f33238196a4f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-215",
+      "external_id=BRK-215",
+      "last_migration_id=null",
+      "identifier=17",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "67468266-7a2b-4278-aaea-82655d6655c2",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-227",
+      "external_id=BRK-227",
+      "last_migration_id=null",
+      "identifier=6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2f03eb4d-5cad-4a29-8f25-b4fcb250efcf",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-216",
+      "external_id=BRK-216",
+      "last_migration_id=null",
+      "identifier=18",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "884ab609-445c-4539-8852-a41b73a434bb",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-220",
+      "external_id=BRK-220",
+      "last_migration_id=null",
+      "identifier=48",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a7910d4a-4b0c-4c2c-8c14-686684cfb2ab",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-292",
+      "external_id=BRK-292",
+      "last_migration_id=null",
+      "identifier=20",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d14f700a-1dee-4ec9-ab41-6f920188155c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-233",
+      "external_id=BRK-233",
+      "last_migration_id=null",
+      "identifier=26",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a6af137a-2b2f-4639-bf8f-a6fc6e16a8ca",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-230",
+      "external_id=BRK-230",
+      "last_migration_id=null",
+      "identifier=19",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5fd5f1ad-f96d-496b-beff-24b5f30ddb18",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-246",
+      "external_id=BRK-246",
+      "last_migration_id=null",
+      "identifier=31",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f5a07e9b-9f24-4eb1-a153-30035c56484b",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-226",
+      "external_id=BRK-226",
+      "last_migration_id=null",
+      "identifier=7",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c729a79f-47e4-433a-b280-fc4c4b44e0e3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-261",
+      "external_id=BRK-261",
+      "last_migration_id=null",
+      "identifier=54",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3cfec5c9-3651-464b-919a-d1bc4d4dfdb8",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-288",
+      "external_id=BRK-288",
+      "last_migration_id=null",
+      "identifier=51",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f20292d9-9e32-4dd7-b660-ca357eafe9b9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-320",
+      "external_id=BRK-320",
+      "last_migration_id=null",
+      "identifier=47",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "214fa5f3-aa3b-4230-a327-4df63b6a2da1",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-321",
+      "external_id=BRK-321",
+      "last_migration_id=null",
+      "identifier=35",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2266a750-041f-4051-9d90-732214ef1e9a",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-326",
+      "external_id=BRK-326",
+      "last_migration_id=null",
+      "identifier=50",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c5b041ce-43d7-48f6-b41f-7483a5efe042",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-302",
+      "external_id=BRK-302",
+      "last_migration_id=null",
+      "identifier=25",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6c669caf-840e-4a45-b302-81c29194cb6e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-335",
+      "external_id=BRK-335",
+      "last_migration_id=null",
+      "identifier=32",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b5c0d770-9baa-4418-822b-1952547d79a0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-332",
+      "external_id=BRK-332",
+      "last_migration_id=null",
+      "identifier=29",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d2df3974-06f8-4a2a-b834-076fe100b257",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-380",
+      "external_id=BRK-380",
+      "last_migration_id=null",
+      "identifier=23",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "780784b8-7278-4faa-ae53-ae5ad4e23509",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-400",
+      "external_id=BRK-400",
+      "last_migration_id=null",
+      "identifier=10",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b87ffe5d-b097-4715-80c2-9f00ef2a4336",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-363",
+      "external_id=BRK-363",
+      "last_migration_id=null",
+      "identifier=45",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8bd518bc-9cce-4107-b8c2-731e46e40871",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-403",
+      "external_id=BRK-403",
+      "last_migration_id=null",
+      "identifier=15",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "fc249ea7-f3be-4387-a124-a0b4469523e2",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-402",
+      "external_id=BRK-402",
+      "last_migration_id=null",
+      "identifier=44",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f7e476d9-0658-4da2-8832-4e5b66a8a209",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-413",
+      "external_id=BRK-413",
+      "last_migration_id=null",
+      "identifier=33",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "73586464-0e4e-4381-b9bc-69e5e1f98958",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-408",
+      "external_id=BRK-408",
+      "last_migration_id=null",
+      "identifier=43",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "50757305-5aba-4100-a659-2bfba93ec028",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-411",
+      "external_id=BRK-411",
+      "last_migration_id=null",
+      "identifier=11",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e626076e-7bf3-440c-95c8-03fd49cc9cf9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-999",
+      "external_id=BRK-999",
+      "last_migration_id=null",
+      "identifier=55",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5981ba6c-47d9-400e-a238-14fbf188009d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-425",
+      "external_id=BRK-425",
+      "last_migration_id=null",
+      "identifier=21",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "66c9a1cb-190e-4b6e-97eb-888147e4cf04",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-430",
+      "external_id=BRK-430",
+      "last_migration_id=null",
+      "identifier=5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e94ea983-44d6-4652-a7c4-95f950d041c9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-437",
+      "external_id=BRK-437",
+      "last_migration_id=null",
+      "identifier=41",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f745f689-9b82-409d-a6c0-681b69c62e48",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-427",
+      "external_id=BRK-427",
+      "last_migration_id=null",
+      "identifier=9",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7daf66bf-b4bc-47b0-9808-4af5ed6570ff",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-431",
+      "external_id=BRK-431",
+      "last_migration_id=null",
+      "identifier=52",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ea68dae6-2b55-40dd-8b75-5c460a6a6dbc",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-433",
+      "external_id=BRK-433",
+      "last_migration_id=null",
+      "identifier=37",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9b4b6523-d9ba-4693-ad43-931b0eb9138e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-432",
+      "external_id=BRK-432",
+      "last_migration_id=null",
+      "identifier=53",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "94a45616-3a61-4f3d-ba5e-fca5d9f36a4e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-436",
+      "external_id=BRK-436",
+      "last_migration_id=null",
+      "identifier=42",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a9d6e68c-079e-4910-bc17-adcab8681f3c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-438",
+      "external_id=BRK-438",
+      "last_migration_id=null",
+      "identifier=40",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "317f7a51-65d3-4689-9cf4-cb6068aa45e1",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-439",
+      "external_id=BRK-439",
+      "last_migration_id=null",
+      "identifier=39",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "59a4b914-74fc-4b19-aae6-368c2ae67f3d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-440",
+      "external_id=BRK-440",
+      "last_migration_id=null",
+      "identifier=38",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "24c448da-9484-480f-b16b-d1bc9cfa7f67",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-442",
+      "external_id=BRK-442",
+      "last_migration_id=null",
+      "identifier=4",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a4cd7604-dd77-42b6-a87d-1073736e712c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-441",
+      "external_id=BRK-441",
+      "last_migration_id=null",
+      "identifier=16",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "931f95a5-418e-4d9f-8f09-32098a093a53",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-456",
+      "external_id=BRK-456",
+      "last_migration_id=null",
+      "identifier=22",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "83d9e86c-d157-4b54-94bc-8cfca2507d4d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-457",
+      "external_id=BRK-457",
+      "last_migration_id=null",
+      "identifier=3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a5a4e5cb-3847-48fc-972f-0972f4b5db63",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-466",
+      "external_id=BRK-466",
+      "last_migration_id=null",
+      "identifier=62",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e0acc379-63e2-4361-a265-60fe280972a3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-479",
+      "external_id=BRK-479",
+      "last_migration_id=null",
+      "identifier=80",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "07ca92ca-4686-4325-a3ed-83b520c84cc9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-997",
+      "external_id=BRK-997",
+      "last_migration_id=null",
+      "identifier=57",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1a3cb1c2-6857-46f0-a1f5-868dcf48c229",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-458",
+      "external_id=BRK-458",
+      "last_migration_id=null",
+      "identifier=36",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0a0fe615-4fa0-4233-ad28-c8dc865b5354",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-465",
+      "external_id=BRK-465",
+      "last_migration_id=null",
+      "identifier=30",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "624863c5-9358-4f2f-899e-1548888afba6",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-461",
+      "external_id=BRK-461",
+      "last_migration_id=null",
+      "identifier=13",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e1fc5a8b-f49d-495a-bdf9-ad266bfb32b3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-991",
+      "external_id=BRK-991",
+      "last_migration_id=null",
+      "identifier=63",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3f4889c0-73d7-4aeb-911f-20b370c33d18",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-994",
+      "external_id=BRK-994",
+      "last_migration_id=null",
+      "identifier=60",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dcd53b27-d816-4fc8-b6f8-cd2e48d952d0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-996",
+      "external_id=BRK-996",
+      "last_migration_id=null",
+      "identifier=58",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "418f74a0-b9b8-49d9-ba48-ecd7afdf7277",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-993",
+      "external_id=BRK-993",
+      "last_migration_id=null",
+      "identifier=61",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3f6e19d1-af93-4014-9200-02ae3a4da3d1",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-998",
+      "external_id=BRK-998",
+      "last_migration_id=null",
+      "identifier=56",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e513eb66-0bcd-48b0-ab87-f07470f2b324",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-10",
+      "external_id=TABLET-10",
+      "last_migration_id=null",
+      "identifier=69",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "414fac48-4d59-4024-8bc4-0095f15a6b17",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-3",
+      "external_id=TABLET-3",
+      "last_migration_id=null",
+      "identifier=75",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d39907e0-027f-4838-9be0-e5cef9352d6d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-4",
+      "external_id=TABLET-4",
+      "last_migration_id=null",
+      "identifier=74",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7898398f-783c-4f15-9716-74dfe9b5a97e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-8",
+      "external_id=TABLET-8",
+      "last_migration_id=null",
+      "identifier=70",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e2219b9c-c75a-4a6d-a891-6ddbca5b5105",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-6",
+      "external_id=TABLET-6",
+      "last_migration_id=null",
+      "identifier=72",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d12c0203-fbd5-4e00-939e-c5b821991e1f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-7",
+      "external_id=TABLET-7",
+      "last_migration_id=null",
+      "identifier=71",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "911cef7f-b07e-486c-bd5a-b679d72f324f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-124",
+      "external_id=BRK-124",
+      "last_migration_id=null",
+      "identifier=14",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dbcb75e4-ab3e-4059-87bf-50865a471f7a",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TC-IBEROJET",
+      "external_id=TC-IBEROJET",
+      "last_migration_id=null",
+      "identifier=65",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "91e36b1a-997d-4cd0-939f-1fb7337fd8be",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TC-BASE",
+      "external_id=TC-BASE",
+      "last_migration_id=null",
+      "identifier=64",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dc4057ce-8306-4b60-98a0-f13d8a7e6a04",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TC-WORLD2FLY",
+      "external_id=TC-WORLD2FLY",
+      "last_migration_id=null",
+      "identifier=66",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "15864426-892f-429c-83cd-18060ce56326",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-995",
+      "external_id=BRK-995",
+      "last_migration_id=null",
+      "identifier=59",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "55176dc2-b092-46ce-a845-22d8bbde72cd",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-2",
+      "external_id=TABLET-2",
+      "last_migration_id=null",
+      "identifier=76",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d588ab9f-fc10-438b-a406-30b3f6bcff77",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-5",
+      "external_id=TABLET-5",
+      "last_migration_id=null",
+      "identifier=73",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "047feac3-4ff2-4aa6-9f38-bb3323cc50f9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-410",
+      "external_id=BRK-410",
+      "last_migration_id=null",
+      "identifier=12",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3dffe8a5-6899-4285-9d89-0602e262f7a5",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-328",
+      "external_id=BRK-328",
+      "last_migration_id=null",
+      "identifier=46",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "650975f9-8840-4ffd-9960-41f920a38cfc",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:BRK-355",
+      "external_id=BRK-355",
+      "last_migration_id=null",
+      "identifier=27",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dc33f6fc-4664-466f-a2c6-635f8fa93d3d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=gse:TABLET-1",
+      "external_id=TABLET-1",
+      "last_migration_id=null",
+      "identifier=77",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "897d5e8e-c114-4773-8b9f-d55e98280fd0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-005",
+      "external_id=BRK-005",
+      "last_migration_id=null",
+      "identifier=BRK-005",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "05ffdc29-6988-442d-b5e8-0d6ca089d107",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-124",
+      "external_id=BRK-124",
+      "last_migration_id=null",
+      "identifier=BRK-124",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7640b5e5-33fb-454e-912a-1b38b1d9bd38",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-126",
+      "external_id=BRK-126",
+      "last_migration_id=null",
+      "identifier=BRK-126",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "21a85023-6366-4beb-b1bc-e0f3c2c729f5",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-180",
+      "external_id=BRK-180",
+      "last_migration_id=null",
+      "identifier=BRK-180",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9b1796e7-1a07-4db9-bec1-75d3187cb477",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-202",
+      "external_id=BRK-202",
+      "last_migration_id=null",
+      "identifier=BRK-202",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5f26a65c-b8c6-4c98-bec8-aac224980f91",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-101",
+      "external_id=BRK-101",
+      "last_migration_id=null",
+      "identifier=BRK-101",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5e009507-4542-4f46-a7ee-ea7a94913d85",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-167",
+      "external_id=BRK-167",
+      "last_migration_id=null",
+      "identifier=BRK-167",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d0280961-4877-40f4-9175-4528334aa161",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-227",
+      "external_id=BRK-227",
+      "last_migration_id=null",
+      "identifier=BRK-227",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ce74fffd-ddae-447e-86d9-5b9ad89003a7",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-220",
+      "external_id=BRK-220",
+      "last_migration_id=null",
+      "identifier=BRK-220",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dfb74244-986c-4df8-89b9-f6c5863a98e2",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-230",
+      "external_id=BRK-230",
+      "last_migration_id=null",
+      "identifier=BRK-230",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "25ab6b84-7087-43aa-8210-2fc916a29e5e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-233",
+      "external_id=BRK-233",
+      "last_migration_id=null",
+      "identifier=BRK-233",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "91b84aec-a181-4b21-b02e-03ba6a34b7ab",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-326",
+      "external_id=BRK-326",
+      "last_migration_id=null",
+      "identifier=BRK-326",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "86b7f7ce-88c3-4e2d-b963-4321e5865732",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-302",
+      "external_id=BRK-302",
+      "last_migration_id=null",
+      "identifier=BRK-302",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "850d1fbf-949d-4ddb-9c17-eae4acc8f8e0",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-320",
+      "external_id=BRK-320",
+      "last_migration_id=null",
+      "identifier=BRK-320",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ebf25398-a25d-46a1-a494-1203f7821e73",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-292",
+      "external_id=BRK-292",
+      "last_migration_id=null",
+      "identifier=BRK-292",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bacaeef1-0644-4dea-89df-cf93423c118d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-321",
+      "external_id=BRK-321",
+      "last_migration_id=null",
+      "identifier=BRK-321",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "912b3c7e-b8ac-431c-9657-840658ec297c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-328",
+      "external_id=BRK-328",
+      "last_migration_id=null",
+      "identifier=BRK-328",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8ab23b79-dcb2-4308-bc4b-5d485abe7437",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-363",
+      "external_id=BRK-363",
+      "last_migration_id=null",
+      "identifier=BRK-363",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ebfb725a-9938-4b52-a339-fdad1021c779",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-355",
+      "external_id=BRK-355",
+      "last_migration_id=null",
+      "identifier=BRK-355",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "03229967-056d-45e5-95cf-c351a7d8a8b5",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-400",
+      "external_id=BRK-400",
+      "last_migration_id=null",
+      "identifier=BRK-400",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7a3a178c-3eec-4767-a624-13e81cbde91c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-402",
+      "external_id=BRK-402",
+      "last_migration_id=null",
+      "identifier=BRK-402",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a0075d42-0e57-4744-b168-0f293bcb3904",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-403",
+      "external_id=BRK-403",
+      "last_migration_id=null",
+      "identifier=BRK-403",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8d740e72-2bb5-4e2b-be8c-6e255d422aa4",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-410",
+      "external_id=BRK-410",
+      "last_migration_id=null",
+      "identifier=BRK-410",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b2d883f7-6db7-4c0b-b2bc-490f8448a83e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-427",
+      "external_id=BRK-427",
+      "last_migration_id=null",
+      "identifier=BRK-427",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "61d560e9-1fee-4aac-bfcc-815884c362ee",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-431",
+      "external_id=BRK-431",
+      "last_migration_id=null",
+      "identifier=BRK-431",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4fba8fe6-8dfc-45a7-839c-2d14af712370",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-413",
+      "external_id=BRK-413",
+      "last_migration_id=null",
+      "identifier=BRK-413",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2b4ee99c-4df7-48d5-b909-cdd91f822621",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-430",
+      "external_id=BRK-430",
+      "last_migration_id=null",
+      "identifier=BRK-430",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e723a7de-d5a2-42b7-9b39-68a702ef5ebe",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-6",
+      "external_id=TABLET-6",
+      "last_migration_id=null",
+      "identifier=TABLET-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c5983b63-9260-4a06-a718-ab22a9605f23",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-411",
+      "external_id=BRK-411",
+      "last_migration_id=null",
+      "identifier=BRK-411",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "461ce361-dab2-4969-b4d4-6bf673ab42a3",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-425",
+      "external_id=BRK-425",
+      "last_migration_id=null",
+      "identifier=BRK-425",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9b2cfc06-7c4d-4039-8b30-1cc229035905",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-433",
+      "external_id=BRK-433",
+      "last_migration_id=null",
+      "identifier=BRK-433",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f1641fba-6f1b-425c-b1a7-76ccd5358b70",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-439",
+      "external_id=BRK-439",
+      "last_migration_id=null",
+      "identifier=BRK-439",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "372983f8-e448-43db-81bf-c592cb3e8947",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-432",
+      "external_id=BRK-432",
+      "last_migration_id=null",
+      "identifier=BRK-432",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1ccd579c-37cb-4554-9784-e0c8e7ed9437",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-440",
+      "external_id=BRK-440",
+      "last_migration_id=null",
+      "identifier=BRK-440",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c69c65b4-f652-4470-94ab-1ff6e32a8d96",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-437",
+      "external_id=BRK-437",
+      "last_migration_id=null",
+      "identifier=BRK-437",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "45b68a37-307c-40a4-9959-c82511f7309d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-438",
+      "external_id=BRK-438",
+      "last_migration_id=null",
+      "identifier=BRK-438",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "46113224-a102-408b-bedf-33c303716792",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-456",
+      "external_id=BRK-456",
+      "last_migration_id=null",
+      "identifier=BRK-456",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ed67eb7b-60cc-4552-a8e9-a8eede6f801d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-461",
+      "external_id=BRK-461",
+      "last_migration_id=null",
+      "identifier=BRK-461",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "06fe6b10-2eed-442a-b3cb-4bcaf42a1ad7",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-991",
+      "external_id=BRK-991",
+      "last_migration_id=null",
+      "identifier=BRK-991",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b6eccff2-6d57-4823-8ca7-f5cff4804568",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-993",
+      "external_id=BRK-993",
+      "last_migration_id=null",
+      "identifier=BRK-993",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "de6379c2-5c14-4808-9f6b-a4aa17c5b040",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-458",
+      "external_id=BRK-458",
+      "last_migration_id=null",
+      "identifier=BRK-458",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "558c0656-2472-4878-81e0-1f3be65499eb",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-465",
+      "external_id=BRK-465",
+      "last_migration_id=null",
+      "identifier=BRK-465",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d29774ac-b0c8-46d1-b97a-96fbe5326a12",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-246",
+      "external_id=BRK-246",
+      "last_migration_id=null",
+      "identifier=BRK-246",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62209551-3347-4484-934a-4ea7984d4974",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-467",
+      "external_id=BRK-467",
+      "last_migration_id=null",
+      "identifier=BRK-467",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e2ceea1d-d7b1-4124-888f-ed737cd16ee1",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-466",
+      "external_id=BRK-466",
+      "last_migration_id=null",
+      "identifier=BRK-466",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c3d42da7-d602-46c0-8e39-f0554caa63db",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-998",
+      "external_id=BRK-998",
+      "last_migration_id=null",
+      "identifier=BRK-998",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "17172817-e25e-41b7-8988-4203b7e1d198",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-995",
+      "external_id=BRK-995",
+      "last_migration_id=null",
+      "identifier=BRK-995",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1dbbb851-2168-44b5-b24f-86ecc0e42573",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-996",
+      "external_id=BRK-996",
+      "last_migration_id=null",
+      "identifier=BRK-996",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a13940eb-c09f-4980-b524-d68b0e08123d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-997",
+      "external_id=BRK-997",
+      "last_migration_id=null",
+      "identifier=BRK-997",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "20861705-7f1b-406d-a141-ccc593519fbf",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-994",
+      "external_id=BRK-994",
+      "last_migration_id=null",
+      "identifier=BRK-994",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "da416cef-40a8-47aa-85d2-49f947564d6b",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G10-6",
+      "external_id=G10-6",
+      "last_migration_id=null",
+      "identifier=G10-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "577e3bdd-d78e-4cfc-8a1f-c105e4618b8c",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G4-6",
+      "external_id=G4-6",
+      "last_migration_id=null",
+      "identifier=G4-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "99145976-0d06-40f5-ace4-bc1fa260c6f7",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G7-3",
+      "external_id=G7-3",
+      "last_migration_id=null",
+      "identifier=G7-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1b210ae0-55ba-49ab-9ec9-2a451e97a267",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G3-6",
+      "external_id=G3-6",
+      "last_migration_id=null",
+      "identifier=G3-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "83452c34-c1e3-4e37-8e3c-b677f934e05e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G9-6",
+      "external_id=G9-6",
+      "last_migration_id=null",
+      "identifier=G9-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "14f36cdb-9466-4d3f-af31-02d28df188ba",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-999",
+      "external_id=BRK-999",
+      "last_migration_id=null",
+      "identifier=BRK-999",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "76ae94dd-757f-4094-837d-7903fb1f5279",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G2-6",
+      "external_id=G2-6",
+      "last_migration_id=null",
+      "identifier=G2-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f197a833-db5c-470b-9db0-18f1eec1136f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G1-6",
+      "external_id=G1-6",
+      "last_migration_id=null",
+      "identifier=G1-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "85046e92-fa03-4d81-86d3-73ae3a7405fa",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G7-6",
+      "external_id=G7-6",
+      "last_migration_id=null",
+      "identifier=G7-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e3e10a20-dd15-4669-8914-ed50e95bf424",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TC-BASE",
+      "external_id=TC-BASE",
+      "last_migration_id=null",
+      "identifier=TC-BASE",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0097fb51-36a3-4882-92a6-759253b96304",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G5-6",
+      "external_id=G5-6",
+      "last_migration_id=null",
+      "identifier=G5-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c3adfc27-84de-4464-abd9-0805b1fd6697",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:P4-5",
+      "external_id=P4-5",
+      "last_migration_id=null",
+      "identifier=P4-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5494aa12-f41e-4811-a245-96eb67b79e69",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G6-3",
+      "external_id=G6-3",
+      "last_migration_id=null",
+      "identifier=G6-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "817d1bf2-1171-427a-9c75-3e2e99e38a47",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:G8-6",
+      "external_id=G8-6",
+      "last_migration_id=null",
+      "identifier=G8-6",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "346d3cbe-ac84-4ef7-bf5d-ab02412d877b",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TC-IBEROJET",
+      "external_id=TC-IBEROJET",
+      "last_migration_id=null",
+      "identifier=TC-IBEROJET",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "81fb370b-6755-4614-bd3e-7cfa31c03ac9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:P3-5",
+      "external_id=P3-5",
+      "last_migration_id=null",
+      "identifier=P3-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e8013570-575d-4c19-8fb2-051f55aae1e6",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-436",
+      "external_id=BRK-436",
+      "last_migration_id=null",
+      "identifier=BRK-436",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9e4a6a3d-b364-4c21-8643-501b794bd79f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-1",
+      "external_id=TABLET-1",
+      "last_migration_id=null",
+      "identifier=TABLET-1",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "48c8e8d1-9cb8-4e19-b9b2-3395e9d5e7aa",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:P1-5",
+      "external_id=P1-5",
+      "last_migration_id=null",
+      "identifier=P1-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8616d7a0-fddd-47a1-8cb8-015bcce28517",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:L1-3",
+      "external_id=L1-3",
+      "last_migration_id=null",
+      "identifier=L1-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "975df619-3636-4c0f-8790-3b5f896dd01a",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-215",
+      "external_id=BRK-215",
+      "last_migration_id=null",
+      "identifier=BRK-215",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6ec6a713-0bb0-41fa-95ca-f69dcad4bd16",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:P5-2",
+      "external_id=P5-2",
+      "last_migration_id=null",
+      "identifier=P5-2",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bb0d83cb-57a6-4df3-a1d8-5d824efc8f8a",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-10",
+      "external_id=TABLET-10",
+      "last_migration_id=null",
+      "identifier=TABLET-10",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c091633c-9f0c-4184-9ead-2454ef1f7d52",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-216",
+      "external_id=BRK-216",
+      "last_migration_id=null",
+      "identifier=BRK-216",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d3e419da-ba39-4d7e-9518-ca9d1899f425",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-3",
+      "external_id=TABLET-3",
+      "last_migration_id=null",
+      "identifier=TABLET-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "baf2036c-af2d-4627-881f-d20286cb50c8",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-380",
+      "external_id=BRK-380",
+      "last_migration_id=null",
+      "identifier=BRK-380",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "da356a65-e099-471b-8f11-8ac1897c923e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-8",
+      "external_id=TABLET-8",
+      "last_migration_id=null",
+      "identifier=TABLET-8",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "44ab7d79-b913-4467-b91e-3569bdfc9fb4",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-2",
+      "external_id=TABLET-2",
+      "last_migration_id=null",
+      "identifier=TABLET-2",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "840f3b90-055a-4668-9805-dce80d281cd7",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-7",
+      "external_id=TABLET-7",
+      "last_migration_id=null",
+      "identifier=TABLET-7",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e279ca59-467e-4df5-8de8-28f64898e753",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-5",
+      "external_id=TABLET-5",
+      "last_migration_id=null",
+      "identifier=TABLET-5",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bc49c565-b138-4e1c-8e60-8b6166484f17",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-4",
+      "external_id=TABLET-4",
+      "last_migration_id=null",
+      "identifier=TABLET-4",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4edf7a52-a47d-440a-a173-6a1055d5e9d1",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TC-WORLD2FLY",
+      "external_id=TC-WORLD2FLY",
+      "last_migration_id=null",
+      "identifier=TC-WORLD2FLY",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2a488662-8507-49fc-9bee-ed1958a7f411",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-226",
+      "external_id=BRK-226",
+      "last_migration_id=null",
+      "identifier=BRK-226",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9218f7ec-6333-45ea-a45e-a230c67dcc1e",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-261",
+      "external_id=BRK-261",
+      "last_migration_id=null",
+      "identifier=BRK-261",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "65d67781-d13f-4797-85fc-8e142e59cc6d",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-335",
+      "external_id=BRK-335",
+      "last_migration_id=null",
+      "identifier=BRK-335",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d4cb37f8-829a-47a7-b9e3-bf040d9d26ac",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-442",
+      "external_id=BRK-442",
+      "last_migration_id=null",
+      "identifier=BRK-442",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62c74dec-bc20-4da5-93c9-54f0bdbb2452",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:L2-3",
+      "external_id=L2-3",
+      "last_migration_id=null",
+      "identifier=L2-3",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "496cb78e-7474-41c7-a019-d0097e97e9b4",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:TABLET-9",
+      "external_id=TABLET-9",
+      "last_migration_id=null",
+      "identifier=TABLET-9",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6eff504b-7433-44e8-b099-61be98c427bb",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-332",
+      "external_id=BRK-332",
+      "last_migration_id=null",
+      "identifier=BRK-332",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7b712243-8b26-4e56-b1bb-e113d5f9ad43",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-441",
+      "external_id=BRK-441",
+      "last_migration_id=null",
+      "identifier=BRK-441",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b83f4327-8ccc-424c-8d81-594e4b5e4187",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-408",
+      "external_id=BRK-408",
+      "last_migration_id=null",
+      "identifier=BRK-408",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "02300922-1856-4073-9944-ac06bc88ae58",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-288",
+      "external_id=BRK-288",
+      "last_migration_id=null",
+      "identifier=BRK-288",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a3630f5e-3346-4a59-a03f-30a86cc75c8f",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-457",
+      "external_id=BRK-457",
+      "last_migration_id=null",
+      "identifier=BRK-457",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c7eb3a6e-b5f2-4e6c-ab7d-2a6bb40b39c9",
+    "classification": "EXTERNAL_ID_SCHEME_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "logical_key=inv:BRK-479",
+      "external_id=BRK-479",
+      "last_migration_id=null",
+      "identifier=BRK-479",
+      "siblings=2",
+      "pre-V3 external_id (text identifier/BRK) vs V7 numeric id"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "50a46b6e-b0a4-48c5-858f-b33e1d6c0bc5",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "94e8483b-9eed-4451-89df-0dfb7298b84b",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "d77a4cb6-9d83-4264-bb76-cbe4d1af0b93",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "09200c5d-447d-4e19-b6cc-899d0f42a18d",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "4e0352ad-3e63-432a-a3f9-a7976935ce8b",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "e0298284-3cf4-45a9-b99b-6397bf82c9e4",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "670e0837-e5f1-4a40-8f04-724723976a28",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "c13c8f56-0791-4f8a-9fa3-56827042cecf",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "0202e706-4b4b-4427-89a1-f1290faf5690",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "a4ea8256-2c33-47d5-8618-409da7545235",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "3a1fb41b-d616-4a3e-8f6c-c88d97f3c626",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "0eab3e98-9e70-4a70-ba90-9dbffa5a62e2",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "1779d882-e904-4d6b-8302-3d2bfe9e2980",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "7a11fbe8-5470-4a41-8658-620a177b64bf",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "b7ed5d2f-046d-4c34-89e0-94d457451ab0",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "e9eb2b55-dbab-4609-8874-b800e4f21388",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "a6620f04-280a-483d-ae5c-c07377266bba",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "186b8793-ce5d-430c-9fce-ba23000b2a07",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "943a013f-a9d5-4454-8399-445c8e55c817",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_task",
+    "canonical_id": "a166b9e0-7485-43a6-8bad-c1e2b8f8cdf1",
+    "classification": "SOURCE_GROUP_NULL",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "id_grupo_trabajo=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "13482a70-beed-4830-a5e3-e00d490e5921",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=group-ECSMK-1785519123826",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "c7f08905-8ad8-4fae-824c-fbf664d817ee",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=group-ECSMK-1785519205540",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "d04d5809-2131-4659-a84a-09d1bab60788",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-915972f5-352c-436d-93d7-34eada9cf4d6-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "286b24f8-53a4-4c71-be7a-99baf5746ce5",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=group-ECSMK-1785581598845",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "bcaaee89-5988-454a-bc2a-ccf430b8adfa",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-dc2936e5-73be-4b73-acdc-06654d2cb453-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "475dd7e0-b21b-4330-8b43-c212de28b6a1",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=group-ECSMK2-1785581610002",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "996e64fc-44bb-4c78-89bb-4a588c20423e",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-91c9aff3-9a06-4466-9f35-67bd6c383fcf-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "e507afcb-ac4e-450f-bb72-6b0b91e6239d",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=group-7b892e58-543b-4b51-8cbb-8fa7787211a7",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "68931ce3-c137-408c-a69a-e187d64ca5c2",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-4c5e5d1f-8a8e-4266-a0e4-57dd7442a277-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "6541b905-5e32-4b16-9b3a-20862b2d3924",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-78d6034b-a8e5-43b2-87eb-60ec6896fb3c-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "d3156265-94be-43b9-96ce-7c3777979bc6",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-1ba3f4a1-00d5-4b6e-9daf-aa55624577ba-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "57000776-784a-42ef-8638-f52404bab3c8",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-2d9a1eb4-b1ab-454d-9c1d-9a4546f2678d-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "d6c20753-0d93-4882-993c-091d8a0b9ae9",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-e3966106-10e6-4885-ae39-3466960eabdb-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "c4337054-7af2-4ae1-83cf-50b552875d00",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-edb524d8-f5e8-43ec-8b49-f461beb03890-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "70f24583-36fa-4cb4-af4b-bad925d0226b",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-a80e5443-e7a4-4d4f-955b-e7cd7dedcfdb-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "planner_group",
+    "canonical_id": "9879caaa-8624-4782-8e8d-9e33d1cea1da",
+    "classification": "OLD_RUN_ZOMBIE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "external_id=import-69705d93-ffdf-401f-a0a4-4381208f08c0-ECNFP",
+      "not in V7 grupo_trabajo raw"
+    ],
+    "confidence": 0.9
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "a8fdc012-d6d9-408a-9e90-d2d5932d29ec",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34651920860",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "32ac5d28-f6b3-4482-89ee-58bfd40d9fa7",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34658160355",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "e0689c8e-fdd9-4c21-ba53-2734cd4cc6b8",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34658176264",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "69c8af5d-f93b-466b-b4c6-69cf5c89ca32",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34658182237",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "24482fbb-8743-4403-b2cf-44a5d5fd818c",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34660860668",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "f75c1ec4-e7e9-48ca-bea3-d7a9df0770a8",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34660862372",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "a492eba3-579d-4aff-a456-58eda52115f8",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34669698295",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "6c1ba23c-1a82-451b-bcd7-d6759cf203a2",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34669705320",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "27b62378-2892-4050-ba9b-5fc560e3abff",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34669709436",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=e9ab763eaf9584de",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "personnel",
+    "canonical_id": "341e91ee-2afc-4b69-9999-22f01dbcc1fe",
+    "classification": "WEB_REGISTRATION",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=reg-+34669519108",
+      "source_system=public_registration",
+      "source_table=registrobroki",
+      "nombre_hash=16abbf3aa69cb82b",
+      "not_in_v7_raw=true"
+    ],
+    "confidence": 0.6
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "34158396-6851-4140-a171-7999c4b59430",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-0ffa",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-0ffa-1785696969435",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "f9022038-e73d-40cd-afdd-40e7443e80d2",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-f7b5",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-f7b5-1785697045382",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "aa9ecbeb-9dd1-43a4-b96e-169ae798a99a",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-d7bf",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-d7bf-1785697085910",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "33cd5838-db39-48e1-b8ac-9da7bbb21052",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-0ffa",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-0ffa-1785696968211",
+      "remarks_hash=3415816a04f90ce7"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "1826563e-d715-425f-b3e2-48d6e04cc073",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-d7bf",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-d7bf-1785697085456",
+      "remarks_hash=4c5da73322965b2c"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "c691c2fa-5b70-4757-a1cf-dc4d2abd8087",
+    "classification": "SMOKE",
+    "recommended_action": "DELETE_CANDIDATE",
+    "evidence": [
+      "bac=BAC-SMK-f7b5",
+      "tool_id=null",
+      "ext=checkout-BAC-SMK-f7b5-1785697044984",
+      "remarks_hash=0fd52037b4b3320a"
+    ],
+    "confidence": 0.99
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "238eb8a8-e40b-4b84-b317-1d13d4b0d52f",
+    "classification": "BROKEN_RELATION",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "bac=BAC1268",
+      "tool_id=null",
+      "ext=4",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "24092c2a-b341-4cde-af22-99021a7b6978",
+    "classification": "BROKEN_RELATION",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "bac=BAC2341",
+      "tool_id=null",
+      "ext=6",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "tooling_movement",
+    "canonical_id": "a6f81d8a-1076-4240-bd5d-de773cceb67b",
+    "classification": "BROKEN_RELATION",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "bac=BAC2504",
+      "tool_id=null",
+      "ext=5",
+      "remarks_hash=null"
+    ],
+    "confidence": 0.8
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c56f9816-07d4-45d0-b558-aa1c35beed8b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=1",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e48190fd-407a-4400-b188-0cc3107b713b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=11",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8a821311-7756-46fd-94f9-9314ed92b0aa",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=4",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "04889dbb-3f9d-471e-9391-28790dbbcc75",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=10",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7e974e4f-f083-40b6-a857-19b356593637",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=12",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c84a4de6-6792-47a0-a9c7-35cc383fdab3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=13",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "656615ce-e63d-4f62-9799-361ca4dd0306",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=14",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7d1579bb-13b4-4c5a-8c83-56a895b558c3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=15",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6673da1f-9514-4ac2-872e-0635fc879834",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=17",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "859ec5a1-a7fb-41dd-9d6f-9b71b4314a0f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=16",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "49504b60-616d-4c9d-bfc4-79e6c1d3aba0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=2",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bbfcd6b6-66f6-44bd-961e-a6306548dac3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=3",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "cebfd8f2-37e7-453a-95a0-b3e2859cbadf",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=6",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "aa294bf2-aa63-4122-83ae-e5e6db8157dd",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=5",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d88bf8c1-d8e8-4125-b826-95c5f441d4ed",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=7",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "04de9f39-4592-4483-85aa-22dc19699752",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=8",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8ba431a6-da98-453b-bf7b-8023d66df2ad",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=9",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0b06b3bb-171f-46d3-b6cf-7852fe35d997",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=78",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0fab1710-70ea-42d1-88af-45f1a9f9f824",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=79",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "81917b10-bc74-4c5a-a09b-3efdf0a6aaa8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=9",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8926d2b8-5334-46c9-be44-57ea02c95633",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=44",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dcfcc25d-04d4-49e4-8024-0cb8fdc7b3a0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=49",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b8832070-e868-4fe8-a11c-bdfcae7adc86",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=24",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "46a47231-a68a-495b-b35b-45f240b7fbae",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=10",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "783c9cd1-9e78-4829-9468-926f8d51101c",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=11",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9708c794-3bde-4978-9437-94fa1e409db5",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=13",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0006846c-3957-4d27-94ea-20eefcd136ac",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=12",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ddc51d30-98c1-4e1c-b13f-0e11810d8569",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=14",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f1656354-9944-4bd0-b993-6182fbed5fad",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=15",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1d36ed6f-916e-4746-826f-7962076dbe25",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=16",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "cf64b349-a08e-41f7-a7b1-586f5ca9fcb8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=17",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62bdbb4b-ba7e-4a40-b496-0445c5b67d18",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=20",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e2461db5-a859-416f-a241-29e104c82116",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=18",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4967d471-2375-4b24-8539-e9e7c37931ca",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=19",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ffd7df2a-d77f-4207-90f3-99c89563c12f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=2",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3b104222-6362-4e2f-b2f1-c80e72d0ac52",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=21",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d6be9680-f245-4bf4-9ba2-b2d85130b550",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=22",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c972c37b-7055-46ac-96da-bec39cceff91",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=32",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "671c4bc4-43d9-4bf7-bb8b-6bdd0cb7a533",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=26",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "91781410-0c5c-4b3d-a183-d8cbe1ccf7f1",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=23",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "47082aa1-0735-4eb8-a3e7-1fd1cf4cb340",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=27",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bba00e8e-2021-46ff-8446-d6cc545628f1",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=25",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "11fce8f1-745d-4552-983a-f63d474d1a08",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=39",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62e6a2c7-2a8e-4696-8937-2a378ce7812e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=29",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "11f2e416-aea9-40e7-bb4f-c552e9359b3f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=3",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "53606143-34ba-4bed-8b44-3bc5431a6e03",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=28",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b3daf5bb-b8a6-4d41-88c2-6e35dd4c5606",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=30",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "560dbd20-91d2-4d08-84c5-0bb04bf46d5e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=41",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9f781a8e-08a9-4b25-9056-f620552b19f3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=31",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d7d83d0e-802d-48e0-9339-bbb76dfc9540",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=33",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "05313ba9-f9f3-412f-8457-c207a1395bb6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=34",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5dc41ea4-df62-4770-b86f-7de9a63001d0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=35",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "104024ab-106a-4c30-be1d-ed9d91383bf6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=36",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f54f4ccf-2e2f-4d42-8bf8-859893c5d2fb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=37",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5e5ddab9-69c2-48fe-98f1-512d5fb8be1e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=38",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "70866e27-3787-480c-b1c8-c0d35c76cfb9",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=4",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "65eff09d-f15f-4666-a84d-f5144d971133",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=45",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "174b1236-a8d9-4533-b118-cb9ebc9a1336",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=47",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "92584cb7-d5b8-4329-b9d2-e552bb70bdb7",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=40",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "082fa5be-f9c9-445d-8d65-45e86b28711f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=5",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "352ca40c-d9ad-4d0f-b766-80d72988ece1",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=43",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d7cc4f10-312d-4ede-9d25-dfec911f7934",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=42",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "62497334-a87a-4f3e-87d3-130d64274e51",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=46",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ab774397-69ab-4faf-85d5-a3dd7c2d1cf2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=50",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "278b41e0-be27-4de4-843d-f2334278a711",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=48",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1a3c2d09-db08-4512-8989-31881ce962ba",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=51",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ab1b7e4b-24f3-40b4-bce1-b028d7f082c6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=57",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "094ab156-17b6-45a6-af12-df60fa875f2f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=69",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "165f9233-c076-412f-91b8-2b5033621354",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=58",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d674b9ec-01c5-448b-8cb2-63418d991ee2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=55",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3a7593f9-cdf6-4040-b2b2-9e0dbca49150",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=56",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0715b0b3-4885-4e2b-a193-1ef3c5a5799b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=53",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "815f022f-06a0-4870-964f-0cc8d1247de8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=54",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ea6b29b9-e262-4860-ba37-d6f7aa4c23a3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=60",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "30e393e8-164d-4d3d-94e4-5c059cfda2de",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=62",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b9d9bbba-0ac6-4cc4-adae-2cd9e8a26ee9",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=63",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5835a99d-15aa-49ac-bf73-82ff982df152",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=65",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "89d9680d-c305-4c7f-b471-cf049ef16fb7",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=64",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "08093d44-bf94-4d88-a4a9-ca8cd3ee569f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=66",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1488c542-5338-4ae7-b4a0-e710a5ab5b0e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=80",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "de25ebd1-f04c-4291-bdfb-1f0022e633ad",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=7",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0f21636a-5fa8-4ece-824d-6b28847c475a",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=71",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d3ab9ca4-15ab-4885-b2f6-c01033da83a0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=72",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c41124f6-acd0-48ca-897a-dd7d57779692",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=8",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "52de2029-5277-4590-969e-27ef2bccaccf",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=70",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5a3c76df-5758-4501-9388-59db66f3eedb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=74",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7611b7b9-f871-4581-b047-ecf46504109f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=76",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e1fe7c01-2cbc-4218-a841-4edfaac5f699",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=73",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4a9ce1c6-b112-4a53-b28b-8488a7a283ee",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=77",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "db23da18-e724-4f79-9ef1-4dda98e7ed4b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=75",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8a05ed1e-24ec-45db-8282-52e6e539b128",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=85",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2c49c770-f36c-486b-92fb-847b250fd454",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=86",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "770175a5-7770-4dca-a3f4-a3a96d136b0c",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=89",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "91fc1c6d-029c-4003-bd37-57d2042ff559",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=9",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d508f890-6170-4707-9e80-27fe7a7de3e0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=90",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6786f534-b440-43c2-9c52-fadc6d6be00b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=63",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e62cb2da-154d-414e-a04b-f425623967c6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=94",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2d0235c9-5d4a-43ad-9dad-7e1b8c34d773",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=95",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "15250ad9-0a4a-4be6-847a-8224ab8f31cb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=96",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d76b4e0f-75b7-40cc-8fa9-3ff7b750e1a4",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=54",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c5b62b5c-c2df-4d3e-89b8-deb961746647",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=53",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ee632e8c-24e2-45d8-a057-b3db2ea0ccaa",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=99",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bdd57dba-b9f3-41a1-8a67-8fb6939505a8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=71",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "08764110-6f26-4a52-982c-38e6df880639",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=30",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "aba176eb-d816-44ee-b505-34b03167c6a5",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=1",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9c17e790-a724-4cbb-9da8-fa88b99c4280",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=10",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a9499698-0190-4e01-bdd3-4c30b85f9c11",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=100",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4401c3fa-a011-4eaa-b517-69d8c66f46f3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=101",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4f76c5f8-4fa9-49db-981d-c6f71d6f05c5",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=11",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "847f5f32-a39e-4511-99c6-84804eaa29fa",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=12",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1f245746-6645-4514-9bb1-9334c027b236",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=13",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "49c643ea-49a1-440c-9422-ce8d6ae602ba",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=14",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "49c3f39a-89a2-4cf0-9e86-bde1d8d37960",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=15",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "28b931ff-7950-4d50-9b93-71a355edb7c0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=16",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ee1764dd-6367-4aa3-8178-0f766c15fde5",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=17",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8d50928a-6b10-4fe1-b981-5ff444698c66",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=2",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "80a2f085-091d-44f2-9a8b-59dfc7fdc56e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=25",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "fe817c7a-fb94-4da2-addc-3a52c7816283",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=26",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "52cc3f5a-934c-42d7-9a56-245dfeb5e91d",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=27",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "954960f3-d63e-4334-ba4d-2c964d9ee18c",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=28",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "788d4307-3ba8-454b-a0c5-6618d8d32990",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=29",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5cee69a1-6ea8-4b47-b308-3d54addce650",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=3",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7e903d1e-0093-48e7-b621-f238b14e6ddb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=32",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a08d404d-a0e6-4149-9fb5-b70667331257",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=31",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "4e2730b5-e334-4595-9b94-e1cdb7d230e2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=33",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "ec5f9fc8-5d90-4281-aa36-c92ede5d6924",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=36",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0cfdb310-2045-4307-a0a3-753af9011ec6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=55",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5b2d52a1-c975-442d-b43b-8ce23917d3af",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=34",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9356292a-ddc2-41d3-99ba-75ce555dfe9b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=35",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "3ca3e4e2-417e-4c75-9281-359d94c53a53",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=37",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6e9065a5-a336-476e-ba89-3f19d6681dda",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=38",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9065df9f-786f-4e42-a206-40ea3621c22e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=39",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "a9eea139-f4da-491c-b509-ef0d9410baab",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=4",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "da76abe2-2961-4fec-87a9-c5d8ad91ead1",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=40",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0dd2c417-725c-48de-bdba-0e6773f429a3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=41",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "84c7971d-012b-471f-b026-68ba79f960d3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=44",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bdc4a36e-2392-413f-9712-3baab3d9ae39",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=42",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "08a534e5-b278-45ed-a57e-491c8d9e52e4",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=43",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b8f8b1fa-c4ef-4819-8b80-82e05695899e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=45",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "16414707-2481-43f6-9ec3-99c32dde5eac",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=46",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "58649204-cf60-4ff6-b694-fe4cec8f96a6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=49",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "21f0ddee-524b-4889-9714-f354957f19fd",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=47",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "18ab439d-8171-4747-ad11-21a510be37eb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=52",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "8a5fc5bb-1c75-4590-b87a-c9012ba666cc",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=48",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "d257d5a1-dae5-4315-a5ed-c63c5d321396",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=50",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "150aa9a0-0608-4044-9753-d39ceb137194",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=58",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1b079e60-cd12-474c-8b86-daf213a8c1f6",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=59",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1ee1f497-fc47-4782-9d7b-6143dab719d4",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=60",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "2d1d45c9-0082-4a1d-9145-106696a4e0aa",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=51",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "16561bd2-0fd1-418c-b42a-7ddba6633daa",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=6",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "737dd6b7-590a-4149-bdf4-1c978a73bc76",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=5",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "95eff013-b720-4e1d-902e-bd3a1554c89a",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=56",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "57926e24-4659-4840-9eaf-dc9a1cd4385e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=57",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "506db401-dd21-4fb9-ba01-8e3d581fc08d",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=7",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "973f1e80-ea69-43db-9e00-7d88c8029fa2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=79",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "01537fa6-ce7e-4b35-91de-1cb6ade9b4ec",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=64",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "22403839-6711-494e-bfea-1901ae67229c",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=61",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "bcc2632e-85e9-41db-97f5-52de17834bd3",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=62",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c6be49eb-fb27-4f28-a520-3b5464307a1f",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=69",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f8141eb0-e0d8-4e19-9d4d-2b1877234d32",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=65",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "da532a5a-b1e6-4d89-85a6-ae68c3e66ec7",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=66",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "119ce0a4-82cc-456e-b993-d9bad529fac7",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=67",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "1c64bbcb-6070-44ef-a4ed-f6eee9af6a73",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=68",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "babfe686-7bcb-4384-be70-76b7c25ed08b",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=70",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "60faca5d-39a9-4aa4-b819-2a20039d8ee2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=72",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "661d5f83-bf4e-4c80-9268-667f09d4ab79",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=73",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "dcef3431-889a-4921-b5b4-163944f43271",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=87",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "314c904e-f804-491b-bf3a-b9c32be5cf87",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=74",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "5a31c0c3-00f3-4370-8905-ccb375f7d8ad",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=75",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f574d577-2e77-4c93-b7cc-a6e7e656ffc2",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=76",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "fa54bf28-2a5e-4352-92ab-51821bd4ee71",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=78",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "872096e6-8856-49bc-8a32-d2fa20f27e9a",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=91",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "7729c4e7-5b86-42ce-b7f0-c66b3434abfb",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=97",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "866bc649-620f-47c4-bb1f-68059d93efa9",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=77",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "139550f2-d84a-47ce-bd74-5f93826a2f1a",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=81",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f045f5c0-fcf4-4d98-b494-9fefbe1f26f0",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=93",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "34355d9b-8590-499d-8ddf-f735cca32c53",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=82",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "6b8cabb2-b68d-44e3-ba2f-b258c11f5d18",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=88",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "38bcd4c5-4f9a-4733-bc25-2d986adee291",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=61",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "9a86dbde-e559-43b5-8e86-290dd2397155",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=52",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "f6c7b558-828e-4906-8eab-b253829564f8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=59",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e941da1d-4b0e-43a2-8c74-6563172107b8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=6",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "0712ca61-25e9-4a58-89ee-e1d612ce0e11",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=92",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "b40e068d-695f-4eb5-8673-3e63eeb4c4d8",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=8",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "87847029-d7d7-47b4-8b8b-305d2d57a9bc",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=80",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "e800c16c-a63a-4999-893a-6500cb2ccb5e",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=83",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "c285e961-b18f-4ab0-8bfc-b7cb991e1001",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=84",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset",
+    "canonical_id": "604a4da1-a788-471d-bfa6-eade7d927b89",
+    "classification": "V7_CURRENT",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "external_id=98",
+      "mid=fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.furgonetas.trabajadores",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_assets.current_worker_text (+ current_worker_id via links)",
+      "pct=0.8235294117647058"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.furgonetas.vehiculo",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=Map vehiculo → descripcion when descripcion/nombre_equipo empty; keep raw_payload.vehiculo. If product needs both labels, escalate to ADD_CANONICAL_COLUMN.",
+      "pct=1"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.gse.trabajadores",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_assets.current_worker_text",
+      "pct=0.36363636363636365"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.gse.brk",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_assets.identifier coalesce(identificador, brk, id)",
+      "pct=1"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.aviones.compania",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_aircraft.aerolinea",
+      "pct=1"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.aviones.msn",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_aircraft.msn (dedicated)",
+      "pct=0"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.aviones.motor",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_aircraft.motor",
+      "pct=0"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.tooling.tipo",
+    "classification": "MAP_EXISTING_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=broki_tooling_catalog — map tipo→tipo_tool or add tipo",
+      "pct=0.997093023255814"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.tooling.supplier",
+    "classification": "ADD_CANONICAL_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=ADD column broki_tooling_catalog.supplier OR raw_payload-only if UI unused",
+      "pct=1"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "pro.tooling.manufacturer",
+    "classification": "ADD_CANONICAL_COLUMN",
+    "recommended_action": "BACKFILL",
+    "evidence": [
+      "destino=ADD column broki_tooling_catalog.manufacturer",
+      "pct=0.25290697674418605"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "n8n.nitro_stock.createdAt",
+    "classification": "RAW_ONLY_APPROVED",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "metadata / non-operational"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "field_gap",
+    "canonical_id": "n8n.nitro_stock.updatedAt",
+    "classification": "RAW_ONLY_APPROVED",
+    "recommended_action": "KEEP",
+    "evidence": [
+      "metadata / non-operational"
+    ],
+    "confidence": 1
+  },
+  {
+    "entity_type": "asset_universe",
+    "canonical_id": "pro.furgonetas+gse+inventario",
+    "classification": "EXTERNAL_ID_SCHEME_CHANGE",
+    "recommended_action": "REBUILD",
+    "evidence": [
+      "Prefer rebuild assets from V7 raw only after zombie DELETE_CANDIDATE",
+      "or filter normalize by last_migration_id"
+    ],
+    "confidence": 0.95
+  }
+]

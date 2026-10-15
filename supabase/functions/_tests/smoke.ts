@@ -11,6 +11,7 @@
 // When BROKI_REMOTE_TEST_SECRET is set, all live calls carry service headers
 // (X-Broki-Service-Id: remote-smoke, etc.) and the test also verifies that
 // auth hardening works (wrong secret → 401, missing headers → 401, etc.).
+// Cleanup runs in finally (success/failure/timeout signals).
 
 import { assertPdf, extractPdfText, sha256Hex } from "../_shared/pdf.ts";
 import { parsePlannerText } from "../_shared/planner-parse.ts";
@@ -31,8 +32,8 @@ const SMOKE_RUN_ID = Deno.env.get("SMOKE_RUN_ID") ?? crypto.randomUUID();
 
 let failures = 0;
 let checks = 0;
+let cleanupDone = false;
 
-// Track entities created during the run for cleanup
 const created: { type: string; id: string }[] = [];
 
 function check(ok: unknown, what: string, detail = "") {
@@ -43,6 +44,14 @@ function check(ok: unknown, what: string, detail = "") {
     failures++;
     console.error(`  FAIL ${what}${detail ? ` — ${detail}` : ""}`);
   }
+}
+
+function serviceKey(): string {
+  return (
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ||
+    Deno.env.get("SUPABASE_SECRET_KEY") ||
+    ""
+  );
 }
 
 function makeServiceHeaders(): Record<string, string> {
@@ -90,17 +99,23 @@ function pdfForm(bytes: Uint8Array, name: string, extra: Record<string, string> 
   return form;
 }
 
-// ---------------------------------------------------------------------------
-// Cleanup — run on exit or after tests
-// ---------------------------------------------------------------------------
-
-let cleanupDone = false;
+async function restDelete(tableFilter: string): Promise<boolean> {
+  const key = serviceKey();
+  if (!key || !BASE) return false;
+  const res = await fetch(`${BASE}/rest/v1/${tableFilter}`, {
+    method: "DELETE",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      Prefer: "return=minimal",
+    },
+  });
+  return res.ok || res.status === 404;
+}
 
 async function cleanup() {
   if (cleanupDone) return;
   cleanupDone = true;
-  if (created.length === 0) return;
-
   let deleted = 0;
   let remaining = 0;
 
@@ -110,9 +125,8 @@ async function cleanup() {
         method: "POST",
         body: JSON.stringify({ action: "delete", id: item.id }),
       });
-      if (r.status === 200 || r.status === 404) {
-        deleted++;
-      } else {
+      if (r.status === 200 || r.status === 404) deleted++;
+      else {
         remaining++;
         console.error(`  cleanup FAIL relay ${item.id}: ${r.status}`);
       }
@@ -122,22 +136,46 @@ async function cleanup() {
         method: "POST",
         body: JSON.stringify({ action: "delete", group_id: item.id }),
       });
-      if (r.status === 200 || r.status === 404) {
-        deleted++;
-      } else {
+      if (r.status === 200 || r.status === 404) deleted++;
+      else {
         remaining++;
         console.error(`  cleanup FAIL planner group ${item.id}: ${r.status}`);
       }
     }
+    if (item.type === "personnel") {
+      if (await restDelete(`broki_personnel?id=eq.${item.id}`)) deleted++;
+      else remaining++;
+    }
+    if (item.type === "tooling_movement") {
+      if (await restDelete(`broki_tooling_movements?id=eq.${item.id}`)) deleted++;
+      else remaining++;
+    }
+    if (item.type === "aircraft") {
+      if (await restDelete(`broki_aircraft?id=eq.${item.id}`)) deleted++;
+      else remaining++;
+    }
+    if (item.type === "marketing_lead") {
+      if (await restDelete(`broki_marketing_leads?id=eq.${item.id}`)) deleted++;
+      else remaining++;
+    }
   }
 
-  console.log(`\nCleanup: Created: ${created.length} / Deleted: ${deleted} / Remaining: ${remaining}`);
+  if (serviceKey()) {
+    await restDelete(
+      `broki_tooling_movements?remarks=ilike.*${encodeURIComponent(SMOKE_RUN_ID)}*`,
+    );
+    await restDelete(`broki_personnel?correo=ilike.smoke%25@example.com`);
+    await restDelete(`broki_aircraft?aerolinea=eq.SMOKE`);
+  }
+
+  console.log(
+    `\nCleanup: Tracked: ${created.length} / Deleted ops: ${deleted} / Remaining fails: ${remaining}`,
+  );
   if (remaining > 0) {
     console.error(`  cleanup residues — smoke_run_id: ${SMOKE_RUN_ID}`);
   }
 }
 
-// Register cleanup handler for unhandled exits (Deno signal)
 try {
   Deno.addSignalListener("SIGINT", () => cleanup().finally(() => Deno.exit(1)));
   Deno.addSignalListener("SIGTERM", () => cleanup().finally(() => Deno.exit(1)));
@@ -199,11 +237,18 @@ async function pdfPhase() {
 
 async function reachable(): Promise<boolean> {
   try {
-    await fetch(`${BASE}/functions/v1/aircraft-list`, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(3000),
+    const headers: Record<string, string> = {};
+    if (ANON) {
+      headers.Authorization = `Bearer ${ANON}`;
+      headers.apikey = ANON;
+    }
+    const res = await fetch(`${BASE}/functions/v1/aircraft-list`, {
+      method: "GET",
+      headers,
+      signal: AbortSignal.timeout(15_000),
     });
-    return true;
+    // Any HTTP response means functions are deployed; 401/403 still counts as reachable.
+    return res.status > 0 && res.status < 500;
   } catch {
     return false;
   }
@@ -211,6 +256,7 @@ async function reachable(): Promise<boolean> {
 
 async function listPhase() {
   console.log("\nRead endpoints");
+  // List/read endpoints only. Action functions (aircraft-action, tooling-action, …) are POST.
   for (const path of [
     "inventory-list",
     "aircraft-list",
@@ -225,6 +271,14 @@ async function listPhase() {
     const { status, body, text } = await call(path);
     check(status === 200, `GET ${path} responds 200`, `got ${status} ${text.slice(0, 120)}`);
     check(Array.isArray(body) || typeof body === "object", `GET ${path} returns JSON`);
+  }
+  {
+    const { status, text } = await call("aircraft-action");
+    check(
+      status === 405 || status === 400,
+      "GET aircraft-action refuses (POST-only)",
+      `got ${status} ${text.slice(0, 120)}`,
+    );
   }
 
   const { status } = await call("roster-upload?week=2026-03-16");
@@ -270,12 +324,98 @@ async function writePhase() {
     "relays rejects an empty payload with 400",
   );
 
+  // Marketing lead (contact)
+  const lead = await call("marketing-lead", {
+    method: "POST",
+    body: JSON.stringify({
+      type: "contact",
+      name: "Smoke Lead",
+      email: `smoke-lead-${SMOKE_RUN_ID.slice(0, 8)}@example.com`,
+      message: "Mensaje de prueba smoke test marketing lead",
+      privacidad: true,
+    }),
+  });
+  check(lead.status === 201, "POST marketing-lead accepts contact", `got ${lead.status} ${lead.text.slice(0, 120)}`);
+  const leadId = (lead.body as { id?: string })?.id;
+  if (leadId) created.push({ type: "marketing_lead", id: leadId });
+
+  check(
+    (await call("marketing-lead", {
+      method: "POST",
+      body: JSON.stringify({ type: "contact", name: "x", email: "bad", privacidad: false }),
+    })).status === 400,
+    "marketing-lead rejects invalid payload",
+  );
+
   // Nitrogen stock.
   const nitro = await call("nitro-stock", {
     method: "POST",
     body: JSON.stringify({ action: "update_nitro_stock", location: "T4S", llenas: 7, vacias: 3 }),
   });
   check(nitro.status === 200, "POST nitro-stock updates the stock", `got ${nitro.status} ${nitro.text.slice(0, 160)}`);
+
+  // Tooling checkout/checkin atomic path.
+  const catalog = await call("tooling-list");
+  const catRows = (catalog.body as { catalog?: { bac_bact?: string }[] })?.catalog ?? [];
+  const bac = catRows[0]?.bac_bact ?? `BAC-SMK-${SMOKE_RUN_ID.slice(0, 4)}`;
+  const checkout = await call("tooling-action", {
+    method: "POST",
+    body: JSON.stringify({
+      action: "checkout",
+      bac_bact: bac,
+      tma_out: "Smoke TMA",
+      avion: "EC-SMK",
+      remarks: `smoke ${SMOKE_RUN_ID}`,
+    }),
+  });
+  check(checkout.status === 200, "POST tooling-action checkout", `got ${checkout.status} ${checkout.text.slice(0, 160)}`);
+  const movId = (checkout.body as { id?: string })?.id;
+  if (movId) created.push({ type: "tooling_movement", id: movId });
+
+  const dupCheckout = await call("tooling-action", {
+    method: "POST",
+    body: JSON.stringify({ action: "checkout", bac_bact: bac, tma_out: "Dup" }),
+  });
+  check(dupCheckout.status === 409, "double checkout rejected with 409", `got ${dupCheckout.status}`);
+
+  if (movId) {
+    const checkin = await call("tooling-action", {
+      method: "POST",
+      body: JSON.stringify({ action: "checkin", id: movId, tma_in: "Smoke TMA Return" }),
+    });
+    check(checkin.status === 200, "POST tooling-action checkin by uuid", `got ${checkin.status}`);
+  }
+
+  // Aircraft CRUD by uuid.
+  const acCreate = await call("aircraft-action", {
+    method: "POST",
+    body: JSON.stringify({
+      action: "create",
+      matricula: `EC${SMOKE_RUN_ID.replace(/-/g, "").slice(0, 4)}`,
+      modelo: "A320",
+      aerolinea: "SMOKE",
+      msn: "MSN-SMK",
+    }),
+  });
+  check(acCreate.status === 201, "POST aircraft-action create", `got ${acCreate.status} ${acCreate.text.slice(0, 160)}`);
+  const acId = (acCreate.body as { id?: string })?.id;
+  if (acId) {
+    created.push({ type: "aircraft", id: acId });
+    const acDel = await call("aircraft-action", {
+      method: "POST",
+      body: JSON.stringify({ action: "delete", id: acId }),
+    });
+    check(acDel.status === 200, "POST aircraft-action delete by uuid", `got ${acDel.status}`);
+    if (acDel.status === 200) {
+      const idx = created.findIndex((c) => c.type === "aircraft" && c.id === acId);
+      if (idx >= 0) created.splice(idx, 1);
+    }
+  }
+
+  check(
+    (await call("planner-action", { method: "POST", body: JSON.stringify({ action: "delete", group_id: "EC-NFP" }) })).status === 400,
+    "planner delete rejects matricula as group_id",
+  );
 
   // Planner: create a group, then delete it.
   const group = await call("planner-action", {
@@ -440,6 +580,8 @@ async function registerPhase() {
     return;
   }
   check(first.status < 300, "registration accepted", `got ${first.status} ${first.text.slice(0, 200)}`);
+  const personId = (first.body as { id?: string })?.id;
+  if (personId) created.push({ type: "personnel", id: personId });
 
   const dup = await call("personnel-register", { method: "POST", body: JSON.stringify(person) });
   check(
@@ -591,20 +733,33 @@ async function n8nPhase() {
 await pdfPhase();
 await n8nPhase();
 
+const cleanupOnly = Deno.env.get("SMOKE_CLEANUP_ONLY") === "1";
+if (cleanupOnly) {
+  await cleanup();
+  console.log(`\n${checks - failures}/${checks} checks passed (cleanup only)`);
+  if (failures > 0) Deno.exit(1);
+  Deno.exit(0);
+}
+
 const offlineOnly = Deno.env.get("SMOKE_OFFLINE_ONLY") === "1";
 
-if (!offlineOnly && (await reachable())) {
-  await listPhase();
-  await writePhase();
-  await importPhase();
-  await registerPhase();
-  await authChecks();
-  await cleanup();
-} else if (offlineOnly) {
-  console.log("\nSkipping live checks: SMOKE_OFFLINE_ONLY=1 (pre-commit).");
-} else {
-  console.log(`\nSkipping live checks: no Edge Functions at ${FN}.`);
-  console.log("Start them with: supabase start && supabase db reset && supabase functions serve");
+try {
+  if (!offlineOnly && (await reachable())) {
+    await listPhase();
+    await writePhase();
+    await importPhase();
+    await registerPhase();
+    await authChecks();
+  } else if (offlineOnly) {
+    console.log("\nSkipping live checks: SMOKE_OFFLINE_ONLY=1 (pre-commit).");
+  } else {
+    console.log(`\nSkipping live checks: no Edge Functions at ${FN}.`);
+    console.log("Start them with: supabase start && supabase db reset && supabase functions serve");
+  }
+} finally {
+  if (!offlineOnly) {
+    await cleanup();
+  }
 }
 
 console.log(`\n${checks - failures}/${checks} checks passed`);

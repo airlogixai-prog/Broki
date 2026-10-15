@@ -1,22 +1,20 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import {
-  Notebook,
-  PlusCircle,
-  Airplane,
-  User,
-  CheckCircle,
-  Trash,
-  X,
-  Plus,
-  Sun,
-  ClockCounterClockwise,
-  Archive,
-  Warning,
-} from "@phosphor-icons/react";
+import { Notebook, PlusCircle, Airplane, User, CheckCircle, Trash, X, Plus, Sun, ClockCounterClockwise, Archive } from "@phosphor-icons/react";
 import { useApp } from "@/context/AppContext";
 import { brokiApi, type Relay } from "@/lib/api/broki";
+import { useBrokiRealtime } from "@/lib/hooks/useBrokiRealtime";
+import { OperationalSyncBar } from "@/components/ui/OperationalSyncBar";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button, IconButton } from "@/components/ui/Button";
+import { Modal } from "@/components/ui/Modal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { SelectField, TextField } from "@/components/ui/FormField";
+import { ErrorState, InlineError } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { BlockSkeleton } from "@/components/ui/BlockSkeleton";
+import { useToast } from "@/components/ui/Toast";
 
 function getRelayGroup(timestamp: string): "today" | "yesterday" | "older" {
   const d = new Date(timestamp);
@@ -37,72 +35,57 @@ function formatRelayDate(timestamp: string, group: string): string {
   return d.toLocaleDateString("es-ES", { day: "numeric", month: "short" }) + " " + time;
 }
 
-interface RelayCardProps {
-  relay: Relay;
-  onDelete: () => void;
-}
-
-function RelayCard({ relay, onDelete }: RelayCardProps) {
+function RelayCard({ relay, onDelete }: { relay: Relay; onDelete: () => void }) {
   const group = getRelayGroup(relay.timestamp);
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col group hover:border-brand-300 dark:hover:border-brand-600 transition-all">
-      <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex justify-between items-start">
-        <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-800">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-colors hover:border-brand-300" aria-label={`Relevo ${relay.plane}`}>
+      <div className="flex items-start justify-between border-b border-border-subtle bg-muted p-4">
+        <div className="flex min-w-0 gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-info/30 bg-info-muted text-info-strong" aria-hidden>
             <Airplane size={20} />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight truncate">
-              {relay.plane}
-            </h3>
-          </div>
-        </div>
-        <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-2">
-          {formatRelayDate(relay.timestamp, group)}
-        </span>
-      </div>
-
-      <div className="p-4 flex-1">
-        <div className="flex items-center gap-2 mb-3">
-          <User size={14} className="text-slate-400 shrink-0" />
-          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">
-            {relay.worker}
           </span>
+          <div className="min-w-0">
+            <h3 className="truncate text-base font-bold leading-tight text-fg">{relay.plane}</h3>
+            <p className="flex items-center gap-1 text-xs text-fg-muted">
+              <User size={12} aria-hidden /> {relay.worker || "Sin firmante"}
+            </p>
+          </div>
         </div>
-        <div className="space-y-2">
-          {relay.points.map((p, i) => (
-            <div key={i} className="flex gap-2 items-start">
-              <CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" />
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-snug break-words">
-                {p}
-              </p>
-            </div>
-          ))}
-        </div>
+        <time dateTime={relay.timestamp} className="tabular ml-2 shrink-0 text-[11px] font-medium text-fg-subtle">
+          {formatRelayDate(relay.timestamp, group)}
+        </time>
       </div>
-
-      <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={onDelete}
-          className="text-xs font-bold text-red-500 hover:text-red-700 flex items-center gap-1 px-2 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-        >
-          <Trash size={14} /> Eliminar
-        </button>
+      <ul className="flex-1 space-y-2 p-4">
+        {relay.points.map((p, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <CheckCircle size={14} className="mt-0.5 shrink-0 text-success" aria-hidden />
+            <p className="break-words text-xs leading-snug text-fg">{p}</p>
+          </li>
+        ))}
+      </ul>
+      <div className="flex justify-end border-t border-border-subtle bg-muted px-3 py-2">
+        <Button variant="ghost" size="sm" icon={<Trash size={14} />} onClick={onDelete} className="text-danger-strong hover:bg-danger-muted">
+          Eliminar
+        </Button>
       </div>
-    </div>
+    </article>
   );
 }
 
 export default function FleetPage() {
   const { aircraft } = useApp();
+  const toast = useToast();
   const [relays, setRelays] = useState<Relay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [toDelete, setToDelete] = useState<Relay | null>(null);
   const [plane, setPlane] = useState("");
   const [worker, setWorker] = useState("");
   const [points, setPoints] = useState<string[]>(["", ""]);
+  const [touched, setTouched] = useState(false);
 
   const load = useCallback(async (alive: () => boolean = () => true) => {
     setLoading(true);
@@ -111,9 +94,7 @@ export default function FleetPage() {
       const fetched = await brokiApi.fetchRelays();
       if (alive()) setRelays(fetched);
     } catch (err) {
-      if (alive()) {
-        setError(err instanceof Error ? err.message : "No se pudieron cargar los relevos");
-      }
+      if (alive()) setError(err instanceof Error ? err.message : "No se pudieron cargar los relevos");
     } finally {
       if (alive()) setLoading(false);
     }
@@ -129,46 +110,52 @@ export default function FleetPage() {
     };
   }, [load]);
 
-  const handleAddPoint = () => setPoints((p) => [...p, ""]);
-  const handleRemovePoint = (i: number) =>
-    setPoints((p) => p.filter((_, idx) => idx !== i));
-  const handlePointChange = (i: number, val: string) =>
-    setPoints((p) => p.map((x, idx) => (idx === i ? val : x)));
+  const realtime = useBrokiRealtime(["broki_relays", "broki_relay_points"], () => load());
+
+  const validPoints = points.map((p) => p.trim()).filter(Boolean);
+  const errors = {
+    plane: !plane.trim() ? "Selecciona el avión" : null,
+    points: validPoints.length === 0 ? "Añade al menos una novedad" : null,
+  };
+  const valid = !errors.plane && !errors.points;
+
+  const resetForm = () => {
+    setPlane("");
+    setWorker("");
+    setPoints(["", ""]);
+    setTouched(false);
+    setSaveError(null);
+  };
 
   const handleSave = async () => {
-    if (!plane) return;
-    const validPoints = points.map((p) => p.trim()).filter(Boolean);
-    if (validPoints.length === 0) return;
-
+    setTouched(true);
+    if (!valid || saving) return;
     setSaving(true);
-    setError(null);
+    setSaveError(null);
     try {
-      const created = await brokiApi.createRelay({
-        plane,
-        worker: worker.trim(),
-        points: validPoints,
-      });
-      setRelays((prev) => [created, ...prev]);
+      const created = await brokiApi.createRelay({ plane: plane.trim().toUpperCase(), worker: worker.trim(), points: validPoints });
+      setRelays((prev) => [created, ...prev.filter((r) => r.id !== created.id)]);
       setShowModal(false);
-      setPlane("");
-      setWorker("");
-      setPoints(["", ""]);
+      resetForm();
+      toast.success("Relevo guardado", created.plane);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "No se pudo guardar el relevo");
+      setSaveError(err instanceof Error ? err.message : "No se pudo guardar el relevo");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("¿Borrar este relevo?")) return;
+  const handleDelete = async () => {
+    if (!toDelete) return;
     const previous = relays;
-    setRelays((prev) => prev.filter((r) => r.id !== id));
+    setRelays((prev) => prev.filter((r) => r.id !== toDelete.id));
     try {
-      await brokiApi.deleteRelay(id);
+      await brokiApi.deleteRelay(toDelete.id);
+      toast.success("Relevo eliminado", toDelete.plane);
+      setToDelete(null);
     } catch (err) {
       setRelays(previous);
-      setError(err instanceof Error ? err.message : "No se pudo borrar el relevo");
+      throw err;
     }
   };
 
@@ -176,223 +163,142 @@ export default function FleetPage() {
   const yesterday = relays.filter((r) => getRelayGroup(r.timestamp) === "yesterday");
   const older = relays.filter((r) => getRelayGroup(r.timestamp) === "older");
 
-  const sectionCls = "text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2";
-
-  const fieldCls =
-    "w-full text-sm border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-brand-500";
+  const section = (title: string, icon: React.ReactNode, items: Relay[]) =>
+    items.length === 0 ? null : (
+      <section aria-label={title} key={title}>
+        <h2 className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-fg-muted">
+          {icon} {title} <span className="tabular rounded-full bg-subtle px-1.5 text-fg-muted">{items.length}</span>
+        </h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {items.map((r) => (
+            <RelayCard key={r.id} relay={r} onDelete={() => setToDelete(r)} />
+          ))}
+        </div>
+      </section>
+    );
 
   return (
-    <div className="space-y-6 pb-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <Notebook size={28} className="text-brand-500" /> Notas de Relevo
-        </h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 shadow-sm transition-colors"
-        >
-          <PlusCircle size={16} /> Nuevo Relevo
-        </button>
-      </div>
+    <div className="space-y-5 pb-10">
+      <PageHeader
+        title="Relevos"
+        subtitle={`Libro de relevos · ${today.length} hoy · ${relays.length} en total`}
+        icon={<Notebook size={22} />}
+        actions={
+          <Button icon={<PlusCircle size={16} />} onClick={() => setShowModal(true)}>
+            Nuevo relevo
+          </Button>
+        }
+      >
+        <OperationalSyncBar syncMode={realtime.syncMode} lastUpdate={realtime.lastUpdate} updating={realtime.updating || loading} />
+      </PageHeader>
 
-      {error && (
-        <div
-          role="alert"
-          className="flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3"
-        >
-          <Warning size={18} className="text-red-500 mt-0.5 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-red-700 dark:text-red-300">{error}</p>
-            <button
-              onClick={() => void load()}
-              className="mt-1 text-xs font-bold text-red-600 dark:text-red-400 underline hover:no-underline"
-            >
-              Reintentar
-            </button>
-          </div>
-        </div>
-      )}
+      {error && <ErrorState message={error} onRetry={() => void load()} />}
 
-      {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-busy="true">
+      {loading && relays.length === 0 && !error && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" aria-busy="true">
           {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-48 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 animate-pulse"
-            />
+            <BlockSkeleton key={i} className="h-48" label="Cargando relevos" />
           ))}
         </div>
       )}
 
       {!loading && !error && relays.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-            <Notebook size={36} className="text-slate-400 dark:text-slate-600" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-            Sin Relevos Activos
-          </h3>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm max-w-xs">
-            No hay notas de relevo. Crea la primera para gestionar cambios de turno.
-          </p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="mt-4 flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-bold rounded-xl shadow-lg hover:bg-brand-700 transition-colors"
-          >
-            <PlusCircle size={18} /> Crear Primer Relevo
-          </button>
-        </div>
+        <EmptyState
+          icon={<Notebook size={28} />}
+          title="Sin relevos registrados"
+          description="Crea el primero para dejar constancia del cambio de turno. Se guarda en el servidor y lo ven todos los dispositivos."
+          action={
+            <Button icon={<PlusCircle size={18} />} onClick={() => setShowModal(true)}>
+              Crear primer relevo
+            </Button>
+          }
+        />
       )}
 
-      {today.length > 0 && (
-        <div>
-          <p className={sectionCls}>
-            <Sun size={12} className="text-emerald-500" /> Hoy ({today.length})
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {today.map((r) => (
-              <RelayCard key={r.id} relay={r} onDelete={() => handleDelete(r.id)} />
-            ))}
-          </div>
-        </div>
-      )}
+      {section("Hoy", <Sun size={12} className="text-success" aria-hidden />, today)}
+      {section("Ayer", <ClockCounterClockwise size={12} className="text-warning" aria-hidden />, yesterday)}
+      {section("Historial", <Archive size={12} aria-hidden />, older)}
 
-      {yesterday.length > 0 && (
-        <div>
-          <p className={sectionCls}>
-            <ClockCounterClockwise size={12} className="text-amber-500" /> Ayer ({yesterday.length})
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {yesterday.map((r) => (
-              <RelayCard key={r.id} relay={r} onDelete={() => handleDelete(r.id)} />
-            ))}
+      <Modal
+        open={showModal}
+        onClose={() => !saving && setShowModal(false)}
+        busy={saving}
+        title="Nuevo relevo"
+        icon={<Notebook size={18} />}
+        description="Novedades y pendientes para el siguiente turno."
+        footer={
+          <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <InlineError message={saveError} />
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <Button variant="secondary" onClick={() => setShowModal(false)} disabled={saving}>
+                Cancelar
+              </Button>
+              <Button loading={saving} onClick={() => void handleSave()} disabled={touched && !valid}>
+                Guardar relevo
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-
-      {older.length > 0 && (
-        <div>
-          <p className={sectionCls}>
-            <Archive size={12} className="text-slate-400" /> Historial ({older.length})
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {older.map((r) => (
-              <RelayCard key={r.id} relay={r} onDelete={() => handleDelete(r.id)} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Create modal */}
-      {showModal && (
-        <dialog
-          open
-          className="backdrop:bg-slate-900/50 backdrop:backdrop-blur-sm p-0 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white m-auto"
+        }
+      >
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleSave();
+          }}
+          noValidate
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Notebook size={18} /> Nuevo Relevo
-            </h2>
-            <button
-              onClick={() => setShowModal(false)}
-              className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-            >
-              <X size={16} />
-            </button>
-          </div>
+          {aircraft.length > 0 ? (
+            <SelectField label="Avión" value={plane} onChange={(e) => setPlane(e.target.value)} required error={touched ? errors.plane : null}>
+              <option value="">Seleccionar avión…</option>
+              {aircraft.map((a) => (
+                <option key={a.reg} value={a.reg}>
+                  {a.reg} · {a.airline}
+                </option>
+              ))}
+            </SelectField>
+          ) : (
+            <TextField label="Avión" value={plane} onChange={(e) => setPlane(e.target.value.toUpperCase())} placeholder="EC-XXX" required error={touched ? errors.plane : null} />
+          )}
+          <TextField label="Técnico firmante" value={worker} onChange={(e) => setWorker(e.target.value)} placeholder="Nombre…" list="broki-personnel-names" />
+          <fieldset>
+            <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-muted">Novedades</legend>
+            <ul className="space-y-2">
+              {points.map((p, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <TextField
+                    label={`Novedad ${i + 1}`}
+                    className="flex-1 [&_label]:sr-only"
+                    value={p}
+                    onChange={(e) => setPoints((prev) => prev.map((x, idx) => (idx === i ? e.target.value : x)))}
+                    placeholder="Escribe una novedad o tarea pendiente…"
+                  />
+                  <IconButton size="sm" label={`Quitar novedad ${i + 1}`} onClick={() => setPoints((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : [""]))}>
+                    <X size={14} />
+                  </IconButton>
+                </li>
+              ))}
+            </ul>
+            {touched && errors.points && <InlineError message={errors.points} />}
+            <Button variant="ghost" size="sm" icon={<Plus size={14} />} className="mt-2" onClick={() => setPoints((p) => [...p, ""])}>
+              Añadir línea
+            </Button>
+          </fieldset>
+          <button type="submit" className="hidden" aria-hidden tabIndex={-1} />
+        </form>
+      </Modal>
 
-          <div className="p-5 space-y-4">
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">
-                Avión
-              </label>
-              {aircraft.length > 0 ? (
-                <select
-                  value={plane}
-                  onChange={(e) => setPlane(e.target.value)}
-                  className={fieldCls}
-                >
-                  <option value="">Seleccionar avión...</option>
-                  {aircraft.map((a) => (
-                    <option key={a.reg} value={a.reg}>
-                      {a.reg} · {a.airline}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="text"
-                  value={plane}
-                  onChange={(e) => setPlane(e.target.value)}
-                  className={fieldCls}
-                  placeholder="EC-XXX"
-                />
-              )}
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-1">
-                Técnico Firmante
-              </label>
-              <input
-                type="text"
-                value={worker}
-                onChange={(e) => setWorker(e.target.value)}
-                className={fieldCls}
-                placeholder="Nombre..."
-              />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide block mb-2">
-                Novedades
-              </label>
-              <div className="space-y-2">
-                {points.map((p, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full shrink-0" />
-                    <input
-                      type="text"
-                      value={p}
-                      onChange={(e) => handlePointChange(i, e.target.value)}
-                      className={`${fieldCls} flex-1`}
-                      placeholder="Escribe una novedad o tarea pendiente..."
-                    />
-                    <button
-                      onClick={() => handleRemovePoint(i)}
-                      className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={handleAddPoint}
-                className="mt-2 flex items-center gap-1 text-xs text-brand-600 dark:text-brand-400 font-medium hover:text-brand-700 transition-colors"
-              >
-                <Plus size={14} /> Añadir línea
-              </button>
-            </div>
-          </div>
-
-          <div className="flex gap-2 justify-end px-5 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
-            <button
-              onClick={() => setShowModal(false)}
-              className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={() => void handleSave()}
-              disabled={saving || !plane || points.every((p) => !p.trim())}
-              className="px-4 py-2 bg-brand-600 text-white text-sm font-bold rounded-lg hover:bg-brand-700 disabled:opacity-50 shadow-sm transition-colors"
-            >
-              {saving ? "Guardando..." : "Guardar Relevo"}
-            </button>
-          </div>
-        </dialog>
-      )}
+      <ConfirmDialog
+        open={!!toDelete}
+        danger
+        title="Borrar relevo"
+        message={toDelete ? `Se borrará el relevo de ${toDelete.plane} (${toDelete.points.length} novedades).` : undefined}
+        confirmLabel="Borrar"
+        onCancel={() => setToDelete(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

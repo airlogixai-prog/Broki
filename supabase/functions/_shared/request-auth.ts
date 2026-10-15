@@ -11,8 +11,9 @@
  * Callers: `const auth = await authorizeOrRespond(req, "fn-name", opts); if (auth instanceof Response) return auth;`
  */
 import { authenticateServiceRequest, type BrokiServiceId } from "./service-auth.ts";
-import { authenticateBrokiUser } from "./user-auth.ts";
+import { authenticateBrokiUser, type BrokiPermission } from "./user-auth.ts";
 import { FUNCTION_SERVICE_ACCESS } from "./function-access.ts";
+import { checkIdempotency, storeIdempotency } from "./idempotency.ts";
 import { jsonResponse } from "./response.ts";
 
 export type UserContext = {
@@ -87,4 +88,50 @@ export async function authorizeOrRespond(
     email: result.email,
     permissions: result.permissions,
   };
+}
+
+/** Reject user mutations without dashboard:write (hook for future RBAC). */
+export function assertUserCanWrite(req: Request, auth: AuthContext): Response | null {
+  if (auth.kind === "user" && !auth.permissions.includes("dashboard:write" as BrokiPermission)) {
+    return jsonResponse(req, { error: "forbidden" }, 403);
+  }
+  return null;
+}
+
+export async function readMutationBody(
+  req: Request,
+  auth: AuthContext,
+  requestPath: string,
+): Promise<
+  | { ok: true; bodyText: string; body: Record<string, unknown> }
+  | { ok: false; response: Response }
+> {
+  const bodyText = await req.text();
+  let body: Record<string, unknown>;
+  try {
+    body = bodyText ? JSON.parse(bodyText) as Record<string, unknown> : {};
+  } catch {
+    return { ok: false, response: jsonResponse(req, { error: "invalid_json" }, 400) };
+  }
+
+  if (auth.kind === "service") {
+    const idem = await checkIdempotency(req, auth, requestPath, bodyText);
+    if (idem.hit) return { ok: false, response: idem.response };
+  }
+
+  return { ok: true, bodyText, body };
+}
+
+export async function respondMutation(
+  req: Request,
+  auth: AuthContext,
+  requestPath: string,
+  bodyText: string,
+  status: number,
+  payload: unknown,
+): Promise<Response> {
+  if (auth.kind === "service") {
+    await storeIdempotency(auth, requestPath, bodyText, status, payload);
+  }
+  return jsonResponse(req, payload, status);
 }

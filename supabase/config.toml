@@ -392,6 +392,9 @@ verify_jwt = true
 [functions.aircraft-list]
 verify_jwt = true
 
+[functions.aircraft-action]
+verify_jwt = true
+
 [functions.incidents]
 verify_jwt = true
 
@@ -425,6 +428,9 @@ verify_jwt = true
 # Public: backs the /registrobroki form. Validation, honeypot and rate limiting
 # live inside the function.
 [functions.personnel-register]
+verify_jwt = false
+
+[functions.marketing-lead]
 verify_jwt = false
 
 [functions.broki-import-batch]

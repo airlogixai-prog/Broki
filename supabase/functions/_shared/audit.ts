@@ -14,6 +14,7 @@ export async function writeAudit(
     const actorUserId = auth?.kind === "user" ? auth.userId : null;
     const actorType = auth?.kind ?? null;
     const actorServiceId = auth?.kind === "service" ? auth.serviceId : null;
+    const actorEmail = auth?.kind === "user" ? auth.email ?? null : null;
     const requestId = auth?.kind === "service" ? auth.requestId : null;
     const idempotencyKey = auth?.kind === "service" ? auth.idempotencyKey : null;
 
@@ -27,6 +28,7 @@ export async function writeAudit(
       actor_service_id: actorServiceId,
       metadata: {
         ...metadata,
+        ...(actorEmail ? { actor_email: actorEmail } : {}),
         ...(requestId ? { request_id: requestId } : {}),
         ...(idempotencyKey ? { idempotency_key: idempotencyKey } : {}),
       },

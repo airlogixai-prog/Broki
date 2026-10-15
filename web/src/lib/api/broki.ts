@@ -1,7 +1,28 @@
 import { createClient } from "@/lib/supabase/client";
+import type {
+  AircraftRow,
+  AssetRow,
+  IncidentRow,
+  NitroStockRow,
+  PersonnelRow,
+  PlannerGroupRow,
+  PlannerTaskRow,
+  ToolingListResponse,
+  ToolingMovementRow,
+} from "@/lib/api/canonical";
 
-type N8nRow = Record<string, unknown>;
-type ToolingResponse = { catalog: N8nRow[]; movements: N8nRow[] };
+export type {
+  AircraftRow,
+  AssetRow,
+  IncidentRow,
+  NitroStockRow,
+  PersonnelRow,
+  PlannerGroupRow,
+  PlannerTaskRow,
+  ToolingCatalogRow,
+  ToolingListResponse,
+  ToolingMovementRow,
+} from "@/lib/api/canonical";
 
 export interface RegisterResult {
   ok?: boolean;
@@ -11,6 +32,13 @@ export interface RegisterResult {
   message?: string;
 }
 
+export interface MarketingLeadResult {
+  ok?: boolean;
+  id?: string;
+  error?: string;
+  field?: string;
+}
+
 export interface PlannerImportResult {
   duplicate?: boolean;
   created?: number;
@@ -18,6 +46,26 @@ export interface PlannerImportResult {
   ignored?: number;
   errors?: string[];
   message?: string;
+}
+
+export interface PlannerPreviewTask {
+  codigo: string | null;
+  tipo_tarea: string | null;
+  prioridad: string | null;
+  descripcion: string | null;
+  matricula_avion: string | null;
+  fecha: string | null;
+  estado: number | null;
+}
+
+/** planner-action multipart with dry_run=1: parsed tasks, nothing written. */
+export interface PlannerPreviewResult {
+  dry_run: true;
+  source: string;
+  matricula: string | null;
+  fecha: string | null;
+  already_imported: boolean;
+  tasks: PlannerPreviewTask[];
 }
 
 export interface RosterPerson {
@@ -45,6 +93,21 @@ export interface RosterUploadResult {
   message?: string;
 }
 
+export interface ImportRun {
+  id: string;
+  file_name?: string | null;
+  status?: string | null;
+  created_count?: number | null;
+  duplicate_count?: number | null;
+  skipped_count?: number | null;
+  imported_count?: number | null;
+  error_count?: number | null;
+  errors?: unknown;
+  metadata?: Record<string, unknown> | null;
+  created_at?: string | null;
+  finished_at?: string | null;
+}
+
 export interface Relay {
   id: string;
   timestamp: string;
@@ -53,38 +116,113 @@ export interface Relay {
   points: string[];
 }
 
+/** Action payloads remain open objects (server validates). */
+type ActionBody = Record<string, unknown>;
+
+/**
+ * Error with the server's JSON body attached, so the UI can react to codes
+ * (`stale_update`, `open_checkout_exists`, `forbidden`…) instead of showing
+ * "Edge Function returned a non-2xx status code".
+ */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+    readonly code: string | null,
+    readonly payload: Record<string, unknown> | null,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+const CODE_MESSAGES: Record<string, string> = {
+  stale_update: "Otro usuario ha modificado este equipo mientras lo editabas. Recarga para ver los cambios.",
+  open_checkout_exists: "Esta herramienta ya está sacada. Devuélvela antes de volver a sacarla.",
+  open_movement_not_found: "No hay ninguna sacada abierta para esta herramienta.",
+  forbidden: "No tienes permisos para esta operación.",
+  unauthorized: "Sesión no válida. Vuelve a iniciar sesión.",
+  asset_not_found: "El equipo no existe en la base de datos.",
+  incident_not_found: "La incidencia no existe o ya fue cerrada.",
+  group_not_found: "El grupo ya no existe.",
+  task_not_found: "La tarea ya no existe.",
+  task_duplicate: "Esa tarea ya existe para este avión y fecha.",
+  db_error: "Error de base de datos. Inténtalo de nuevo.",
+  internal_error: "Error interno del servidor.",
+  method_not_allowed: "Operación no permitida.",
+  rate_limited: "Demasiadas peticiones. Espera un momento.",
+};
+
+async function toApiError(error: { message: string; context?: unknown }): Promise<ApiError> {
+  const ctx = error.context;
+  let status = 0;
+  let payload: Record<string, unknown> | null = null;
+  if (ctx && typeof ctx === "object" && "status" in ctx) {
+    const res = ctx as Response;
+    status = res.status;
+    try {
+      payload = (await res.clone().json()) as Record<string, unknown>;
+    } catch {
+      payload = null;
+    }
+  }
+  const code = payload && typeof payload.error === "string" ? payload.error : null;
+  const message =
+    (code && CODE_MESSAGES[code]) ||
+    (payload && typeof payload.message === "string" ? payload.message : null) ||
+    (code && /\s/.test(code) ? code : null) ||
+    (status === 0 ? "Sin conexión con el servidor." : error.message);
+  return new ApiError(message, status, code, payload);
+}
+
 async function invoke<T>(
   name: string,
-  init: { method: "GET" } | { method: "POST"; body: Record<string, unknown> | FormData },
+  init: { method: "GET" } | { method: "POST"; body: ActionBody | FormData },
 ): Promise<T> {
   const supabase = createClient();
   const { data, error } = await supabase.functions.invoke(name, init);
-  if (error) throw new Error(error.message);
+  if (error) throw await toApiError(error);
   return data as T;
 }
 
+export function isApiError(e: unknown, code?: string): e is ApiError {
+  return e instanceof ApiError && (code === undefined || e.code === code);
+}
+
 export const brokiApi = {
-  fetchInventory: () => invoke<N8nRow[]>("inventory-list", { method: "GET" }),
-  fetchPersonnel: () => invoke<N8nRow[]>("personnel-list", { method: "GET" }),
-  fetchAircraft: () => invoke<N8nRow[]>("aircraft-list", { method: "GET" }),
-  fetchIncidents: () => invoke<N8nRow[]>("incidents", { method: "GET" }),
-  postIncident: (body: Record<string, unknown>) =>
-    invoke<N8nRow>("incidents", { method: "POST", body }),
-  updateEquipment: (body: Record<string, unknown>) =>
-    invoke<N8nRow>("equipment-update", { method: "POST", body }),
-  fetchStock: () => invoke<N8nRow[]>("nitro-stock", { method: "GET" }),
-  updateStock: (body: Record<string, unknown>) =>
-    invoke<N8nRow>("nitro-stock", { method: "POST", body }),
-  fetchPlannerGroups: () => invoke<N8nRow[]>("planner-groups", { method: "GET" }),
-  fetchPlannerTasks: () => invoke<N8nRow[]>("planner-tasks", { method: "GET" }),
-  plannerAction: (body: Record<string, unknown>) =>
-    invoke<N8nRow>("planner-action", { method: "POST", body }),
+  fetchInventory: () => invoke<AssetRow[]>("inventory-list", { method: "GET" }),
+  fetchPersonnel: () => invoke<PersonnelRow[]>("personnel-list", { method: "GET" }),
+  fetchAircraft: () => invoke<AircraftRow[]>("aircraft-list", { method: "GET" }),
+  aircraftAction: (body: ActionBody) =>
+    invoke<AircraftRow>("aircraft-action", { method: "POST", body }),
+  fetchPlannerImports: () =>
+    invoke<ImportRun[]>("planner-groups?imports=1", { method: "GET" }),
+  fetchRosterImports: () =>
+    invoke<ImportRun[]>("roster-upload?imports=1", { method: "GET" }),
+  fetchIncidents: () => invoke<IncidentRow[]>("incidents", { method: "GET" }),
+  postIncident: (body: ActionBody) =>
+    invoke<IncidentRow>("incidents", { method: "POST", body }),
+  updateEquipment: (body: ActionBody) =>
+    invoke<AssetRow>("equipment-update", { method: "POST", body }),
+  fetchStock: () => invoke<NitroStockRow[]>("nitro-stock", { method: "GET" }),
+  updateStock: (body: ActionBody) =>
+    invoke<NitroStockRow>("nitro-stock", { method: "POST", body }),
+  fetchPlannerGroups: () => invoke<PlannerGroupRow[]>("planner-groups", { method: "GET" }),
+  fetchPlannerTasks: () => invoke<PlannerTaskRow[]>("planner-tasks", { method: "GET" }),
+  plannerAction: (body: ActionBody) =>
+    invoke<PlannerGroupRow | PlannerTaskRow>("planner-action", { method: "POST", body }),
   plannerActionForm: (formData: FormData) =>
     invoke<PlannerImportResult>("planner-action", { method: "POST", body: formData }),
-  fetchTooling: () => invoke<ToolingResponse>("tooling-list", { method: "GET" }),
-  toolingAction: (body: Record<string, unknown>) =>
-    invoke<N8nRow>("tooling-action", { method: "POST", body }),
-  fetchRoster: () => invoke<RosterWeek>("roster-upload", { method: "GET" }),
+  plannerPreviewForm: (formData: FormData) =>
+    invoke<PlannerPreviewResult>("planner-action", { method: "POST", body: formData }),
+  fetchTooling: () => invoke<ToolingListResponse>("tooling-list", { method: "GET" }),
+  toolingAction: (body: ActionBody) =>
+    invoke<ToolingMovementRow>("tooling-action", { method: "POST", body }),
+  fetchRoster: (week?: string) =>
+    invoke<RosterWeek>(
+      week ? `roster-upload?week=${encodeURIComponent(week)}` : "roster-upload",
+      { method: "GET" },
+    ),
   rosterUpload: (formData: FormData) =>
     invoke<RosterUploadResult>("roster-upload", { method: "POST", body: formData }),
   /**
@@ -92,7 +230,7 @@ export const brokiApi = {
    * because the form needs the server's per-field message ("Telefono no valido")
    * rather than a generic HTTP failure.
    */
-  registerPersonnel: async (body: Record<string, unknown>): Promise<RegisterResult> => {
+  registerPersonnel: async (body: ActionBody): Promise<RegisterResult> => {
     const supabase = createClient();
     const { data, error } = await supabase.functions.invoke<RegisterResult>(
       "personnel-register",
@@ -108,6 +246,32 @@ export const brokiApi = {
         if (payload?.error) return payload;
       } catch {
         // Fall through to the generic message below.
+      }
+    }
+    throw new Error(error.message);
+  },
+  submitMarketingLead: async (
+    body: ActionBody,
+  ): Promise<MarketingLeadResult> => {
+    const supabase = createClient();
+    const { data, error } = await supabase.functions.invoke<MarketingLeadResult>(
+      "marketing-lead",
+      { method: "POST", body },
+    );
+
+    if (!error) return data ?? { ok: true };
+
+    const response = (error as { context?: Response }).context;
+    if (response && typeof response.json === "function") {
+      try {
+        const payload = (await response.json()) as MarketingLeadResult;
+        if (payload?.error) {
+          throw new Error(
+            payload.field ? `${payload.error} (field: ${payload.field})` : payload.error,
+          );
+        }
+      } catch (e) {
+        if (e instanceof Error && e.message.includes("field:")) throw e;
       }
     }
     throw new Error(error.message);

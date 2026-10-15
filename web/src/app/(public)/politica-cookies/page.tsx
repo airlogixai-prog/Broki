@@ -1,19 +1,18 @@
 import { LegalPageLayout } from "@/components/public/LegalPageLayout";
+import { LegalHtml } from "@/components/public/LegalHtml";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
 
-export default function PoliticaCookiesPage() {
+export const metadata: Metadata = pageMetadata({
+  title: "Política de Cookies",
+  description: "Información sobre el uso de cookies en airlogix.ai.",
+  path: "/politica-cookies",
+});
+
+export default function CookiesPage() {
   return (
     <LegalPageLayout title="Política de Cookies">
-      <p>
-        Este sitio puede utilizar cookies técnicas necesarias para el funcionamiento y cookies
-        analíticas para mejorar la experiencia de usuario.
-      </p>
-      <p>
-        Puedes configurar tu navegador para rechazar cookies, aunque algunas funcionalidades
-        podrían verse afectadas.
-      </p>
-      <p>
-        Las cookies de sesión de BROKI se utilizan para mantener la autenticación del dashboard.
-      </p>
+      <LegalHtml file="politica-cookies" />
     </LegalPageLayout>
   );
 }

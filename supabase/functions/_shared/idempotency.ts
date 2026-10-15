@@ -7,8 +7,8 @@
  * Same key + different hash    → 409 Conflict.
  * No key or user caller        → skip (no-op).
  */
-import { createClient } from "npm:@supabase/supabase-js@2";
 import type { ServiceContext } from "./request-auth.ts";
+import { createServiceClient } from "./supabase-admin.ts";
 import { jsonResponse } from "./response.ts";
 
 const MAX_BODY_BYTES = 4096;
@@ -37,11 +37,12 @@ export async function checkIdempotency(
   const key = auth.idempotencyKey;
   if (!key) return { hit: false };
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !serviceKey) return { hit: false };
-
-  const supabase = createClient(supabaseUrl, serviceKey);
+  let supabase: ReturnType<typeof createServiceClient>;
+  try {
+    supabase = createServiceClient();
+  } catch {
+    return { hit: false };
+  }
   const hash = await sha256Hex(requestBodyText);
 
   const { data: existing } = await supabase
@@ -80,12 +81,8 @@ export async function storeIdempotency(
   const key = auth.idempotencyKey;
   if (!key) return;
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!supabaseUrl || !serviceKey) return;
-
   try {
-    const supabase = createClient(supabaseUrl, serviceKey);
+    const supabase = createServiceClient();
     const hash = await sha256Hex(requestBodyText);
     await supabase.from("broki_idempotency_keys").upsert({
       service_id: auth.serviceId,
@@ -100,4 +97,13 @@ export async function storeIdempotency(
     // ponytail: idempotency store failure must not break the main operation
     console.error("[idempotency] store failed", err);
   }
+}
+
+// ponytail: pure helpers only; DB path needs integration smoke
+if (import.meta.main) {
+  const big = { data: "x".repeat(5000) };
+  const t = truncateBody(big) as { _truncated?: boolean };
+  console.assert(t._truncated === true, "truncate large body");
+  console.assert(truncateBody({ ok: 1 }) !== null);
+  console.log("idempotency self-check OK");
 }

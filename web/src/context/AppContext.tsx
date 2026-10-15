@@ -8,12 +8,9 @@ import React, {
   useRef,
   type ReactNode,
 } from "react";
-import type {
-  Equipment,
-  Personnel,
-  Aircraft,
-  IncidentState,
-} from "@/lib/types/equipment";
+import type { Equipment, Personnel, Aircraft, IncidentState } from "@/lib/types/equipment";
+
+export type SyncMode = "loading" | "realtime" | "polling" | "error" | "idle";
 
 interface AppState {
   furgonetas: Equipment[];
@@ -31,6 +28,7 @@ interface AppState {
   compactMode: boolean;
   darkMode: boolean;
   autoRefresh: boolean;
+  syncMode: SyncMode;
 }
 
 interface AppContextValue extends AppState {
@@ -44,9 +42,15 @@ interface AppContextValue extends AppState {
   setLoading: (v: boolean) => void;
   setFetchError: (v: string | null) => void;
   setInventory: (
-    data: Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">
+    data: Partial<Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">>
   ) => void;
   setIncidentsMemory: (m: Record<string, IncidentState>) => void;
+  /** Functional per-equipment update: safe against stale closures and concurrent refreshes. */
+  patchIncidentState: (itemId: string, state: IncidentState) => void;
+  setSyncMode: (m: SyncMode | ((current: SyncMode) => SyncMode)) => void;
+  patchEquipment: (id: string, patch: Partial<Equipment>) => void;
+  setAircraft: (aircraft: Aircraft[]) => void;
+  restoreInventory: (data: Pick<AppState, "furgonetas" | "gse">) => void;
   refreshRef: React.MutableRefObject<(() => void) | null>;
 }
 
@@ -101,8 +105,9 @@ function saveFilters(filters: {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const initialFilters = getInitialFilters();
-  const [state, setState] = useState<AppState>({
+  const [state, setState] = useState<AppState>(() => {
+    const initialFilters = getInitialFilters();
+    return {
     furgonetas: [],
     gse: [],
     personal: [],
@@ -118,6 +123,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     compactMode: getInitialCompact(),
     darkMode: getInitialDark(),
     autoRefresh: getInitialAutoRefresh(),
+    syncMode: "loading",
+    };
   });
 
   const refreshRef = useRef<(() => void) | null>(null);
@@ -168,13 +175,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     []
   );
   const setInventory = useCallback(
-    (data: Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">) =>
+    (data: Partial<Pick<AppState, "furgonetas" | "gse" | "personal" | "aircraft">>) =>
       setState((s) => ({ ...s, ...data, lastUpdate: new Date() })),
     []
   );
   const setIncidentsMemory = useCallback(
     (m: Record<string, IncidentState>) =>
       setState((s) => ({ ...s, incidentsMemory: m })),
+    []
+  );
+  const patchIncidentState = useCallback(
+    (itemId: string, incident: IncidentState) =>
+      setState((s) => ({ ...s, incidentsMemory: { ...s.incidentsMemory, [itemId]: incident } })),
+    []
+  );
+  const setSyncMode = useCallback(
+    (next: SyncMode | ((current: SyncMode) => SyncMode)) =>
+      setState((s) => ({ ...s, syncMode: typeof next === "function" ? next(s.syncMode) : next })),
+    []
+  );
+  const patchEquipment = useCallback((id: string, patch: Partial<Equipment>) => {
+    setState((s) => ({
+      ...s,
+      furgonetas: s.furgonetas.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+      gse: s.gse.map((e) => (e.id === id ? { ...e, ...patch } : e)),
+    }));
+  }, []);
+  const setAircraft = useCallback((aircraft: Aircraft[]) => setState((s) => ({ ...s, aircraft })), []);
+  const restoreInventory = useCallback(
+    (data: Pick<AppState, "furgonetas" | "gse">) =>
+      setState((s) => ({ ...s, ...data })),
     []
   );
 
@@ -193,6 +223,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setFetchError,
         setInventory,
         setIncidentsMemory,
+        patchIncidentState,
+        setSyncMode,
+        patchEquipment,
+        setAircraft,
+        restoreInventory,
         refreshRef,
       }}
     >

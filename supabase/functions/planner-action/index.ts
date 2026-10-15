@@ -5,12 +5,22 @@ import { writeAudit } from "../_shared/audit.ts";
 import { extractPdfText, looksScanned, openAiJson, PdfError, readPdfUpload, sha256Hex } from "../_shared/pdf.ts";
 import {
   aiPayloadToTasks,
+  parsePlannerTable,
   parsePlannerText,
   PLANNER_AI_SCHEMA,
   type PlannerAiPayload,
   type PlannerParseResult,
 } from "../_shared/planner-parse.ts";
-import { authorizeOrRespond, type AuthContext } from "../_shared/request-auth.ts";
+import { authorizeOrRespond, assertUserCanWrite, readMutationBody, respondMutation, type AuthContext } from "../_shared/request-auth.ts";
+import { assertUuid } from "../_shared/uuid.ts";
+
+function requireUuid(req: Request, value: unknown, field: string): string | Response {
+  try {
+    return assertUuid(value, field);
+  } catch {
+    return jsonResponse(req, { error: `invalid ${field}` }, 400);
+  }
+}
 
 function normalizeMat(s: unknown): string {
   return String(s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -19,10 +29,14 @@ function normalizeMat(s: unknown): string {
 async function parsePlannerPdf(bytes: Uint8Array): Promise<{ parsed: PlannerParseResult; source: string }> {
   const pdf = await extractPdfText(bytes);
 
-  // Always try the cheap parser first, whatever the text layer looks like. A
-  // short sheet with two tasks trips the "looks scanned" heuristic even though
-  // its text is perfectly readable, and skipping the parser used to send it to
-  // the AI, which means losing the import outright when no key is configured.
+  // 1. Try the tabular parser first: handles exported daily_workload PDFs with
+  //    fixed-width columns including a "Realizado" column (→ estado 1).
+  const table = parsePlannerTable(pdf.text);
+  if (table.tasks.length > 0) return { parsed: table, source: "table" };
+
+  // 2. Fall back to the legacy line-by-line heuristic for older free-text sheets.
+  //    A short sheet with two tasks trips the "looks scanned" heuristic even
+  //    though its text is perfectly readable, so we try it regardless.
   const heuristic = parsePlannerText(pdf.text);
   if (heuristic.tasks.length > 0) return { parsed: heuristic, source: "heuristic" };
 
@@ -72,6 +86,35 @@ async function handlePdfImport(req: Request, auth?: AuthContext): Promise<Respon
     .select("id, status, created_count, duplicate_count")
     .eq("file_hash", fileHash)
     .maybeSingle();
+
+  // Preview: parse only, write nothing. The UI shows the extracted tasks and
+  // asks for confirmation before the real import.
+  if (formField("dry_run") === "1") {
+    let parsed: PlannerParseResult;
+    let source: string;
+    try {
+      ({ parsed, source } = await parsePlannerPdf(bytes));
+    } catch (err) {
+      console.error("[planner-action] pdf preview error", err);
+      return jsonResponse(req, { error: "No se pudo leer el PDF." }, 422);
+    }
+    return jsonResponse(req, {
+      dry_run: true,
+      source,
+      matricula: parsed.matricula,
+      fecha: parsed.fecha,
+      already_imported: !!existing && existing.status === "success",
+      tasks: parsed.tasks.map((t) => ({
+        codigo: t.codigo,
+        tipo_tarea: t.tipoTarea,
+        prioridad: t.prioridad,
+        descripcion: t.descripcion,
+        matricula_avion: t.matriculaAvion ?? parsed.matricula,
+        fecha: t.fecha,
+        estado: t.estado,
+      })),
+    });
+  }
 
   if (existing && existing.status === "success") {
     return jsonResponse(req, {
@@ -160,7 +203,7 @@ async function handlePdfImport(req: Request, auth?: AuthContext): Promise<Respon
         errors.push(`${mat}: no se pudo crear el grupo`);
         continue;
       }
-      groupId = group.id;
+      groupId = String(group.id);
       groupIdByMat.set(mat, groupId);
 
       if (isFormAircraft && formMembers.length > 0) {
@@ -193,7 +236,7 @@ async function handlePdfImport(req: Request, auth?: AuthContext): Promise<Respon
         duplicates++;
       } else {
         console.error("[planner-action] task insert error", taskErr);
-        errors.push(`${task.codigo}: ${taskErr.message}`);
+        errors.push(`${task.codigo}: no se pudo guardar la tarea`);
       }
       continue;
     }
@@ -247,6 +290,8 @@ async function handlePdfImport(req: Request, auth?: AuthContext): Promise<Respon
 serve(async (req) => {
   const auth = await authorizeOrRespond(req, "planner-action", { mutation: true });
   if (auth instanceof Response) return auth;
+  const denied = assertUserCanWrite(req, auth);
+  if (denied) return denied;
 
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
@@ -267,10 +312,19 @@ serve(async (req) => {
   }
 
   let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonResponse(req, { error: "invalid_json" }, 400);
+  let bodyText = "";
+  if (auth.kind === "service") {
+    const parsed = await readMutationBody(req, auth, "planner-action");
+    if (!parsed.ok) return parsed.response;
+    body = parsed.body;
+    bodyText = parsed.bodyText;
+  } else {
+    try {
+      bodyText = await req.text();
+      body = bodyText ? JSON.parse(bodyText) as Record<string, unknown> : {};
+    } catch {
+      return jsonResponse(req, { error: "invalid_json" }, 400);
+    }
   }
 
   if (!body?.action) {
@@ -297,7 +351,7 @@ serve(async (req) => {
         hora_llegada: body.hora_llegada ?? null,
         hora_salida: body.hora_salida ?? null,
         destino: body.destino ?? null,
-        timestamp: body.timestamp ?? new Date().toISOString(),
+        timestamp: new Date().toISOString(),
         ...Object.fromEntries(
           Array.from({ length: 10 }, (_, i) => [
             `trabajador_${i + 1}`,
@@ -322,14 +376,12 @@ serve(async (req) => {
         id_avion: idAvion,
       }, auth);
 
-      return jsonResponse(req, { ...group, members });
+      return respondMutation(req, auth, "planner-action", bodyText, 200, { ...group, members });
     }
 
     if (action === "delete") {
-      const groupId = String(body.group_id ?? "");
-      if (!groupId) {
-        return jsonResponse(req, { error: "missing group_id" }, 400);
-      }
+      const groupId = requireUuid(req, body.group_id, "group_id");
+      if (groupId instanceof Response) return groupId;
 
       const { data: deleted, error } = await supabase
         .from("broki_planner_groups")
@@ -347,15 +399,15 @@ serve(async (req) => {
       }
 
       await writeAudit("planner.group.delete", "broki_planner_groups", deleted.id, { group_id: groupId }, auth);
-      return jsonResponse(req, deleted);
+      return respondMutation(req, auth, "planner-action", bodyText, 200, deleted);
     }
 
     if (action === "toggle_task") {
-      const taskId = String(body.task_id ?? body.task_db_id ?? "");
+      const taskId = requireUuid(req, body.task_id ?? body.task_db_id, "task_id");
+      if (taskId instanceof Response) return taskId;
       const estado = Number(body.estado ?? 0);
-
-      if (!taskId) {
-        return jsonResponse(req, { error: "missing task_id" }, 400);
+      if (estado !== 0 && estado !== 1) {
+        return jsonResponse(req, { error: "estado must be 0 or 1" }, 400);
       }
 
       const { data: updated, error } = await supabase
@@ -374,15 +426,12 @@ serve(async (req) => {
       }
 
       await writeAudit("planner.task.toggle", "broki_planner_tasks", updated.id, { estado }, auth);
-      return jsonResponse(req, updated);
+      return respondMutation(req, auth, "planner-action", bodyText, 200, updated);
     }
 
     if (action === "delete_task") {
-      const taskId = String(body.task_id ?? body.task_db_id ?? "");
-
-      if (!taskId) {
-        return jsonResponse(req, { error: "missing task_id" }, 400);
-      }
+      const taskId = requireUuid(req, body.task_id ?? body.task_db_id, "task_id");
+      if (taskId instanceof Response) return taskId;
 
       const { data: deleted, error } = await supabase
         .from("broki_planner_tasks")
@@ -400,7 +449,136 @@ serve(async (req) => {
       }
 
       await writeAudit("planner.task.delete", "broki_planner_tasks", deleted.id, { task_id: taskId }, auth);
-      return jsonResponse(req, deleted);
+      return respondMutation(req, auth, "planner-action", bodyText, 200, deleted);
+    }
+
+    if (action === "update_task") {
+      const taskId = requireUuid(req, body.task_id ?? body.task_db_id, "task_id");
+      if (taskId instanceof Response) return taskId;
+
+      const patch: Record<string, unknown> = {
+        fecha_modificacion: new Date().toISOString(),
+      };
+      if (body.descripcion != null) patch.descripcion = body.descripcion;
+      if (body.prioridad != null) patch.prioridad = body.prioridad;
+      if (body.notas != null) patch.notas = body.notas;
+      if (body.tipo_tarea != null) patch.tipo_tarea = body.tipo_tarea;
+      if (body.estado != null) patch.estado = Number(body.estado);
+
+      const { data: updated, error } = await supabase
+        .from("broki_planner_tasks")
+        .update(patch)
+        .eq("id", taskId)
+        .select()
+        .maybeSingle();
+
+      if (error) {
+        console.error("[planner-action] update_task error", error);
+        return jsonResponse(req, { error: "db_error" }, 500);
+      }
+      if (!updated) {
+        return jsonResponse(req, { error: "task_not_found" }, 404);
+      }
+
+      await writeAudit("planner.task.update", "broki_planner_tasks", updated.id, patch, auth);
+      return respondMutation(req, auth, "planner-action", bodyText, 200, updated);
+    }
+
+    if (action === "create_task") {
+      const groupId = requireUuid(req, body.group_id, "group_id");
+      if (groupId instanceof Response) return groupId;
+
+      const codigo = String(body.codigo ?? "").trim();
+      if (!codigo) {
+        return jsonResponse(req, { error: "missing codigo" }, 400);
+      }
+
+      const { data: inserted, error } = await supabase
+        .from("broki_planner_tasks")
+        .insert({
+          source_system: "edge_function",
+          source_table: "manual",
+          external_id: `task-${crypto.randomUUID()}`,
+          group_id: groupId,
+          codigo,
+          tipo_tarea: body.tipo_tarea ?? "SERVICIO",
+          prioridad: body.prioridad ?? "NORMAL",
+          descripcion: body.descripcion ?? codigo,
+          notas: body.notas ?? null,
+          matricula_avion: body.matricula_avion ?? null,
+          estado: 0,
+          fecha_modificacion: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === "23505") {
+          return jsonResponse(req, { error: "task_duplicate" }, 409);
+        }
+        console.error("[planner-action] create_task error", error);
+        return jsonResponse(req, { error: "db_error" }, 500);
+      }
+
+      await writeAudit("planner.task.create", "broki_planner_tasks", inserted.id, { group_id: groupId }, auth);
+      return respondMutation(req, auth, "planner-action", bodyText, 201, inserted);
+    }
+
+    if (action === "update_group") {
+      const groupId = requireUuid(req, body.group_id, "group_id");
+      if (groupId instanceof Response) return groupId;
+
+      const patch: Record<string, unknown> = {
+        fecha_modificacion: new Date().toISOString(),
+      };
+      for (const key of [
+        "id_avion", "modelo", "aerolinea", "vehiculo", "responsable",
+        "hora_salida", "hora_llegada", "destino",
+      ] as const) {
+        if (body[key] != null) patch[key] = body[key];
+      }
+
+      const { data: updated, error } = await supabase
+        .from("broki_planner_groups")
+        .update(patch)
+        .eq("id", groupId)
+        .select()
+        .maybeSingle();
+
+      if (error) {
+        console.error("[planner-action] update_group error", error);
+        return jsonResponse(req, { error: "db_error" }, 500);
+      }
+      if (!updated) {
+        return jsonResponse(req, { error: "group_not_found" }, 404);
+      }
+
+      const workers: string[] = [];
+      for (let i = 1; i <= 10; i++) {
+        const w = body[`trabajador_${i}`];
+        if (typeof w === "string" && w.trim()) workers.push(w.trim());
+      }
+      if (body.workers && Array.isArray(body.workers)) {
+        workers.length = 0;
+        for (const w of body.workers) {
+          if (typeof w === "string" && w.trim()) workers.push(w.trim());
+        }
+      }
+      if (workers.length > 0 || body.replace_workers === true) {
+        await supabase.from("broki_planner_group_members").delete().eq("group_id", groupId);
+        if (workers.length > 0) {
+          await supabase.from("broki_planner_group_members").insert(
+            workers.slice(0, 10).map((worker_text, i) => ({
+              group_id: groupId,
+              position: i + 1,
+              worker_text,
+            })),
+          );
+        }
+      }
+
+      await writeAudit("planner.group.update", "broki_planner_groups", groupId, patch, auth);
+      return respondMutation(req, auth, "planner-action", bodyText, 200, updated);
     }
 
     return jsonResponse(req, { error: `unknown action: ${action}` }, 400);

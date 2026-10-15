@@ -1,0 +1,310 @@
+{
+  "$schema": "broki/legacy-field-map/v1",
+  "version": "2026-08-02",
+  "description": "Contract: pro.* / nitro_stock → broki_legacy_rows.row_data → broki_* canonical columns. Keys are lowercase PostgreSQL column names unless noted.",
+  "workflow": {
+    "name": "MIGRATION_EXPORT_ALL_BROKI_TO_SUPABASE_RAW_NO_SECRET_SAFE_V2",
+    "path": "docs/private/n8n/MIGRATION_EXPORT_ALL_BROKI_TO_SUPABASE_RAW_NO_SECRET_SAFE_V2.json",
+    "postgres_export": "to_jsonb(t) — full row, all columns preserved",
+    "edge_function": "broki-import-batch",
+    "normalize_entrypoint": "broki_normalize_legacy_all()"
+  },
+  "import_contract": {
+    "batch_max": 1000,
+    "external_id_keys": ["external_id", "id", "identificador", "brk", "codigo", "id_incidencia"],
+    "raw_storage": {
+      "table": "broki_legacy_rows",
+      "payload_column": "row_data",
+      "integrity": "row_data must equal canonical.raw_payload after normalize"
+    }
+  },
+  "shared_groups": {
+    "asset_fields": [
+      { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id", "identificador"] },
+      { "canonical": "identifier", "type": "text", "json_keys": ["identificador", "id"] },
+      { "canonical": "descripcion", "type": "text", "json_keys": ["descripcion"] },
+      { "canonical": "nombre_equipo", "type": "text", "json_keys": ["nombre_equipo", "nombre"] },
+      { "canonical": "matricula", "type": "text", "json_keys": ["matricula"] },
+      { "canonical": "familia", "type": "text", "json_keys": ["familia"] },
+      { "canonical": "plazas", "type": "text", "json_keys": ["plazas"] },
+      { "canonical": "estado", "type": "text", "json_keys": ["estado"] },
+      { "canonical": "ubicacion_habitual", "type": "text", "json_keys": ["ubicacion_habitual"] },
+      { "canonical": "parking", "type": "text", "json_keys": ["parking"] },
+      { "canonical": "avion_text", "type": "text", "json_keys": ["avion"] },
+      { "canonical": "current_worker_text", "type": "text", "json_keys": ["trabajador"] },
+      { "canonical": "combustible", "type": "numeric", "json_keys": ["combustible"] },
+      { "canonical": "adblue", "type": "numeric", "json_keys": ["adblue"] },
+      { "canonical": "nitrogeno_1", "type": "numeric", "json_keys": ["nitrogeno_1"] },
+      { "canonical": "nitrogeno_2", "type": "numeric", "json_keys": ["nitrogeno_2"] },
+      { "canonical": "nitrogeno_3", "type": "numeric", "json_keys": ["nitrogeno_3"] },
+      { "canonical": "nitrogeno_4", "type": "numeric", "json_keys": ["nitrogeno_4"] },
+      { "canonical": "notas", "type": "text", "json_keys": ["notas"] }
+    ]
+  },
+  "entities": [
+    {
+      "id": "personal",
+      "postgres": { "schema": "pro", "table": "personal" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "personal" },
+      "canonical": { "table": "broki_personnel", "normalizer": "broki_normalize_personnel" },
+      "postgres_columns": [
+        "id", "nombre", "cod_empleado_aena", "telefono", "correo", "id_chat", "estado",
+        "fecha_alta", "fecha_baja", "fecha_modificacion", "helper", "cat_a", "b1", "b2",
+        "certificador", "n_bac",
+        "a_a320_family", "a_airbus_a330", "a_airbus_a350", "a_boeing_737", "a_boeing_787",
+        "a_boeing_777", "a_atr_42_72", "a_embraer_e_jet", "a_bombardier_crj", "a_otros",
+        "b1_a320_family", "b1_airbus_a330", "b1_airbus_a350", "b1_boeing_737", "b1_boeing_787",
+        "b1_boeing_777", "b1_atr_42_72", "b1_embraer_e_jet", "b1_bombardier_crj", "b1_otros",
+        "b2_a320_family", "b2_airbus_a330", "b2_airbus_a350", "b2_boeing_737", "b2_boeing_787",
+        "b2_boeing_777", "b2_atr_42_72", "b2_embraer_e_jet", "b2_bombardier_crj", "b2_otros"
+      ],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "nombre", "type": "text", "json_keys": ["nombre"], "required": true },
+        { "canonical": "cod_empleado_aena", "type": "text", "json_keys": ["cod_empleado_aena"] },
+        { "canonical": "telefono", "type": "text", "json_keys": ["telefono"] },
+        { "canonical": "correo", "type": "text", "json_keys": ["correo"] },
+        { "canonical": "id_chat", "type": "text", "json_keys": ["id_chat"] },
+        { "canonical": "estado", "type": "integer", "json_keys": ["estado"] },
+        { "canonical": "fecha_alta", "type": "date", "json_keys": ["fecha_alta"] },
+        { "canonical": "fecha_baja", "type": "timestamptz", "json_keys": ["fecha_baja"] },
+        { "canonical": "fecha_modificacion", "type": "timestamptz", "json_keys": ["fecha_modificacion"] },
+        { "canonical": "helper", "type": "boolean", "json_keys": ["helper"] },
+        { "canonical": "cat_a", "type": "boolean", "json_keys": ["cat_a"] },
+        { "canonical": "b1", "type": "boolean", "json_keys": ["b1"] },
+        { "canonical": "b2", "type": "boolean", "json_keys": ["b2"] },
+        { "canonical": "certificador", "type": "boolean", "json_keys": ["certificador"] },
+        { "canonical": "n_bac", "type": "text", "json_keys": ["n_bac"] },
+        { "canonical": "a_a320_family", "type": "integer", "json_keys": ["a_a320_family"] },
+        { "canonical": "a_airbus_a330", "type": "integer", "json_keys": ["a_airbus_a330"] },
+        { "canonical": "a_airbus_a350", "type": "integer", "json_keys": ["a_airbus_a350"] },
+        { "canonical": "a_boeing_737", "type": "integer", "json_keys": ["a_boeing_737"] },
+        { "canonical": "a_boeing_787", "type": "integer", "json_keys": ["a_boeing_787"] },
+        { "canonical": "a_boeing_777", "type": "integer", "json_keys": ["a_boeing_777"] },
+        { "canonical": "a_atr_42_72", "type": "integer", "json_keys": ["a_atr_42_72"] },
+        { "canonical": "a_embraer_e_jet", "type": "integer", "json_keys": ["a_embraer_e_jet"] },
+        { "canonical": "a_bombardier_crj", "type": "integer", "json_keys": ["a_bombardier_crj"] },
+        { "canonical": "a_otros", "type": "integer", "json_keys": ["a_otros"] },
+        { "canonical": "b1_a320_family", "type": "integer", "json_keys": ["b1_a320_family"] },
+        { "canonical": "b1_airbus_a330", "type": "integer", "json_keys": ["b1_airbus_a330"] },
+        { "canonical": "b1_airbus_a350", "type": "integer", "json_keys": ["b1_airbus_a350"] },
+        { "canonical": "b1_boeing_737", "type": "integer", "json_keys": ["b1_boeing_737"] },
+        { "canonical": "b1_boeing_787", "type": "integer", "json_keys": ["b1_boeing_787"] },
+        { "canonical": "b1_boeing_777", "type": "integer", "json_keys": ["b1_boeing_777"] },
+        { "canonical": "b1_atr_42_72", "type": "integer", "json_keys": ["b1_atr_42_72"] },
+        { "canonical": "b1_embraer_e_jet", "type": "integer", "json_keys": ["b1_embraer_e_jet"] },
+        { "canonical": "b1_bombardier_crj", "type": "integer", "json_keys": ["b1_bombardier_crj"] },
+        { "canonical": "b1_otros", "type": "integer", "json_keys": ["b1_otros"] },
+        { "canonical": "b2_a320_family", "type": "integer", "json_keys": ["b2_a320_family"] },
+        { "canonical": "b2_airbus_a330", "type": "integer", "json_keys": ["b2_airbus_a330"] },
+        { "canonical": "b2_airbus_a350", "type": "integer", "json_keys": ["b2_airbus_a350"] },
+        { "canonical": "b2_boeing_737", "type": "integer", "json_keys": ["b2_boeing_737"] },
+        { "canonical": "b2_boeing_787", "type": "integer", "json_keys": ["b2_boeing_787"] },
+        { "canonical": "b2_boeing_777", "type": "integer", "json_keys": ["b2_boeing_777"] },
+        { "canonical": "b2_atr_42_72", "type": "integer", "json_keys": ["b2_atr_42_72"] },
+        { "canonical": "b2_embraer_e_jet", "type": "integer", "json_keys": ["b2_embraer_e_jet"] },
+        { "canonical": "b2_bombardier_crj", "type": "integer", "json_keys": ["b2_bombardier_crj"] },
+        { "canonical": "b2_otros", "type": "integer", "json_keys": ["b2_otros"] }
+      ]
+    },
+    {
+      "id": "inventario",
+      "postgres": { "schema": "pro", "table": "inventario" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "inventario" },
+      "canonical": { "table": "broki_assets", "normalizer": "broki_normalize_assets", "asset_kind": "inventory", "source_table_value": "pro.inventario" },
+      "postgres_columns": ["id", "identificador", "descripcion", "nombre_equipo", "nombre", "matricula", "familia", "plazas", "estado", "ubicacion_habitual", "parking", "avion", "trabajador", "combustible", "adblue", "nitrogeno_1", "nitrogeno_2", "nitrogeno_3", "nitrogeno_4", "notas", "brk"],
+      "fields_ref": "shared_groups.asset_fields"
+    },
+    {
+      "id": "furgonetas",
+      "postgres": { "schema": "pro", "table": "furgonetas" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "furgonetas" },
+      "canonical": { "table": "broki_assets", "normalizer": "broki_normalize_assets", "asset_kind": "van", "source_table_value": "pro.furgonetas" },
+      "postgres_columns": ["id", "identificador", "descripcion", "matricula", "familia", "plazas", "estado", "ubicacion_habitual", "parking", "avion", "trabajador", "combustible", "adblue", "notas"],
+      "fields_ref": "shared_groups.asset_fields"
+    },
+    {
+      "id": "gse",
+      "postgres": { "schema": "pro", "table": "gse" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "gse" },
+      "canonical": { "table": "broki_assets", "normalizer": "broki_normalize_assets", "asset_kind": "gse", "source_table_value": "pro.gse" },
+      "postgres_columns": ["id", "identificador", "descripcion", "nombre_equipo", "familia", "estado", "ubicacion_habitual", "parking", "avion", "trabajador", "nitrogeno_1", "nitrogeno_2", "nitrogeno_3", "nitrogeno_4", "notas"],
+      "fields_ref": "shared_groups.asset_fields"
+    },
+    {
+      "id": "incidencias",
+      "postgres": { "schema": "pro", "table": "incidencias" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "incidencias" },
+      "canonical": { "table": "broki_incidents", "normalizer": "broki_normalize_incidents" },
+      "postgres_columns": ["id", "id_incidencia", "id_objeto", "descripcion", "estado", "status", "status_text", "trabajador", "fecha_apertura", "fecha_cierre", "fecha_modificacion", "codigo"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id", "id_incidencia"] },
+        { "canonical": "incident_code", "type": "text", "json_keys": ["id_incidencia", "codigo"] },
+        { "canonical": "id_objeto", "type": "text", "json_keys": ["id_objeto"] },
+        { "canonical": "descripcion", "type": "text", "json_keys": ["descripcion"] },
+        { "canonical": "estado", "type": "integer", "json_keys": ["estado"] },
+        { "canonical": "status_text", "type": "text", "json_keys": ["status", "status_text"] },
+        { "canonical": "trabajador_text", "type": "text", "json_keys": ["trabajador"] },
+        { "canonical": "fecha_apertura", "type": "timestamptz", "json_keys": ["fecha_apertura"] },
+        { "canonical": "fecha_cierre", "type": "timestamptz", "json_keys": ["fecha_cierre"] },
+        { "canonical": "fecha_modificacion", "type": "timestamptz", "json_keys": ["fecha_modificacion"] }
+      ]
+    },
+    {
+      "id": "grupo_trabajo",
+      "postgres": { "schema": "pro", "table": "grupo_trabajo" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "grupo_trabajo" },
+      "canonical": { "table": "broki_planner_groups", "normalizer": "broki_normalize_planner_groups" },
+      "postgres_columns": ["id", "id_avion", "modelo", "aerolinea", "vehiculo", "responsable", "hora_llegada", "hora_salida", "destino", "fecha_modificacion", "trabajador_1", "trabajador_2", "trabajador_3", "trabajador_4", "trabajador_5", "trabajador_6", "trabajador_7", "trabajador_8", "trabajador_9", "trabajador_10"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "id_avion", "type": "text", "json_keys": ["id_avion"] },
+        { "canonical": "modelo", "type": "text", "json_keys": ["modelo"] },
+        { "canonical": "aerolinea", "type": "text", "json_keys": ["aerolinea"] },
+        { "canonical": "vehiculo", "type": "text", "json_keys": ["vehiculo"] },
+        { "canonical": "responsable", "type": "text", "json_keys": ["responsable"] },
+        { "canonical": "hora_llegada", "type": "timestamptz", "json_keys": ["hora_llegada"] },
+        { "canonical": "hora_salida", "type": "timestamptz", "json_keys": ["hora_salida"] },
+        { "canonical": "destino", "type": "text", "json_keys": ["destino"] },
+        { "canonical": "fecha_modificacion", "type": "timestamptz", "json_keys": ["fecha_modificacion"] }
+      ],
+      "child_tables": [
+        {
+          "table": "broki_planner_group_members",
+          "source": "trabajador_N columns in row_data",
+          "positions": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          "json_key_pattern": "trabajador_{n}"
+        }
+      ]
+    },
+    {
+      "id": "tareas",
+      "postgres": { "schema": "pro", "table": "tareas" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "tareas" },
+      "canonical": { "table": "broki_planner_tasks", "normalizer": "broki_normalize_planner_tasks" },
+      "postgres_columns": ["id", "id_grupo_trabajo", "tipo_tarea", "codigo", "matricula_avion", "matricula", "prioridad", "descripcion", "notas", "estado", "fecha", "fecha_modificacion"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "grupo_trabajo_external_id", "type": "text", "json_keys": ["id_grupo_trabajo"], "notes": "Added 20260802180000; links to broki_planner_groups.external_id" },
+        { "canonical": "tipo_tarea", "type": "text", "json_keys": ["tipo_tarea"] },
+        { "canonical": "codigo", "type": "text", "json_keys": ["codigo"] },
+        { "canonical": "matricula_avion", "type": "text", "json_keys": ["matricula_avion", "matricula"] },
+        { "canonical": "prioridad", "type": "text", "json_keys": ["prioridad"] },
+        { "canonical": "descripcion", "type": "text", "json_keys": ["descripcion"] },
+        { "canonical": "notas", "type": "text", "json_keys": ["notas"] },
+        { "canonical": "estado", "type": "integer", "json_keys": ["estado"] },
+        { "canonical": "fecha", "type": "timestamptz", "json_keys": ["fecha"] },
+        { "canonical": "fecha_modificacion", "type": "timestamptz", "json_keys": ["fecha_modificacion"] }
+      ]
+    },
+    {
+      "id": "aviones",
+      "postgres": { "schema": "pro", "table": "aviones" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "aviones" },
+      "canonical": { "table": "broki_aircraft", "normalizer": "broki_normalize_aircraft" },
+      "postgres_columns": ["id", "matricula", "modelo", "motor", "msn", "aerolinea", "estado"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "matricula", "type": "text", "json_keys": ["matricula", "msn"] },
+        { "canonical": "modelo", "type": "text", "json_keys": ["modelo", "motor"] },
+        { "canonical": "aerolinea", "type": "text", "json_keys": ["aerolinea"] },
+        { "canonical": "estado", "type": "text", "json_keys": ["estado"] }
+      ]
+    },
+    {
+      "id": "tooling",
+      "postgres": { "schema": "pro", "table": "tooling" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "tooling" },
+      "canonical": { "table": "broki_tooling_catalog", "normalizer": "broki_normalize_tooling_catalog" },
+      "postgres_columns": ["id", "bac_bact", "bac", "codigo", "descripcion", "familia", "estado", "tipo_tool", "part_number", "serial_number", "rango", "ubicacion_habitual", "notas", "identificador"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "bac_bact", "type": "text", "json_keys": ["bac_bact", "bac", "identificador"] },
+        { "canonical": "codigo", "type": "text", "json_keys": ["codigo"] },
+        { "canonical": "descripcion", "type": "text", "json_keys": ["descripcion"] },
+        { "canonical": "familia", "type": "text", "json_keys": ["familia"] },
+        { "canonical": "estado", "type": "text", "json_keys": ["estado"] }
+      ],
+      "raw_only_columns": ["tipo_tool", "part_number", "serial_number", "rango", "ubicacion_habitual", "notas"]
+    },
+    {
+      "id": "tool_control",
+      "postgres": { "schema": "pro", "table": "tool_control" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "tool_control" },
+      "canonical": { "table": "broki_tooling_movements", "normalizer": "broki_normalize_tooling_movements" },
+      "postgres_columns": ["id", "bac_bact", "bac", "descripcion", "tma_out", "complete_out", "date_out", "tma_in", "complete_in", "date_in", "remarks", "avion"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "bac_bact", "type": "text", "json_keys": ["bac_bact", "bac"] },
+        { "canonical": "descripcion", "type": "text", "json_keys": ["descripcion"] },
+        { "canonical": "tma_out", "type": "text", "json_keys": ["tma_out"] },
+        { "canonical": "complete_out", "type": "text", "json_keys": ["complete_out"] },
+        { "canonical": "date_out", "type": "timestamptz", "json_keys": ["date_out"] },
+        { "canonical": "tma_in", "type": "text", "json_keys": ["tma_in"] },
+        { "canonical": "complete_in", "type": "text", "json_keys": ["complete_in"] },
+        { "canonical": "date_in", "type": "timestamptz", "json_keys": ["date_in"] },
+        { "canonical": "remarks", "type": "text", "json_keys": ["remarks"] },
+        { "canonical": "avion", "type": "text", "json_keys": ["avion"] }
+      ]
+    },
+    {
+      "id": "registro_comunicaciones",
+      "postgres": { "schema": "pro", "table": "registro_comunicaciones" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "registro_comunicaciones" },
+      "canonical": { "table": "broki_communications", "normalizer": "broki_normalize_communications" },
+      "postgres_columns": ["id", "id_chat", "telefono", "mensaje_in", "mensaje_out", "respondido", "fecha_mensaje_in", "fecha_mensaje_out"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "id_chat", "type": "text", "json_keys": ["id_chat"] },
+        { "canonical": "telefono", "type": "text", "json_keys": ["telefono"] },
+        { "canonical": "mensaje_in", "type": "text", "json_keys": ["mensaje_in"] },
+        { "canonical": "mensaje_out", "type": "text", "json_keys": ["mensaje_out"] },
+        { "canonical": "respondido", "type": "boolean", "json_keys": ["respondido"] },
+        { "canonical": "fecha_mensaje_in", "type": "timestamptz", "json_keys": ["fecha_mensaje_in"] },
+        { "canonical": "fecha_mensaje_out", "type": "timestamptz", "json_keys": ["fecha_mensaje_out"] }
+      ]
+    },
+    {
+      "id": "n8n_chat_histories",
+      "postgres": { "schema": "pro", "table": "n8n_chat_histories" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "n8n_chat_histories" },
+      "canonical": { "table": "broki_chat_histories", "normalizer": "broki_normalize_chat_histories" },
+      "postgres_columns": ["id", "session_id", "role", "content", "message"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "session_id", "type": "text", "json_keys": ["session_id"] },
+        { "canonical": "role", "type": "text", "json_keys": ["role"] },
+        { "canonical": "content", "type": "text", "json_keys": ["content", "message"] },
+        { "canonical": "message", "type": "jsonb", "json_keys": ["message"], "notes": "Full JSON object when content is structured" }
+      ]
+    },
+    {
+      "id": "no_existe_telefono",
+      "postgres": { "schema": "pro", "table": "no_existe_telefono" },
+      "import": { "source_system": "n8n_postgres_pro", "source_table": "no_existe_telefono" },
+      "canonical": { "table": "broki_unknown_contacts", "normalizer": "broki_normalize_unknown_contacts" },
+      "postgres_columns": ["id", "id_chat", "first_name", "last_name", "nombre", "apellido", "telefono", "mensaje", "fecha_modificacion"],
+      "fields": [
+        { "canonical": "legacy_id", "type": "bigint", "json_keys": ["id"] },
+        { "canonical": "id_chat", "type": "text", "json_keys": ["id_chat"] },
+        { "canonical": "first_name", "type": "text", "json_keys": ["first_name", "nombre"] },
+        { "canonical": "last_name", "type": "text", "json_keys": ["last_name", "apellido"] },
+        { "canonical": "telefono", "type": "text", "json_keys": ["telefono"] },
+        { "canonical": "mensaje", "type": "text", "json_keys": ["mensaje"] },
+        { "canonical": "fecha_modificacion", "type": "timestamptz", "json_keys": ["fecha_modificacion"] }
+      ]
+    },
+    {
+      "id": "nitro_stock",
+      "postgres": { "schema": "n8n", "table": "nitro_stock", "notes": "n8n DataTable, not pro.*" },
+      "import": { "source_system": "n8n_datatable", "source_table": "nitro_stock" },
+      "canonical": { "table": "broki_nitro_stock", "normalizer": "broki_normalize_nitro_stock" },
+      "postgres_columns": ["ubicacion", "cantida_de_botellas_llenas", "cantidad_de_botellas_llenas", "cantidad_de_botellas_vacias", "botellas_llenas", "botellas_vacias"],
+      "fields": [
+        { "canonical": "ubicacion", "type": "text", "json_keys": ["ubicacion"] },
+        { "canonical": "botellas_llenas", "type": "integer", "json_keys": ["cantida_de_botellas_llenas", "cantidad_de_botellas_llenas", "botellas_llenas"] },
+        { "canonical": "botellas_vacias", "type": "integer", "json_keys": ["cantidad_de_botellas_vacias", "botellas_vacias"] }
+      ]
+    }
+  ]
+}

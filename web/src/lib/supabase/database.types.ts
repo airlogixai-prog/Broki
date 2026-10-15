@@ -44,6 +44,8 @@ export type Database = {
           legacy_id: number | null
           matricula: string | null
           modelo: string | null
+          msn: string | null
+          motor: string | null
           raw_payload: Json
           source_system: string
           source_table: string
@@ -59,6 +61,8 @@ export type Database = {
           legacy_id?: number | null
           matricula?: string | null
           modelo?: string | null
+          msn?: string | null
+          motor?: string | null
           raw_payload?: Json
           source_system?: string
           source_table?: string
@@ -74,6 +78,8 @@ export type Database = {
           legacy_id?: number | null
           matricula?: string | null
           modelo?: string | null
+          msn?: string | null
+          motor?: string | null
           raw_payload?: Json
           source_system?: string
           source_table?: string

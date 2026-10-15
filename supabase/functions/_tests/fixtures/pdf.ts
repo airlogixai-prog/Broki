@@ -60,3 +60,33 @@ export const rosterPdfLines = [
 
 export const plannerPdf = () => makeTextPdf(plannerPdfLines);
 export const rosterPdf = () => makeTextPdf(rosterPdfLines);
+
+// ---------------------------------------------------------------------------
+// Tabular workload fixture — mirrors the real daily_workload PDF format.
+// Columns: Tipo | Código | A/C | Prioridad | Descripción | Realizado
+//
+// Real files (daily_workload_*.pdf, DAILY PRIORITY *.xlsx) are NOT checked in;
+// they may contain operational data. If a real fixture is available, place it at
+//   supabase/functions/_tests/fixtures/real/
+// and set WORKLOAD_FIXTURE_PATH to its path. Tests below fall back to this
+// synthetic version when the env var is absent.
+//
+// The second page (notas generales) must NOT produce tasks.
+// ---------------------------------------------------------------------------
+export const workloadTableLines = [
+  // Page 1 — task table
+  "DAILY PRIORITY - MADBRK",
+  "FECHA: 2026-08-01  A/C: EC-NFP",
+  "Tipo   Codigo    A/C     Prioridad  Descripcion                        Realizado",
+  "MEL    MEL-2201  EC-NFP  NO_GO      Revisar luz de posicion ala izq    X",
+  "CDL    CDL-0340  EC-NFP  CRITICAL   Panel de acceso de servicio suelto",
+  "PRE    PRE-0455  EC-NFP  NORMAL     Inspeccion prevuelo completa       X",
+  "SRV    SRV-0912  EC-OBM  NORMAL     Carga de nitrogeno tren principal",
+  // Page 2 — notas generales (must not become tasks)
+  "--- Notas Generales ---",
+  "Confirmar disponibilidad de herramientas antes de iniciar.",
+  "El acceso al tren requiere autorizacion del jefe de turno.",
+  "MEL-9999 esta fila esta en notas y NO debe ser importada como tarea.",
+];
+
+export const workloadTablePdf = () => makeTextPdf(workloadTableLines);

@@ -13,9 +13,12 @@ const UNAVAILABLE: WeatherData = {
 export async function fetchLemdWeather(): Promise<WeatherData> {
   try {
     const res = await fetch(LEMD_URL, { headers: { Accept: "application/json" } });
+    if (!res.ok) return UNAVAILABLE;
     const data = await res.json();
-    const curr = data.current ?? {};
-    const temp = Math.round(curr.temperature_2m ?? 0);
+    const curr = data?.current;
+    // A missing reading must never become "0 °C" (that would raise a false frost alert).
+    if (!curr || typeof curr.temperature_2m !== "number") return UNAVAILABLE;
+    const temp = Math.round(curr.temperature_2m);
     const qnh = Math.round(curr.surface_pressure ?? 0);
     const windDir = curr.wind_direction_10m ?? 0;
     const windSpeed = Math.round(curr.wind_speed_10m ?? 0);

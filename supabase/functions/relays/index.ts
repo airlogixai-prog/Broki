@@ -2,7 +2,7 @@ import { serve } from "../_shared/handler.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createServiceClient } from "../_shared/supabase-admin.ts";
 import { writeAudit } from "../_shared/audit.ts";
-import { authorizeOrRespond } from "../_shared/request-auth.ts";
+import { authorizeOrRespond, assertUserCanWrite, readMutationBody, respondMutation } from "../_shared/request-auth.ts";
 
 // Shift relay notes. Replaces the `relays_db` localStorage key the legacy
 // dashboard used as its only store, so a relay survives a browser wipe and is
@@ -57,12 +57,12 @@ serve(async (req) => {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = await req.json();
-  } catch {
-    return jsonResponse(req, { error: "invalid_json" }, 400);
-  }
+  const denied = assertUserCanWrite(req, auth);
+  if (denied) return denied;
+
+  const parsed = await readMutationBody(req, auth, "relays");
+  if (!parsed.ok) return parsed.response;
+  const { body, bodyText } = parsed;
 
   const action = String(body.action ?? "create");
 
@@ -78,7 +78,7 @@ serve(async (req) => {
     }
 
     await writeAudit("relay.delete", "broki_relays", id, {}, auth);
-    return jsonResponse(req, { ok: true });
+    return respondMutation(req, auth, "relays", bodyText, 200, { ok: true });
   }
 
   if (action !== "create") {
@@ -158,12 +158,15 @@ serve(async (req) => {
     point_count: points.length,
   }, auth);
 
-  return jsonResponse(
+  return respondMutation(
     req,
+    auth,
+    "relays",
+    bodyText,
+    201,
     toClientRelay({
       ...(inserted as RelayRow),
       broki_relay_points: points.map((point_text, i) => ({ position: i + 1, point_text })),
     }),
-    201,
   );
 });

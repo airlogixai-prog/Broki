@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { pageMetadata, SITE } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: SITE.title,
+  description: SITE.description,
+  path: "/",
+});
 
 export default function LandingPage() {
   return (
     <PublicPageShell>
-      <section className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-20 text-center">
+      <section className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-20 text-center bg-[#0d1b2a]">
         <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">
           Automatización Inteligente con IA
         </h1>

@@ -1,0 +1,664 @@
+{
+  "name": "MIGRATION_BROKI_ALL_DATA_PARITY_V3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        400
+      ],
+      "id": "084b3676-74fa-4aa7-91a9-cb02bad3b50c",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "content": "BROKI MIGRATION V3 — PostgreSQL + n8n DataTable → Supabase RAW → canonical\n\nCobertura verificada:\n- Todos los workflows: WhatsApp producción, dashboard producción y desarrollo.\n- Todas las tablas del esquema pro se descubren dinámicamente.\n- Alias public usados por workflows antiguos: personal, furgonetas, gse, registro_comunicaciones, tool_control.\n- DataTable n8n: nitro_stock.\n- HTML legacy: inventario, personal, incidencias, planner, aviones, stock nitro y tooling.\n\nRequisitos env n8n:\n- SUPABASE_URL\n- SUPABASE_SERVICE_ROLE_KEY\n- BROKI_N8N_SECRET\n\nRequiere desplegar:\n1) broki-import-batch V3 adjunto\n2) migración SQL 20260804_broki_migration_v3_audit.sql\n\nNo contiene secretos hardcodeados. Falla ante cualquier lote parcial o diferencia de conteos.",
+        "height": 420,
+        "width": 620,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        -64
+      ],
+      "id": "794abad2-34b4-4e3a-8b62-6342dfa9bcc9",
+      "name": "README — BROKI migration V3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const migrationId = crypto.randomUUID();\nreturn [{\n  json: {\n    migration_id: migrationId,\n    started_at: new Date().toISOString(),\n    batch_size: 1000,\n    scope: {\n      postgres: \"all tables in schema pro + explicit public aliases used by legacy workflows\",\n      n8n_datatables: [\"nitro_stock\"],\n    },\n  },\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1056,
+        400
+      ],
+      "id": "c48e319e-cb16-4c26-ab71-d2cf6bb3b735",
+      "name": "Create migration context"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE OR REPLACE FUNCTION pg_temp.broki_export_all_legacy_raw()\nRETURNS TABLE(\n  source_system text,\n  source_schema text,\n  source_table text,\n  external_id text,\n  row_data jsonb,\n  source_count bigint,\n  is_empty boolean\n)\nLANGUAGE plpgsql\nAS $$\nDECLARE\n  cfg record;\n  table_reg regclass;\n  candidate_keys text[];\n  candidate_expr text;\n  pk_cols text[];\n  pk_expr text;\n  pk_pairs text;\n  base_expr text;\n  export_sql text;\n  exported_rows bigint;\nBEGIN\n  FOR cfg IN\n    SELECT\n      n.nspname::text AS source_schema,\n      c.relname::text AS physical_table,\n      CASE WHEN n.nspname = 'pro' THEN c.relname ELSE 'public__' || c.relname END::text AS source_table,\n      CASE\n        WHEN n.nspname = 'pro' THEN 'n8n_postgres_pro'\n        ELSE 'n8n_postgres_' || n.nspname\n      END::text AS source_system\n    FROM pg_class c\n    JOIN pg_namespace n ON n.oid = c.relnamespace\n    WHERE c.relkind IN ('r', 'p')\n      AND (\n        n.nspname = 'pro'\n        OR (\n          n.nspname = 'public'\n          AND c.relname = ANY(ARRAY[\n            'personal',\n            'furgonetas',\n            'gse',\n            'registro_comunicaciones',\n            'tool_control'\n          ]::text[])\n        )\n      )\n    ORDER BY n.nspname, c.relname\n  LOOP\n    table_reg := to_regclass(format('%I.%I', cfg.source_schema, cfg.physical_table));\n    IF table_reg IS NULL THEN\n      RAISE EXCEPTION 'BROKI migration table disappeared: %.%', cfg.source_schema, cfg.physical_table;\n    END IF;\n\n    candidate_keys := CASE cfg.physical_table\n      WHEN 'personal' THEN ARRAY['external_id','id','cod_empleado_aena','telefono']\n      WHEN 'inventario' THEN ARRAY['external_id','id','identificador','matricula']\n      WHEN 'incidencias' THEN ARRAY['external_id','id','id_incidencia','id_objeto']\n      WHEN 'grupo_trabajo' THEN ARRAY['external_id','id','id_avion','matricula','hora_salida']\n      WHEN 'tareas' THEN ARRAY['external_id','id','codigo','matricula_avion']\n      WHEN 'aviones' THEN ARRAY['external_id','id','matricula','id_avion']\n      WHEN 'tooling' THEN ARRAY['external_id','id','bac','bac_bact','codigo','descripcion']\n      WHEN 'tool_control' THEN ARRAY['external_id','id','bac_bact','bac','date_out']\n      WHEN 'furgonetas' THEN ARRAY['external_id','id','identificador','matricula']\n      WHEN 'gse' THEN ARRAY['external_id','id','brk','identificador','descripcion']\n      WHEN 'registro_comunicaciones' THEN ARRAY['external_id','id','id_chat','telefono','fecha_mensaje_in']\n      WHEN 'n8n_chat_histories' THEN ARRAY['external_id','id','session_id']\n      WHEN 'no_existe_telefono' THEN ARRAY['external_id','id','telefono']\n      ELSE ARRAY['external_id','id','uuid','identificador','brk','codigo','id_incidencia']\n    END;\n\n    SELECT string_agg(\n      format('NULLIF(BTRIM(to_jsonb(t)->>%L), '''')', candidate_key),\n      ', '\n    )\n    INTO candidate_expr\n    FROM unnest(candidate_keys) AS candidate_key;\n\n    SELECT array_agg(a.attname ORDER BY u.ordinality)\n    INTO pk_cols\n    FROM pg_index i\n    CROSS JOIN LATERAL unnest(i.indkey) WITH ORDINALITY AS u(attnum, ordinality)\n    JOIN pg_attribute a\n      ON a.attrelid = i.indrelid\n     AND a.attnum = u.attnum\n    WHERE i.indrelid = table_reg\n      AND i.indisprimary;\n\n    pk_expr := NULL;\n    IF array_length(pk_cols, 1) = 1 THEN\n      pk_expr := format('NULLIF(BTRIM(to_jsonb(t)->>%L), '''')', pk_cols[1]);\n    ELSIF array_length(pk_cols, 1) > 1 THEN\n      SELECT string_agg(\n        format('%L, to_jsonb(t)->%L', col_name, col_name),\n        ', '\n      )\n      INTO pk_pairs\n      FROM unnest(pk_cols) AS col_name;\n      pk_expr := format('''pk:'' || md5(jsonb_build_object(%s)::text)', pk_pairs);\n    END IF;\n\n    base_expr := format(\n      'COALESCE(%s%s, ''row:'' || md5(to_jsonb(t)::text))',\n      candidate_expr,\n      CASE WHEN pk_expr IS NULL THEN '' ELSE ', ' || pk_expr END\n    );\n\n    export_sql := format($fmt$\n      WITH source_rows AS (\n        SELECT\n          to_jsonb(t) AS row_data,\n          t.ctid::text AS physical_row_id,\n          %s AS base_external_id\n        FROM %s AS t\n      ), ranked AS (\n        SELECT\n          row_data,\n          physical_row_id,\n          base_external_id,\n          count(*) OVER (PARTITION BY base_external_id) AS duplicate_count,\n          row_number() OVER (\n            PARTITION BY base_external_id\n            ORDER BY md5(row_data::text), physical_row_id\n          ) AS duplicate_index,\n          count(*) OVER () AS source_count\n        FROM source_rows\n      )\n      SELECT\n        %L::text AS source_system,\n        %L::text AS source_schema,\n        %L::text AS source_table,\n        CASE\n          WHEN duplicate_count = 1 THEN base_external_id\n          ELSE base_external_id || '#dup:' || duplicate_index::text\n        END::text AS external_id,\n        row_data,\n        source_count::bigint,\n        false AS is_empty\n      FROM ranked\n      ORDER BY external_id\n    $fmt$,\n      base_expr,\n      table_reg,\n      cfg.source_system,\n      cfg.source_schema,\n      cfg.source_table\n    );\n\n    RETURN QUERY EXECUTE export_sql;\n    GET DIAGNOSTICS exported_rows = ROW_COUNT;\n\n    IF exported_rows = 0 THEN\n      RETURN QUERY SELECT\n        cfg.source_system,\n        cfg.source_schema,\n        cfg.source_table,\n        NULL::text,\n        NULL::jsonb,\n        0::bigint,\n        true;\n    END IF;\n  END LOOP;\nEND;\n$$;\n\nSELECT\n  source_system,\n  source_schema,\n  source_table,\n  external_id,\n  row_data,\n  source_count,\n  is_empty\nFROM pg_temp.broki_export_all_legacy_raw()\nORDER BY source_schema, source_table, external_id NULLS FIRST;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -800,
+        256
+      ],
+      "id": "afc7e64f-2f0f-4da2-9543-34bb4870aef9",
+      "name": "Export every Broki PostgreSQL row",
+      "credentials": {
+        "postgres": {
+          "id": "Xm1WvADEEsESPDdW",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const BATCH_SIZE = Number($('Create migration context').first().json.batch_size || 1000);\nconst migrationId = String($('Create migration context').first().json.migration_id);\nconst rows = $input.all();\nconst groups = new Map();\n\nfunction objectOrThrow(value, label) {\n  if (value && typeof value === 'object' && !Array.isArray(value)) return value;\n  if (typeof value === 'string') {\n    const parsed = JSON.parse(value);\n    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;\n  }\n  throw new Error(`Invalid row_data for ${label}`);\n}\n\nfor (const item of rows) {\n  const row = item.json || {};\n  const sourceSystem = String(row.source_system || 'n8n_postgres_pro');\n  const sourceSchema = String(row.source_schema || 'pro');\n  const sourceTable = String(row.source_table || 'unknown');\n  const key = `${sourceSystem}|${sourceSchema}|${sourceTable}`;\n  const sourceCount = Number(row.source_count || 0);\n\n  if (!groups.has(key)) {\n    groups.set(key, {\n      sourceSystem,\n      sourceSchema,\n      sourceTable,\n      sourceCount,\n      items: [],\n    });\n  }\n\n  const group = groups.get(key);\n  if (group.sourceCount !== sourceCount) {\n    throw new Error(`Inconsistent source_count for ${key}: ${group.sourceCount} vs ${sourceCount}`);\n  }\n\n  if (row.is_empty === true || row.row_data == null) continue;\n\n  const rowData = objectOrThrow(row.row_data, key);\n  const externalId = String(row.external_id || '').trim();\n  if (!externalId) throw new Error(`Missing external_id for ${key}`);\n\n  group.items.push({ external_id: externalId, row_data: rowData });\n}\n\nconst output = [];\nfor (const group of groups.values()) {\n  if (group.items.length !== group.sourceCount) {\n    throw new Error(\n      `Source extraction mismatch for ${group.sourceSchema}.${group.sourceTable}: ` +\n      `expected ${group.sourceCount}, got ${group.items.length}`\n    );\n  }\n\n  const totalBatches = Math.max(1, Math.ceil(group.items.length / BATCH_SIZE));\n  for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {\n    const offset = batchIndex * BATCH_SIZE;\n    const batch = group.items.slice(offset, offset + BATCH_SIZE);\n    const requestId = crypto.randomUUID();\n    const idempotencyKey = [\n      'broki-legacy-v3', migrationId, group.sourceSystem,\n      group.sourceSchema, group.sourceTable, String(batchIndex)\n    ].join(':');\n\n    output.push({\n      json: {\n        auth: {\n          request_id: requestId,\n          timestamp: Math.floor(Date.now() / 1000).toString(),\n          idempotency_key: idempotencyKey,\n        },\n        body: {\n          migration_id: migrationId,\n          source_system: group.sourceSystem,\n          source_schema: group.sourceSchema,\n          source_table: group.sourceTable,\n          batch_index: batchIndex,\n          total_batches: totalBatches,\n          total_rows: group.sourceCount,\n          items: batch,\n        },\n      },\n    });\n  }\n}\n\nif (output.length === 0) throw new Error('No PostgreSQL Broki tables were discovered');\nreturn output;",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        256
+      ],
+      "id": "0b31e7ce-68ab-409c-a6f5-378d78d9d228",
+      "name": "Build PostgreSQL import batches"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "MRgJDLvqhpb65RI0",
+          "mode": "list",
+          "cachedResultName": "brok node",
+          "cachedResultUrl": "/projects/83XmN0Yv2hyjZVUA/datatables/MRgJDLvqhpb65RI0"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        560
+      ],
+      "id": "90b2cab2-c975-4496-a926-28c148f48bea",
+      "name": "Get nitro_stock DataTable rows"
+    },
+    {
+      "parameters": {
+        "jsCode": "const BATCH_SIZE = Number($('Create migration context').first().json.batch_size || 1000);\nconst migrationId = String($('Create migration context').first().json.migration_id);\nconst sourceSystem = 'n8n_datatable';\nconst sourceSchema = 'n8n';\nconst sourceTable = 'nitro_stock';\nconst rawRows = $input.all().map((item) => item.json || {});\n\nfunction stableStringify(value) {\n  if (value === null || typeof value !== 'object') return JSON.stringify(value);\n  if (Array.isArray(value)) return '[' + value.map(stableStringify).join(',') + ']';\n  return '{' + Object.keys(value).sort().map((k) => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',') + '}';\n}\n\nconst indexed = rawRows.map((row, index) => {\n  const base = String(\n    row.external_id ?? row.id ?? row.uuid ?? row.ubicacion ?? row.location ?? `nitro-row-${index + 1}`\n  ).trim();\n  return { row, index, base, contentKey: stableStringify(row) };\n});\n\nconst groups = new Map();\nfor (const entry of indexed) {\n  if (!groups.has(entry.base)) groups.set(entry.base, []);\n  groups.get(entry.base).push(entry);\n}\n\nconst items = new Array(indexed.length);\nfor (const [base, group] of groups) {\n  if (group.length === 1) {\n    items[group[0].index] = { external_id: base, row_data: group[0].row };\n    continue;\n  }\n  group.sort((a, b) => a.contentKey.localeCompare(b.contentKey) || a.index - b.index);\n  group.forEach((entry, dupIndex) => {\n    items[entry.index] = {\n      external_id: `${base}#dup:${dupIndex + 1}`,\n      row_data: entry.row,\n    };\n  });\n}\n\nconst totalBatches = Math.max(1, Math.ceil(items.length / BATCH_SIZE));\nconst output = [];\nfor (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {\n  const batch = items.slice(batchIndex * BATCH_SIZE, (batchIndex + 1) * BATCH_SIZE);\n  output.push({\n    json: {\n      auth: {\n        request_id: crypto.randomUUID(),\n        timestamp: Math.floor(Date.now() / 1000).toString(),\n        idempotency_key: [\n          'broki-legacy-v3', migrationId, sourceSystem, sourceSchema, sourceTable, String(batchIndex)\n        ].join(':'),\n      },\n      body: {\n        migration_id: migrationId,\n        source_system: sourceSystem,\n        source_schema: sourceSchema,\n        source_table: sourceTable,\n        batch_index: batchIndex,\n        total_batches: totalBatches,\n        total_rows: items.length,\n        items: batch,\n      },\n    },\n  });\n}\nreturn output;\n",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        560
+      ],
+      "id": "fd984f4c-8a0a-478f-82bc-7b8378718675",
+      "name": "Build nitro_stock import batches"
+    },
+    {
+      "parameters": {
+        "mode": "append"
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -272,
+        400
+      ],
+      "id": "2b4574ea-d989-4133-b6c4-27e84d1a505f",
+      "name": "Merge all source batches"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/functions/v1/broki-import-batch' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "X-Broki-Service-Id",
+              "value": "n8n"
+            },
+            {
+              "name": "X-Broki-Service-Secret",
+              "value": "={{ $env.BROKI_N8N_SECRET }}"
+            },
+            {
+              "name": "X-Broki-Request-Id",
+              "value": "={{ $json.auth.request_id }}"
+            },
+            {
+              "name": "X-Broki-Timestamp",
+              "value": "={{ $json.auth.timestamp }}"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.auth.idempotency_key }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify($json.body) }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        400
+      ],
+      "id": "c25032f0-8200-45c4-94cf-829a544c802e",
+      "name": "POST every batch to Supabase",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $json;\nconst statusCode = item.statusCode ?? item.status ?? 200;\nconst response = item.body ?? item;\nif (statusCode < 200 || statusCode >= 300) {\n  throw new Error(`Import HTTP ${statusCode}: ${JSON.stringify(response).slice(0, 1000)}`);\n}\nif (!response || response.ok !== true) {\n  throw new Error(`Import request failed: ${JSON.stringify(response).slice(0, 1000)}`);\n}\nif (Number(response.received) !== Number(response.upserted)) {\n  throw new Error(\n    `Partial import ${response.source_schema}.${response.source_table} batch ${response.batch_index}: ` +\n    `received=${response.received}, upserted=${response.upserted}`\n  );\n}\nif (Array.isArray(response.errors) && response.errors.length > 0) {\n  throw new Error(`Import errors: ${JSON.stringify(response.errors).slice(0, 1500)}`);\n}\nif (response.snapshot_status === 'partial' || response.snapshot_status === 'failed') {\n  throw new Error(\n    `Snapshot ${response.snapshot_status} for ${response.source_schema}.${response.source_table} batch ${response.batch_index}`\n  );\n}\nreturn { json: response };\n",
+        "mode": "runOnceForEachItem"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        400
+      ],
+      "id": "6dad694b-6346-4ed1-801d-fe0e164db958",
+      "name": "Validate every imported batch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const responses = $input.all().map((item) => item.json || {});\nif (!responses.length) throw new Error('No import responses received');\nconst migrationIds = [...new Set(responses.map((r) => String(r.migration_id || '')))].filter(Boolean);\nif (migrationIds.length !== 1) throw new Error(`Unexpected migration ids: ${migrationIds.join(', ')}`);\n\nconst groups = new Map();\nfor (const r of responses) {\n  const key = `${r.source_system}|${r.source_schema || ''}|${r.source_table}`;\n  if (!groups.has(key)) {\n    groups.set(key, {\n      source_system: r.source_system,\n      source_schema: r.source_schema || null,\n      source_table: r.source_table,\n      expected_rows: Number(r.total_rows || 0),\n      batchUpserts: new Map(),\n      failed_rows: 0,\n      batches_seen: new Set(),\n      total_batches: Number(r.total_batches || 1),\n      snapshot_status: r.snapshot_status || 'running',\n    });\n  }\n  const g = groups.get(key);\n  if (g.expected_rows !== Number(r.total_rows || 0)) throw new Error(`total_rows drift for ${key}`);\n  const batchIndex = Number(r.batch_index || 0);\n  g.batchUpserts.set(batchIndex, Number(r.upserted || 0));\n  g.batches_seen.add(batchIndex);\n  if (Array.isArray(r.errors) && r.errors.length > 0 && !r.replay) {\n    g.failed_rows += r.errors.length;\n  }\n  if (r.snapshot_status) g.snapshot_status = r.snapshot_status;\n}\n\nconst manifest = [];\nconst import_summary = [];\nfor (const [key, g] of groups) {\n  const imported_rows = [...g.batchUpserts.values()].reduce((a, b) => a + b, 0);\n  if (g.batches_seen.size !== g.total_batches) {\n    throw new Error(`Missing batches for ${key}: ${g.batches_seen.size}/${g.total_batches}`);\n  }\n  for (let i = 0; i < g.total_batches; i++) {\n    if (!g.batches_seen.has(i)) throw new Error(`Missing batch index ${i} for ${key}`);\n  }\n  if (imported_rows !== g.expected_rows || g.failed_rows !== 0) {\n    throw new Error(\n      `Import count mismatch for ${key}: expected=${g.expected_rows}, imported=${imported_rows}, failed=${g.failed_rows}`\n    );\n  }\n  if (g.snapshot_status !== 'success') {\n    throw new Error(`Snapshot not success for ${key}: ${g.snapshot_status}`);\n  }\n  manifest.push({\n    source_system: g.source_system,\n    source_schema: g.source_schema,\n    source_table: g.source_table,\n    expected_rows: g.expected_rows,\n  });\n  import_summary.push({\n    ...manifest[manifest.length - 1],\n    imported_rows,\n    total_batches: g.total_batches,\n    snapshot_status: g.snapshot_status,\n  });\n}\n\nmanifest.sort((a, b) => `${a.source_system}.${a.source_table}`.localeCompare(`${b.source_system}.${b.source_table}`));\nreturn [{\n  json: {\n    ok: true,\n    migration_id: migrationIds[0],\n    imported_tables: manifest.length,\n    imported_rows: manifest.reduce((sum, row) => sum + row.expected_rows, 0),\n    manifest,\n    import_summary,\n  },\n}];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        400
+      ],
+      "id": "35c01fdc-ef2f-49e9-b837-125ac962167a",
+      "name": "Aggregate import results"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/rpc/broki_normalize_legacy_all' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({}) }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        400
+      ],
+      "id": "1f9b4599-96aa-466c-93d3-d2035305f4ba",
+      "name": "Normalize all legacy entities"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/rpc/broki_audit_source_manifest' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => {\n  const agg = $('Aggregate import results').first()?.json;\n  const ctx = $('Create migration context').first()?.json;\n  const migrationId = agg?.migration_id || ctx?.migration_id;\n  const manifest = agg?.manifest;\n  if (!migrationId) {\n    throw new Error(\n      'Audit source manifest: missing migration_id. Re-run the FULL workflow from Manual Trigger (do not retry only this node).'\n    );\n  }\n  if (!Array.isArray(manifest)) {\n    throw new Error(\n      'Audit source manifest: missing manifest from Aggregate import results. Re-run FULL workflow from Manual Trigger.'\n    );\n  }\n  return JSON.stringify({ p_manifest: manifest, p_migration_id: String(migrationId) });\n})() }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1024,
+        400
+      ],
+      "id": "dabc39e8-044d-4fb3-9eb9-83197b2cac6f",
+      "name": "Audit source manifest"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/rpc/broki_audit_migration_snapshots' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => {\n  const agg = $('Aggregate import results').first()?.json;\n  const ctx = $('Create migration context').first()?.json;\n  const migrationId = agg?.migration_id || ctx?.migration_id;\n  if (!migrationId) throw new Error('Audit snapshots: missing migration_id — re-run FULL workflow');\n  return JSON.stringify({ p_migration_id: String(migrationId) });\n})() }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1280,
+        400
+      ],
+      "id": "ca848fff-d115-481c-9892-e07129ca86e7",
+      "name": "Audit migration snapshots"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/rpc/broki_audit_entity_counts' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ (() => {\n  const agg = $('Aggregate import results').first()?.json;\n  const ctx = $('Create migration context').first()?.json;\n  const migrationId = agg?.migration_id || ctx?.migration_id;\n  if (!migrationId) throw new Error('Audit entity counts: missing migration_id — re-run FULL workflow');\n  return JSON.stringify({ p_migration_id: String(migrationId) });\n})() }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1536,
+        400
+      ],
+      "id": "8094df71-311f-468f-ab9f-360021f304d3",
+      "name": "Audit canonical entity counts"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/rpc/broki_audit_raw_payload_parity' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({}) }}",
+        "options": {
+          "timeout": 300000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        400
+      ],
+      "id": "6364c592-cc44-447d-928e-c5d109c389e7",
+      "name": "Audit raw payload parity"
+    },
+    {
+      "parameters": {
+        "jsCode": "function body(name) {\n  const data = $(name).first().json;\n  return data.body ?? data;\n}\nconst sourceAudit = body('Audit source manifest');\nconst snapshotAudit = body('Audit migration snapshots');\nconst entityAudit = body('Audit canonical entity counts');\nconst rawParity = body('Audit raw payload parity');\n\nconst sourceFailures = (Array.isArray(sourceAudit) ? sourceAudit : []).filter((r) => r.status !== 'OK');\nconst snapshotFailures = (Array.isArray(snapshotAudit) ? snapshotAudit : []).filter(\n  (r) => r.status !== 'success' || Number(r.delta || 0) !== 0 || Number(r.failed_rows || 0) !== 0\n);\nconst entityFailures = (Array.isArray(entityAudit) ? entityAudit : []).filter(\n  (r) => !['OK', 'EMPTY', 'RAW_ONLY'].includes(r.status)\n);\nconst rawDrifts = Array.isArray(rawParity) ? rawParity : [];\n\nif (sourceFailures.length || snapshotFailures.length || entityFailures.length || rawDrifts.length) {\n  throw new Error(JSON.stringify({\n    message: 'BROKI migration parity failed',\n    sourceFailures,\n    snapshotFailures,\n    entityFailures,\n    rawDrifts: rawDrifts.slice(0, 50),\n  }));\n}\n\nreturn [{ json: { ok: true } }];\n",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        400
+      ],
+      "id": "20a8432c-7629-4c53-a796-de43ce7adb71",
+      "name": "Final parity gate"
+    },
+    {
+      "parameters": {
+        "content": "SUCCESS solo aparece si:\n- Cada fila origen llegó a broki_legacy_rows.\n- Todos los snapshots terminaron success.\n- No hubo errores parciales.\n- Los conteos RAW = canonical.\n- raw_payload = row_data.\n\nEl JSON final contiene migration_id, filas, tablas y manifiesto completo.",
+        "height": 220,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1968,
+        96
+      ],
+      "id": "97b96f89-1e7d-4af5-934f-01f618f1e7ad",
+      "name": "SUCCESS — zero data loss"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create migration context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create migration context": {
+      "main": [
+        [
+          {
+            "node": "Export every Broki PostgreSQL row",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get nitro_stock DataTable rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export every Broki PostgreSQL row": {
+      "main": [
+        [
+          {
+            "node": "Build PostgreSQL import batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build PostgreSQL import batches": {
+      "main": [
+        [
+          {
+            "node": "Merge all source batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get nitro_stock DataTable rows": {
+      "main": [
+        [
+          {
+            "node": "Build nitro_stock import batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build nitro_stock import batches": {
+      "main": [
+        [
+          {
+            "node": "Merge all source batches",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge all source batches": {
+      "main": [
+        [
+          {
+            "node": "POST every batch to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST every batch to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Validate every imported batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate every imported batch": {
+      "main": [
+        [
+          {
+            "node": "Aggregate import results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate import results": {
+      "main": [
+        [
+          {
+            "node": "Normalize all legacy entities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize all legacy entities": {
+      "main": [
+        [
+          {
+            "node": "Audit source manifest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit source manifest": {
+      "main": [
+        [
+          {
+            "node": "Audit migration snapshots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit migration snapshots": {
+      "main": [
+        [
+          {
+            "node": "Audit canonical entity counts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit canonical entity counts": {
+      "main": [
+        [
+          {
+            "node": "Audit raw payload parity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audit raw payload parity": {
+      "main": [
+        [
+          {
+            "node": "Final parity gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "53ffe485-b772-4a09-aea6-d023b1d4dd84",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

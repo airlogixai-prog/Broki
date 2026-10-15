@@ -1,4 +1,12 @@
 import { PublicPageShell } from "@/components/public/PublicPageShell";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Integraciones",
+  description: "WhatsApp, n8n, Google Workspace, Supabase, ERP y APIs REST.",
+  path: "/integraciones",
+});
 
 const INTEGRATIONS = [
   { name: "WhatsApp Business", desc: "Agentes IA que consultan CRM, inventario e informes conversando por WhatsApp." },

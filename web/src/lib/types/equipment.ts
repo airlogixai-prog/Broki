@@ -3,9 +3,13 @@ export type EquipmentType = "furgo" | "gse";
 export type StatusCategory = "available" | "occupied" | "inoperative" | "unknown";
 
 export interface Equipment {
+  /** Identificador operativo (BRK / G*-* / plate code). */
   id: string;
+  /** UUID canónico broki_assets.id cuando la EF lo envía. */
+  dbId?: string;
   type: EquipmentType;
   family: string;
+  /** descripcion | vehiculo (enrichment). */
   model: string;
   plate: string;
   /** Ubicación habitual (broki_assets.ubicacion_habitual). */
@@ -13,7 +17,10 @@ export interface Equipment {
   usualLocation: string;
   parking: string;
   plane: string;
+  /** Snapshot / current_worker_text (UI). */
   worker: string;
+  /** UUID broki_personnel cuando resuelto. */
+  workerId?: string | null;
   notes: string;
   status: string;
   seats?: number;
@@ -25,6 +32,8 @@ export interface Equipment {
   botella_2?: number | null;
   botella_3?: number | null;
   botella_4?: number | null;
+  /** broki_assets.updated_at as received; sent back on edit to detect concurrent writes. */
+  updatedAt?: string | null;
 }
 
 export interface IncidentMessage {
@@ -53,9 +62,13 @@ export interface Personnel {
 }
 
 export interface Aircraft {
+  id: string;
   reg: string;
   airline: string;
   model: string;
+  msn?: string;
+  motor?: string;
+  status?: string;
 }
 
 export interface WorkTask {
@@ -74,6 +87,8 @@ export interface WorkGroup {
   modelo: string;
   aerolinea: string;
   salida: string;
+  /** Arrival time, "BASE" or "PRE" (legacy ETA / EN BASE badge). */
+  llegada: string;
   responsable: string;
   furgo: string;
   workers: string[];

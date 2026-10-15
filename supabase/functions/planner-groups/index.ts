@@ -13,6 +13,21 @@ serve(async (req) => {
 
   try {
     const supabase = createServiceClient();
+    const url = new URL(req.url);
+
+    if (url.searchParams.get("imports") === "1") {
+      const { data, error } = await supabase
+        .from("broki_planner_import_runs")
+        .select("id, file_name, status, created_count, duplicate_count, skipped_count, errors, metadata, created_at, finished_at")
+        .order("created_at", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        console.error("[planner-groups] imports error", error);
+        return jsonResponse(req, { error: "db_error" }, 500);
+      }
+      return jsonResponse(req, data ?? []);
+    }
 
     const [groupsRes, membersRes] = await Promise.all([
       supabase.from("broki_planner_groups").select("*").order("hora_salida", {

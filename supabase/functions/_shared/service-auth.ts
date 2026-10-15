@@ -110,6 +110,21 @@ export function authenticateServiceRequest(
   return { ok: true, serviceId, requestId, timestamp: ts };
 }
 
+/** Build X-Broki-* headers for server callers (Next, n8n, smoke). Never log the secret. */
+export function buildServiceAuthHeaders(
+  serviceId: BrokiServiceId,
+  secret: string,
+  opts: { requestId?: string; idempotencyKey?: string } = {},
+): Record<string, string> {
+  return {
+    "X-Broki-Service-Id": serviceId,
+    "X-Broki-Service-Secret": secret,
+    "X-Broki-Request-Id": opts.requestId ?? crypto.randomUUID(),
+    "X-Broki-Timestamp": Math.floor(Date.now() / 1000).toString(),
+    ...(opts.idempotencyKey ? { "Idempotency-Key": opts.idempotencyKey } : {}),
+  };
+}
+
 // Self-check (ponytail: fails if constant-time compare or UUID regex breaks)
 if (import.meta.main) {
   const a = "abc";
@@ -121,5 +136,8 @@ if (import.meta.main) {
   console.assert(constantTimeEqual("a", "") === false, "different lengths");
   console.assert(UUID_RE.test("550e8400-e29b-41d4-a716-446655440000"), "valid uuid");
   console.assert(!UUID_RE.test("not-a-uuid"), "invalid uuid");
+  const h = buildServiceAuthHeaders("remote-smoke", "s", { idempotencyKey: "k1" });
+  console.assert(h["X-Broki-Service-Id"] === "remote-smoke");
+  console.assert(h["Idempotency-Key"] === "k1");
   console.log("service-auth self-check OK");
 }

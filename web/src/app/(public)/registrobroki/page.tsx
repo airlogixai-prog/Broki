@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { PublicPageShell } from "@/components/public/PublicPageShell";
 import { RegistroForm } from "@/components/public/RegistroForm";
+import { pageMetadata } from "@/lib/public/site";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Registro personal BROKI",
+  description:
+    "Registro de personal y certificaciones aeronáuticas para operaciones BROKI.",
+  path: "/registrobroki",
+});
 
 export default function RegistroBrokiPage() {
   return (

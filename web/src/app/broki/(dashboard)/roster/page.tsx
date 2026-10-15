@@ -1,21 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  CalendarBlank,
-  Users,
-  UploadSimple,
-  ArrowsClockwise,
-  Warning,
-} from "@phosphor-icons/react";
-import { brokiApi, type RosterPerson, type RosterWeek } from "@/lib/api/broki";
+import { onTabListKeyDown } from "@/lib/a11y/tablist";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { CalendarBlank, Users, ArrowsClockwise, Warning, ClockCounterClockwise } from "@phosphor-icons/react";
+import { brokiApi, type RosterPerson, type RosterWeek, type ImportRun } from "@/lib/api/broki";
+import { PdfDropZone } from "@/components/ui/PdfDropZone";
+import { useBrokiRealtime } from "@/lib/hooks/useBrokiRealtime";
+import { OperationalSyncBar } from "@/components/ui/OperationalSyncBar";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button, IconButton } from "@/components/ui/Button";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { BlockSkeleton } from "@/components/ui/BlockSkeleton";
+import { Card } from "@/components/ui/Card";
+import { DateSelector, shiftDay, toIsoDay } from "@/components/ui/DateSelector";
+import { useToast } from "@/components/ui/Toast";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 
 type ShiftType = "iberojet" | "w2f" | "off" | "leave" | "none";
 
 interface ShiftStyle {
-  bg: string;
-  text: string;
+  cls: string;
   type: ShiftType;
+  label: string;
 }
 
 /**
@@ -24,50 +32,71 @@ interface ShiftStyle {
  * roster order changes, so an unknown airline now renders as a neutral shift
  * instead of being silently assigned to Iberojet.
  */
-function getShiftStyle(shift: string, airline: RosterPerson["airline"]): ShiftStyle {
+export function getShiftStyle(shift: string, airline: RosterPerson["airline"]): ShiftStyle {
   const s = shift.trim().toUpperCase();
-  if (!s)
-    return { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-400", type: "none" };
-  if (["L", "B", "BL", "LD"].includes(s))
-    return { bg: "bg-amber-100 dark:bg-amber-900/30", text: "text-amber-700 dark:text-amber-400", type: "off" };
-  if (["V", "FS", "FSL", "FBL", "P", "IT", "SL"].includes(s))
-    return { bg: "bg-red-100 dark:bg-red-900/30", text: "text-red-700 dark:text-red-400", type: "leave" };
-  if (s.includes("FL"))
-    return { bg: "bg-yellow-100 dark:bg-yellow-900/30", text: "text-yellow-700 dark:text-yellow-400", type: "off" };
-  if (airline === "w2f")
-    return { bg: "bg-blue-600 dark:bg-blue-700", text: "text-white", type: "w2f" };
-  if (airline === "iberojet")
-    return { bg: "bg-cyan-400 dark:bg-cyan-600", text: "text-slate-900 dark:text-white", type: "iberojet" };
-  return { bg: "bg-slate-200 dark:bg-slate-700", text: "text-slate-700 dark:text-slate-200", type: "none" };
+  if (!s) return { cls: "bg-subtle text-fg-subtle", type: "none", label: "Sin dato" };
+  if (["L", "B", "BL", "LD"].includes(s)) return { cls: "bg-warning-muted text-warning-strong", type: "off", label: "Libranza / baja" };
+  if (["V", "FS", "FSL", "FBL", "P", "IT", "SL"].includes(s)) return { cls: "bg-danger-muted text-danger-strong", type: "leave", label: "Vacaciones / free" };
+  if (s.includes("FL")) return { cls: "bg-warning-muted text-warning-strong", type: "off", label: "Libranza" };
+  if (airline === "w2f") return { cls: "bg-info text-white", type: "w2f", label: "W2Fly" };
+  if (airline === "iberojet") return { cls: "bg-info-muted text-info-strong border border-info/40", type: "iberojet", label: "Iberojet" };
+  return { cls: "bg-neutral-muted text-fg", type: "none", label: "Turno" };
 }
 
 const DAYS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 
+function mondayOf(iso: string): string {
+  const d = new Date(`${iso}T12:00:00`);
+  const day = d.getDay();
+  d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+  return toIsoDay(d);
+}
+
 type Mode = "weekly" | "daily";
 type AirlineFilter = "all" | "iberojet" | "w2f";
 
+const AIRLINE_FILTERS: { id: AirlineFilter; label: string }[] = [
+  { id: "all", label: "Todos" },
+  { id: "iberojet", label: "Iberojet" },
+  { id: "w2f", label: "W2Fly" },
+];
+
 export default function RosterPage() {
+  const toast = useToast();
+  const hydrated = useHydrated();
   const [mode, setMode] = useState<Mode>("weekly");
   const [airlineFilter, setAirlineFilter] = useState<AirlineFilter>("all");
   const [roster, setRoster] = useState<RosterWeek | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [day, setDay] = useState(() => toIsoDay(new Date()));
+  const [imports, setImports] = useState<ImportRun[] | null>(null);
 
-  const load = useCallback(async (alive: () => boolean = () => true) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const fetched = await brokiApi.fetchRoster();
-      if (alive()) setRoster(fetched);
-    } catch (err) {
-      if (alive()) {
-        setError(err instanceof Error ? err.message : "No se pudo cargar el horario");
+  const weekKey = mondayOf(day);
+  const dayIdx = (new Date(`${day}T12:00:00`).getDay() + 6) % 7; // Mon=0
+
+  const load = useCallback(
+    async (alive: () => boolean = () => true, week = weekKey) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const fetched = await brokiApi.fetchRoster(week);
+        if (alive()) setRoster(fetched);
+      } catch (err) {
+        if (alive()) setError(err instanceof Error ? err.message : "No se pudo cargar el horario");
+      } finally {
+        if (alive()) setLoading(false);
       }
-    } finally {
-      if (alive()) setLoading(false);
+    },
+    [weekKey],
+  );
+
+  const loadImports = useCallback(async () => {
+    try {
+      setImports(await brokiApi.fetchRosterImports());
+    } catch {
+      setImports([]);
     }
   }, []);
 
@@ -81,20 +110,18 @@ export default function RosterPage() {
     };
   }, [load]);
 
+  const realtime = useBrokiRealtime(["broki_roster_assignments", "broki_roster_periods"], () => load());
+
   const handleUpload = async (file: File) => {
     setUploading(true);
     setError(null);
-    setNotice(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const result = await brokiApi.rosterUpload(formData);
-      setNotice(
-        result.duplicate
-          ? (result.message ?? "Este PDF ya se habia importado.")
-          : `Horario importado: ${result.people ?? 0} personas, ${result.imported ?? 0} turnos.`,
-      );
-      await load();
+      const result = await brokiApi.rosterUpload(formDataFor(file));
+      if (result.duplicate) toast.info("PDF ya importado", result.message ?? "Este horario ya estaba cargado.");
+      else toast.success("Horario importado", `${result.people ?? 0} personas · ${result.imported ?? 0} turnos${result.week ? ` · semana ${result.week}` : ""}`);
+      if (result.week && mondayOf(result.week) !== weekKey) setDay(result.week);
+      else await load();
+      if (imports) await loadImports();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al subir el horario");
     } finally {
@@ -102,321 +129,261 @@ export default function RosterPage() {
     }
   };
 
-  const people = roster?.people ?? [];
-  const today = new Date();
-  const todayIdx = (today.getDay() + 6) % 7; // Mon=0
+  const people = useMemo(() => roster?.people ?? [], [roster]);
+  const filteredPeople = airlineFilter === "all" ? people : people.filter((p) => p.airline === airlineFilter);
+  const isCurrentWeek = weekKey === mondayOf(toIsoDay(new Date()));
+
+  const daily = useMemo(() => {
+    return filteredPeople
+      .map((p) => {
+        const shift = p.week[dayIdx] ?? "";
+        return { ...p, shift, style: getShiftStyle(shift, p.airline) };
+      })
+      .filter((p) => p.style.type !== "off" && p.style.type !== "leave" && p.shift.trim() !== "");
+  }, [filteredPeople, dayIdx]);
+
+  const absent = useMemo(
+    () => filteredPeople.filter((p) => ["off", "leave"].includes(getShiftStyle(p.week[dayIdx] ?? "", p.airline).type)),
+    [filteredPeople, dayIdx],
+  );
+
+  const weekLabel = roster?.week
+    ? `Semana del ${new Date(`${roster.week}T12:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}`
+    : `Semana del ${new Date(`${weekKey}T12:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "long" })}`;
 
   return (
-    <div className="space-y-6 pb-10">
-      {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <CalendarBlank size={28} className="text-brand-500" /> Horario
-          </h1>
-          {roster?.week && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Semana del{" "}
-              {new Date(`${roster.week}T00:00:00`).toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-              {roster.isFallback && " · ultimo horario importado"}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Mode toggle */}
-          <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1 gap-1">
+    <div className="space-y-5 pb-10">
+      <PageHeader
+        title="Horario"
+        subtitle={hydrated ? `${weekLabel}${roster?.isFallback ? " · último horario importado" : ""} · ${people.length} personas` : "Turnos semanales"}
+        icon={<CalendarBlank size={22} />}
+        actions={
+          <>
+            <DateSelector value={day} onChange={setDay} step={mode === "weekly" ? 7 : 1} label={mode === "weekly" ? "Semana" : "Día"} />
+            <IconButton label="Refrescar horario" onClick={() => void load()} disabled={loading}>
+              <ArrowsClockwise size={18} className={loading ? "animate-spin" : ""} />
+            </IconButton>
+          </>
+        }
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <OperationalSyncBar syncMode={realtime.syncMode} lastUpdate={realtime.lastUpdate} updating={realtime.updating || loading} />
+          <div className="flex rounded-lg bg-subtle p-1" role="tablist" onKeyDown={onTabListKeyDown} aria-label="Vista del horario">
             {(["weekly", "daily"] as Mode[]).map((m) => (
               <button
                 key={m}
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                tabIndex={mode === m ? 0 : -1}
                 onClick={() => setMode(m)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${
-                  mode === m
-                    ? "bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300 shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                }`}
+                className={`min-h-9 rounded-md px-3 text-xs font-bold transition-colors ${mode === m ? "bg-surface text-brand-700 shadow-sm dark:text-brand-300" : "text-fg-muted hover:text-fg"}`}
               >
-                {m === "weekly" ? "Semana" : "Hoy"}
+                {m === "weekly" ? "Semana" : "Día"}
               </button>
             ))}
           </div>
+          <div className="flex gap-1.5" role="group" aria-label="Filtrar por aerolínea">
+            {AIRLINE_FILTERS.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                aria-pressed={airlineFilter === f.id}
+                onClick={() => setAirlineFilter(f.id)}
+                className={`min-h-9 rounded-full border px-3 text-xs font-bold transition-colors ${
+                  airlineFilter === f.id ? "border-brand-600 bg-brand-600 text-white" : "border-border bg-surface text-fg-muted hover:bg-subtle"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" icon={<ClockCounterClockwise size={14} />} onClick={() => (imports ? setImports(null) : void loadImports())} aria-expanded={!!imports}>
+            {imports ? "Ocultar importaciones" : "Importaciones"}
+          </Button>
+        </div>
+      </PageHeader>
 
-          {/* Airline filter - only in daily */}
-          {mode === "daily" && (
-            <div className="flex gap-1.5">
-              {(["all", "iberojet", "w2f"] as AirlineFilter[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setAirlineFilter(f)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                    airlineFilter === f
-                      ? f === "iberojet"
-                        ? "bg-cyan-500 text-white shadow-md"
-                        : f === "w2f"
-                        ? "bg-blue-900 text-white shadow-md"
-                        : "bg-slate-800 text-white shadow-md"
-                      : f === "iberojet"
-                      ? "bg-white dark:bg-slate-800 text-cyan-600 border border-cyan-200 dark:border-cyan-800"
-                      : f === "w2f"
-                      ? "bg-white dark:bg-slate-800 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800"
-                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
-                  }`}
-                >
-                  {f === "all" ? "Todos" : f === "iberojet" ? "Iberojet" : "W2Fly"}
-                </button>
-              ))}
+      {roster?.isFallback && (
+        <div role="status" className="flex items-start gap-3 rounded-xl border border-warning/40 bg-warning-muted px-4 py-3">
+          <Warning size={18} className="mt-0.5 shrink-0 text-warning-strong" aria-hidden />
+          <p className="text-sm text-fg">No hay horario importado para la semana seleccionada. Se muestra el último disponible. Sube un PDF o elige otra semana.</p>
+        </div>
+      )}
+
+      {imports && (
+        <Card padded={false} title="Importaciones de horario">
+          {imports.length === 0 ? (
+            <p className="p-4 text-center text-sm text-fg-muted">Sin importaciones registradas.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[480px] text-xs">
+                <thead>
+                  <tr className="border-b border-border-subtle text-left text-[11px] uppercase tracking-wide text-fg-subtle">
+                    <th className="p-3 font-semibold">Archivo</th>
+                    <th className="p-3 font-semibold">Estado</th>
+                    <th className="p-3 font-semibold">Turnos</th>
+                    <th className="p-3 font-semibold">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle">
+                  {imports.map((row) => (
+                    <tr key={row.id}>
+                      <td className="p-3 text-fg">{row.file_name ?? row.id}</td>
+                      <td className="p-3 text-fg-muted">{row.status}</td>
+                      <td className="tabular p-3 text-fg-muted">{row.imported_count ?? "—"}</td>
+                      <td className="tabular p-3 text-fg-muted">{row.finished_at ? new Date(row.finished_at).toLocaleString("es-ES") : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-        </div>
-      </div>
-
-      {error && (
-        <div
-          role="alert"
-          className="flex items-start gap-3 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 px-4 py-3"
-        >
-          <Warning size={18} className="text-red-500 mt-0.5 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-red-700 dark:text-red-300">{error}</p>
-            <button
-              onClick={() => void load()}
-              className="mt-1 text-xs font-bold text-red-600 dark:text-red-400 underline hover:no-underline"
-            >
-              Reintentar
-            </button>
-          </div>
-        </div>
+        </Card>
       )}
 
-      {notice && (
-        <p
-          role="status"
-          className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-300"
-        >
-          {notice}
-        </p>
-      )}
+      {error && <ErrorState title="Error en el horario" message={error} onRetry={() => void load()} />}
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-xs">
+      <ul className="flex flex-wrap gap-2 text-[11px] font-bold" aria-label="Leyenda">
         {[
-          { label: "Iberojet", cls: "bg-cyan-400 text-slate-900" },
-          { label: "W2Fly", cls: "bg-blue-600 text-white" },
-          { label: "Libranza / Baja", cls: "bg-amber-100 text-amber-700" },
-          { label: "Vacaciones / Free", cls: "bg-red-100 text-red-700" },
+          { label: "Iberojet", cls: getShiftStyle("07:00-19:00", "iberojet").cls },
+          { label: "W2Fly", cls: getShiftStyle("07:00-19:00", "w2f").cls },
+          { label: "Libranza / baja (L, B)", cls: getShiftStyle("L", null).cls },
+          { label: "Vacaciones / free (V, FS)", cls: getShiftStyle("V", null).cls },
         ].map((l) => (
-          <span
-            key={l.label}
-            className={`px-2 py-0.5 rounded font-bold ${l.cls}`}
-          >
+          <li key={l.label} className={`rounded px-2 py-0.5 ${l.cls}`}>
             {l.label}
-          </span>
+          </li>
         ))}
-      </div>
+      </ul>
 
-      {loading && (
-        <div
-          className="h-64 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 animate-pulse"
-          aria-busy="true"
-        />
-      )}
+      {loading && people.length === 0 && !error && <BlockSkeleton className="h-64" label="Cargando horario" />}
 
       {!loading && !error && people.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-            <CalendarBlank size={36} className="text-slate-400 dark:text-slate-600" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Sin horario importado</h3>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm max-w-sm">
-            Sube el PDF del horario para ver los turnos de la semana.
-          </p>
-        </div>
+        <EmptyState icon={<CalendarBlank size={28} />} title="Sin horario importado" description="Sube el PDF del horario para ver los turnos de la semana." />
       )}
 
-      {/* Weekly view */}
-      {!loading && people.length > 0 && mode === "weekly" && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-x-auto">
-          <table className="w-full min-w-[700px]">
+      {people.length > 0 && mode === "weekly" && (
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
+          <table className="w-full min-w-[720px] border-collapse">
+            <caption className="sr-only">Turnos semanales</caption>
             <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-700">
-                <th className="p-3 text-left text-[10px] font-bold text-slate-500 uppercase w-16 border-r border-slate-100 dark:border-slate-700">
-                  Cert
+              <tr className="border-b border-border-subtle">
+                <th scope="col" className="w-20 border-r border-border-subtle p-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">
+                  Cert.
                 </th>
-                <th className="p-3 text-left text-[10px] font-bold text-slate-500 uppercase border-r border-slate-100 dark:border-slate-700">
+                <th scope="col" className="border-r border-border-subtle p-3 text-left text-[11px] font-semibold uppercase tracking-wide text-fg-subtle">
                   Nombre
                 </th>
-                {DAYS.map((d, i) => (
-                  <th
-                    key={d}
-                    className={`p-3 text-center text-[10px] font-bold uppercase border-r last:border-0 border-slate-100 dark:border-slate-700 ${
-                      i === todayIdx
-                        ? "text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20"
-                        : "text-slate-500"
-                    }`}
-                  >
-                    {d}
-                  </th>
-                ))}
+                {DAYS.map((d, i) => {
+                  const iso = shiftDay(weekKey, i);
+                  const isSelected = i === dayIdx;
+                  return (
+                    <th
+                      key={d}
+                      scope="col"
+                      className={`border-r border-border-subtle p-2 text-center text-[11px] font-semibold uppercase tracking-wide last:border-0 ${isSelected ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300" : "text-fg-subtle"}`}
+                    >
+                      <button type="button" onClick={() => { setDay(iso); setMode("daily"); }} className="w-full rounded px-1 py-0.5 hover:bg-subtle" aria-label={`Ver día ${d} ${iso.slice(8)}`}>
+                        {d}
+                        <span className="tabular block text-[11px] font-medium normal-case text-fg-muted">{iso.slice(8)}</span>
+                      </button>
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
-              {people.map((p) => {
-                return (
-                  <tr
-                    key={`${p.name}-${p.id}`}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                  >
-                    <td className="p-3 border-r border-slate-100 dark:border-slate-700 text-xs font-medium text-slate-500">
-                      {p.cert}
-                    </td>
-                    <td className="p-3 border-r border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white truncate max-w-[140px]">
-                      {p.name}{" "}
-                      {p.id && <span className="text-slate-400 font-normal">({p.id})</span>}
-                    </td>
-                    {p.week.map((shift, i) => {
-                      const style = getShiftStyle(shift, p.airline);
-                      return (
-                        <td
-                          key={i}
-                          className={`p-1 border-r last:border-0 border-slate-100 dark:border-slate-700 text-center ${
-                            i === todayIdx ? "bg-brand-50/50 dark:bg-brand-900/10" : ""
-                          }`}
-                        >
-                          <div
-                            className={`text-[10px] font-bold p-1 rounded ${style.bg} ${style.text} truncate`}
-                          >
-                            {shift || "—"}
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+            <tbody className="divide-y divide-border-subtle">
+              {filteredPeople.map((p) => (
+                <tr key={`${p.name}-${p.id}`} className="hover:bg-subtle">
+                  <td className="border-r border-border-subtle p-3 text-xs font-medium text-fg-muted">{p.cert}</td>
+                  <th scope="row" className="max-w-[180px] truncate border-r border-border-subtle p-3 text-left text-xs font-bold text-fg">
+                    {p.name} {p.id && <span className="font-normal text-fg-subtle">({p.id})</span>}
+                  </th>
+                  {p.week.map((shift, i) => {
+                    const style = getShiftStyle(shift, p.airline);
+                    return (
+                      <td key={i} className={`border-r border-border-subtle p-1 text-center last:border-0 ${i === dayIdx ? "bg-brand-50/50 dark:bg-brand-900/10" : ""}`}>
+                        <span className={`tabular block truncate rounded p-1 text-[11px] font-bold ${style.cls}`} title={style.label}>
+                          {shift || "—"}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* Daily view */}
-      {!loading && people.length > 0 && mode === "daily" && (
-        <div>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-            Turno de hoy ·{" "}
-            <span className="font-medium text-slate-700 dark:text-slate-300 capitalize">
-              {today.toLocaleDateString("es-ES", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
-            </span>
+      {people.length > 0 && mode === "daily" && (
+        <div className="space-y-4">
+          <p className="text-sm text-fg-muted">
+            Turno del{" "}
+            <span className="font-medium capitalize text-fg">{new Date(`${day}T12:00:00`).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}</span>
+            {!isCurrentWeek && roster?.isFallback && <span> (horario de otra semana)</span>} · {daily.length} en turno · {absent.length} ausentes
           </p>
-          {(() => {
-            let items = people
-              .map((p) => {
-                const shift = p.week[todayIdx] ?? "";
-                return { ...p, shift, style: getShiftStyle(shift, p.airline) };
-              })
-              .filter(
-                (p) =>
-                  p.style.type !== "off" &&
-                  p.style.type !== "leave" &&
-                  p.shift.trim() !== "",
-              );
-
-            if (airlineFilter !== "all") {
-              items = items.filter((p) => p.style.type === airlineFilter);
-            }
-
-            if (items.length === 0) {
-              return (
-                <div className="col-span-full py-12 text-center text-slate-400 italic text-sm">
-                  No hay personal asignado para este filtro hoy.
-                </div>
-              );
-            }
-
-            return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {items.map((p) => (
-                  <div
-                    key={`${p.name}-${p.id}`}
-                    className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between hover:border-brand-300 dark:hover:border-brand-600 transition-colors"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-bold px-1.5 py-0.5 rounded">
-                          {p.cert}
-                        </span>
-                        {p.id && <span className="text-[10px] text-slate-400">ID: {p.id}</span>}
-                      </div>
-                      <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                        {p.name}
-                      </h4>
+          {daily.length === 0 ? (
+            <EmptyState compact icon={<Users size={24} />} title="Nadie en turno para este filtro" />
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {daily.map((p) => (
+                <div key={`${p.name}-${p.id}`} className="flex items-center justify-between rounded-xl border border-border bg-surface p-4 shadow-sm">
+                  <div className="min-w-0">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="rounded bg-subtle px-1.5 py-0.5 text-[11px] font-bold text-fg-muted">{p.cert}</span>
+                      {p.id && <span className="text-[11px] text-fg-subtle">ID {p.id}</span>}
                     </div>
-                    <div className="text-right">
-                      <div
-                        className={`mb-1 ${p.style.bg} ${p.style.text} text-[10px] font-bold px-2 py-1 rounded-lg inline-block shadow-sm`}
-                      >
-                        {p.shift}
-                      </div>
-                      <div className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">
-                        {p.style.type === "w2f"
-                          ? "W2Fly"
-                          : p.style.type === "iberojet"
-                          ? "Iberojet"
-                          : "Turno"}
-                      </div>
-                    </div>
+                    <h3 className="truncate text-sm font-bold text-fg">{p.name}</h3>
                   </div>
-                ))}
-              </div>
-            );
-          })()}
+                  <div className="shrink-0 text-right">
+                    <span className={`tabular mb-1 inline-block rounded-lg px-2 py-1 text-[11px] font-bold ${p.style.cls}`}>{p.shift}</span>
+                    <span className="block text-[11px] font-medium uppercase tracking-wide text-fg-subtle">{p.style.label}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {absent.length > 0 && (
+            <details className="rounded-xl border border-border bg-surface">
+              <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-fg-muted">Ausencias ({absent.length})</summary>
+              <ul className="divide-y divide-border-subtle px-4 pb-2">
+                {absent.map((p) => {
+                  const st = getShiftStyle(p.week[dayIdx] ?? "", p.airline);
+                  return (
+                    <li key={`${p.name}-${p.id}`} className="flex items-center justify-between py-2 text-xs">
+                      <span className="font-medium text-fg">{p.name}</span>
+                      <span className={`rounded px-2 py-0.5 font-bold ${st.cls}`}>{p.week[dayIdx]} · {st.label}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </details>
+          )}
         </div>
       )}
 
-      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-start gap-3">
-          <Users size={20} className="text-slate-400 shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Datos del horario
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Sube el PDF del horario para actualizar los turnos. Subir el mismo
-              archivo dos veces no duplica la semana.
-            </p>
-          </div>
+      <Card title="Importar horario (PDF)">
+        <div className="mb-3 flex items-start gap-3">
+          <Users size={20} className="mt-0.5 shrink-0 text-fg-subtle" aria-hidden />
+          <p className="text-xs text-fg-muted">PDF con capa de texto. Los escaneos sin OCR se rechazan con un mensaje claro. La semana se detecta del documento.</p>
         </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="application/pdf"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
+        <PdfDropZone
+          file={null}
+          onFile={(file) => {
             if (file) void handleUpload(file);
-            e.target.value = "";
           }}
-        />
-        <button
-          onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-60 transition-colors"
-        >
-          {uploading ? (
-            <ArrowsClockwise size={16} className="animate-spin" />
-          ) : (
-            <UploadSimple size={16} />
-          )}
-          {uploading ? "Subiendo..." : "Subir PDF"}
-        </button>
-      </div>
+          label={uploading ? "Subiendo horario…" : "Arrastra el PDF del horario o pulsa para seleccionarlo"}
+        />
+      </Card>
     </div>
   );
+}
+
+function formDataFor(file: File): FormData {
+  const fd = new FormData();
+  fd.append("file", file);
+  return fd;
 }

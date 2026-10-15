@@ -23,7 +23,17 @@ serve(async (req) => {
       console.error("[personnel-list] query error", error);
       return jsonResponse(req, { error: "db_error" }, 500);
     }
-    return jsonResponse(req, data ?? []);
+    // The dashboard needs names, codes and qualifications; contact data (PII)
+    // stays server-side regardless of the caller's dashboard role.
+    const PII = ["telefono", "correo", "email", "phone", "dni", "nif", "raw_payload"];
+    const rows = (data ?? []).map((row) => {
+      const out: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(row as Record<string, unknown>)) {
+        if (!PII.includes(k)) out[k] = v;
+      }
+      return out;
+    });
+    return jsonResponse(req, rows);
   } catch (err) {
     console.error("[personnel-list] unexpected error", err);
     return jsonResponse(req, { error: "internal_error" }, 500);

@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "notes": "Edge Function permission matrix. Browser users need matching BrokiPermission via broki_user_access. Service IDs from function-access.ts.",
+  "roles": {
+    "viewer": ["dashboard:read"],
+    "operator": ["dashboard:read", "dashboard:write"],
+    "admin": ["dashboard:read", "dashboard:write", "admin:read", "admin:write"]
+  },
+  "functions": {
+    "inventory-list": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "personnel-list": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "aircraft-list": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "aircraft-action": {
+      "get": null,
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "tooling-list": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "tooling-action": {
+      "get": null,
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "planner-groups": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "planner-tasks": {
+      "get": "dashboard:read",
+      "post": null,
+      "service": ["next-server", "internal-function", "remote-smoke"],
+      "public": false
+    },
+    "planner-action": {
+      "get": null,
+      "post": "dashboard:write",
+      "service": ["internal-function", "next-server", "remote-smoke"],
+      "public": false
+    },
+    "incidents": {
+      "get": "dashboard:read",
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "nitro-stock": {
+      "get": "dashboard:read",
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "relays": {
+      "get": "dashboard:read",
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "roster-upload": {
+      "get": "dashboard:read",
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false,
+      "notes": "POST must call assertUserCanWrite"
+    },
+    "equipment-update": {
+      "get": null,
+      "post": "dashboard:write",
+      "service": ["next-server", "remote-smoke"],
+      "public": false
+    },
+    "broki-import-batch": {
+      "get": null,
+      "post": null,
+      "service": ["n8n", "remote-smoke"],
+      "public": false,
+      "notes": "service-only ETL"
+    },
+    "personnel-register": {
+      "get": null,
+      "post": null,
+      "service": [],
+      "public": true,
+      "notes": "Creates pending personnel only — never broki_user_access"
+    },
+    "marketing-lead": {
+      "get": null,
+      "post": null,
+      "service": [],
+      "public": true
+    },
+    "broki-whatsapp-inbound": {
+      "get": null,
+      "post": null,
+      "service": [],
+      "public": false,
+      "gated": true,
+      "notes": "WHATSAPP_INBOUND_ENABLED=false until orchestrator+webhook auth complete. Do not include in dashboard deploy."
+    }
+  }
+}

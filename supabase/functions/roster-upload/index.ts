@@ -12,7 +12,7 @@ import {
   type RosterAiPayload,
   type RosterParseResult,
 } from "../_shared/roster-parse.ts";
-import { authorizeOrRespond } from "../_shared/request-auth.ts";
+import { authorizeOrRespond, assertUserCanWrite } from "../_shared/request-auth.ts";
 
 // GET  -> assignments for a week (?week=YYYY-MM-DD, defaults to the current one)
 // POST -> multipart PDF; parses and stores it in broki_roster_*
@@ -61,6 +61,21 @@ function groupByPerson(rows: AssignmentRow[]) {
 async function handleGet(req: Request): Promise<Response> {
   const supabase = createServiceClient();
   const url = new URL(req.url);
+
+  if (url.searchParams.get("imports") === "1") {
+    const { data, error } = await supabase
+      .from("broki_roster_import_runs")
+      .select("id, file_name, status, imported_count, error_count, metadata, created_at, finished_at")
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      console.error("[roster-upload] imports error", error);
+      return jsonResponse(req, { error: "db_error" }, 500);
+    }
+    return jsonResponse(req, data ?? []);
+  }
+
   const requested = url.searchParams.get("week");
   const week = requested?.match(/^\d{4}-\d{2}-\d{2}$/)
     ? requested
@@ -291,6 +306,9 @@ serve(async (req) => {
   if (req.method !== "POST") {
     return jsonResponse(req, { error: "method_not_allowed" }, 405);
   }
+
+  const denied = assertUserCanWrite(req, auth);
+  if (denied) return denied;
 
   try {
     return await handlePost(req, auth);

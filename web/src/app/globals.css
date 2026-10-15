@@ -1,28 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
+@import "../styles/tokens.css";
+@import "../styles/themes.css";
+@import "../styles/components.css";
 
-/* Tailwind v4 defaults dark: to prefers-color-scheme; override for manual toggle. */
+/* Tailwind v4: manual .dark toggle (not prefers-color-scheme). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ---- Brand tokens (default: AirLogix orange) ---- */
-:root {
-  --theme-primary-50: #fff7ed;
-  --theme-primary-100: #ffedd5;
-  --theme-primary-200: #fed7aa;
-  --theme-primary-300: #fdba74;
-  --theme-primary-400: #fb923c;
-  --theme-primary-500: #f97316;
-  --theme-primary-600: #ea580c;
-  --theme-primary-700: #c2410c;
-  --theme-primary-800: #9a3412;
-  --theme-primary-900: #7c2d12;
-  --theme-accent: #0ea5e9;
-  --theme-gradient-from: #f97316;
-  --theme-gradient-to: #fb923c;
-}
-
+/*
+ * Semantic aliases. Use these in components instead of slate-* + dark:* pairs:
+ *   bg-canvas / bg-surface / bg-elevated / bg-muted
+ *   text-fg / text-fg-muted / text-fg-subtle / text-fg-inverse
+ *   border-border / border-border-subtle / border-border-strong
+ *   text-success / bg-success-muted … (success, warning, danger, info, neutral)
+ *   brand-50 … brand-900 (follows the active data-theme)
+ */
 @theme inline {
-  --font-sans: "Inter", sans-serif;
+  --font-sans: var(--broki-font-sans);
+  --font-mono: var(--broki-font-mono);
+
   --color-brand-50: var(--theme-primary-50);
   --color-brand-100: var(--theme-primary-100);
   --color-brand-200: var(--theme-primary-200);
@@ -33,58 +28,71 @@
   --color-brand-700: var(--theme-primary-700);
   --color-brand-800: var(--theme-primary-800);
   --color-brand-900: var(--theme-primary-900);
+
+  --color-canvas: var(--broki-bg);
+  --color-surface: var(--broki-bg-elevated);
+  --color-elevated: var(--broki-bg-elevated);
+  --color-muted: var(--broki-bg-muted);
+  --color-subtle: var(--broki-bg-subtle);
+  --color-border: var(--broki-border);
+  --color-border-subtle: var(--broki-border-subtle);
+  --color-border-strong: var(--broki-border-strong);
+  --color-fg: var(--broki-text);
+  --color-fg-muted: var(--broki-text-muted);
+  --color-fg-subtle: var(--broki-text-subtle);
+  --color-fg-inverse: var(--broki-text-inverse);
+
+  --color-success: var(--broki-success);
+  --color-success-strong: var(--broki-success-strong);
+  --color-success-muted: var(--broki-success-muted);
+  --color-warning: var(--broki-warning);
+  --color-warning-strong: var(--broki-warning-strong);
+  --color-warning-muted: var(--broki-warning-muted);
+  --color-danger: var(--broki-danger);
+  --color-danger-strong: var(--broki-danger-strong);
+  --color-danger-muted: var(--broki-danger-muted);
+  --color-info: var(--broki-info);
+  --color-info-strong: var(--broki-info-strong);
+  --color-info-muted: var(--broki-info-muted);
+  --color-neutral: var(--broki-neutral);
+  --color-neutral-muted: var(--broki-neutral-muted);
+
+  /* Legacy aliases kept for existing markup */
+  --color-broki-bg: var(--broki-bg);
+  --color-broki-elevated: var(--broki-bg-elevated);
+  --color-broki-border: var(--broki-border);
+  --color-broki-text: var(--broki-text);
+  --color-broki-muted: var(--broki-text-muted);
 }
 
 * {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
+  transition: background-color var(--broki-transition), color var(--broki-transition),
+    border-color var(--broki-transition);
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  background: #f8fafc;
-  color: #1e293b;
+  font-family: var(--broki-font-sans);
+  background: var(--broki-bg);
+  color: var(--broki-text);
 }
 
-.dark body {
-  background: #0f172a;
-  color: #f1f5f9;
+::selection {
+  background: var(--broki-selection);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-.dark ::-webkit-scrollbar-thumb { background: #475569; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-/* Card hover lift */
-.card-hoverable {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.card-hoverable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 8px 10px -6px rgba(0, 0, 0, 0.01);
+:focus-visible {
+  outline: 2px solid var(--broki-ring);
+  outline-offset: 2px;
 }
 
-/* Compact view overrides */
-.compact-view .equipment-card { padding: 0.75rem !important; }
-.compact-view .equipment-card h3 { font-size: 0.875rem !important; }
-.compact-view .equipment-card p,
-.compact-view .equipment-card span { font-size: 0.75rem !important; }
-.compact-view .grid {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
-  gap: 0.5rem !important;
-}
-@media (min-width: 768px) {
-  .compact-view .grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
-  }
-}
-@media (min-width: 1024px) {
-  .compact-view .grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-  }
+/* Operational numbers never jump when they refresh. */
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

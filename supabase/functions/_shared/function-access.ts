@@ -10,6 +10,7 @@ export const FUNCTION_SERVICE_ACCESS: Record<string, readonly BrokiServiceId[]> 
   "inventory-list":  ["next-server", "internal-function", "remote-smoke"],
   "personnel-list":  ["next-server", "internal-function", "remote-smoke"],
   "aircraft-list":   ["next-server", "internal-function", "remote-smoke"],
+  "aircraft-action": ["next-server", "remote-smoke"],
   "tooling-list":    ["next-server", "internal-function", "remote-smoke"],
   "planner-groups":  ["next-server", "internal-function", "remote-smoke"],
   "planner-tasks":   ["next-server", "internal-function", "remote-smoke"],
@@ -32,4 +33,5 @@ export const FUNCTION_SERVICE_ACCESS: Record<string, readonly BrokiServiceId[]> 
 
   // Public: no service auth (honeypot + rate limit instead)
   "personnel-register": [],
+  "marketing-lead": [],
 };

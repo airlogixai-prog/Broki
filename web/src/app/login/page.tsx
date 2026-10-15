@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeSlash, Lock, EnvelopeSimple, WarningCircle } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
@@ -44,26 +45,33 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-canvas px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl shadow-lg shadow-brand-500/25 mb-4 overflow-hidden">
-            <img src="/assets/icon.jpg" alt="BROKI" className="w-full h-full object-cover" />
+            <Image
+              src="/assets/icon.jpg"
+              alt="BROKI"
+              width={56}
+              height={56}
+              className="w-full h-full object-cover"
+              priority
+            />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-fg">
             BROKI Dashboard
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="mt-1 text-sm text-fg-muted">
             Inicia sesión para acceder al panel de operaciones
           </p>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none p-6 md:p-8">
+        <div className="rounded-2xl border border-border bg-surface p-6 shadow-xl md:p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <div
                 role="alert"
-                className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-sm text-red-700 dark:text-red-300"
+                className="flex items-start gap-2 rounded-lg border border-danger/40 bg-danger-muted p-3 text-sm text-danger-strong"
               >
                 <WarningCircle size={18} className="shrink-0 mt-0.5" />
                 <span>{error}</span>
@@ -73,14 +81,14 @@ function LoginForm() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                className="mb-1.5 block text-sm font-medium text-fg"
               >
                 Correo electrónico
               </label>
               <div className="relative">
                 <EnvelopeSimple
                   size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle"
                 />
                 <input
                   id="email"
@@ -90,7 +98,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@empresa.com"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="min-h-11 w-full rounded-lg border border-border bg-muted py-2.5 pl-10 pr-4 text-sm text-fg placeholder:text-fg-subtle focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
               </div>
             </div>
@@ -98,14 +106,14 @@ function LoginForm() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                className="mb-1.5 block text-sm font-medium text-fg"
               >
                 Contraseña
               </label>
               <div className="relative">
                 <Lock
                   size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-subtle"
                 />
                 <input
                   id="password"
@@ -116,12 +124,12 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-11 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="min-h-11 w-full rounded-lg border border-border bg-muted py-2.5 pl-10 pr-11 text-sm text-fg placeholder:text-fg-subtle focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-fg-subtle hover:text-fg"
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 >
                   {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
@@ -132,13 +140,13 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+              className="min-h-11 w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Iniciando sesión…" : "Iniciar sesión"}
             </button>
           </form>
 
-          <p className="mt-6 text-xs text-center text-slate-500 dark:text-slate-400">
+          <p className="mt-6 text-center text-xs text-fg-muted">
             Acceso restringido. Contacta con un administrador si necesitas una
             cuenta.
           </p>
@@ -152,7 +160,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="flex min-h-screen items-center justify-center bg-canvas">
           <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }

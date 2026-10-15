@@ -149,6 +149,112 @@ export function parsePlannerText(text: string): PlannerParseResult {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Tabular parser — for exported workload PDFs (daily_workload_*.pdf) whose
+// text layer preserves fixed-width column layout:
+//   Tipo | Código | A/C | Prioridad | Descripción | Realizado
+//
+// A header row containing "tipo" + "codigo" + "prioridad" triggers this path.
+// Everything after a notes-separator line ("--- Notas Generales ---") is
+// excluded so general remarks never become tasks.
+//
+// Falls back gracefully: if no header is found, returns an empty result and
+// the caller should continue to parsePlannerText (legacy).
+// ---------------------------------------------------------------------------
+
+/** Returns the character index of the first pattern that matches, or -1. */
+function findColPos(header: string, ...patterns: RegExp[]): number {
+  for (const p of patterns) {
+    const i = header.search(p);
+    if (i >= 0) return i;
+  }
+  return -1;
+}
+
+export function parsePlannerTable(text: string): PlannerParseResult {
+  const lines = text.split(/\r?\n/);
+
+  // Detect the header row: must contain "tipo" … "codigo"/"código" … "prioridad".
+  const HEADER_RE = /\btipo\b.{0,40}c[oó]digo.{0,40}prioridad/i;
+  const hi = lines.findIndex((l) => HEADER_RE.test(l));
+  if (hi === -1) return { matricula: null, fecha: null, tasks: [] };
+
+  // Extract document-level metadata from pre-header lines.
+  const preamble = lines.slice(0, hi).join("\n").toUpperCase();
+  const documentDate = findDate(lines.slice(0, hi).join("\n"));
+  const docReg = preamble.match(REGISTRATION);
+  const documentMatricula = docReg ? normalizeRegistration(docReg[1]) : null;
+
+  // Locate each column's start position from the lowercased header.
+  const h = lines[hi].toLowerCase();
+  const pos: Record<string, number> = {
+    tipo:        findColPos(h, /\btipo\b/),
+    codigo:      findColPos(h, /\bc[oó]digo\b/, /\bcod\b/),
+    ac:          findColPos(h, /\ba\/c\b/, /\bmatricula\b/),
+    prioridad:   findColPos(h, /\bprioridad\b/),
+    descripcion: findColPos(h, /\bdescripci[oó]n\b/, /\bdescripcion\b/),
+    realizado:   findColPos(h, /\brealizado\b/, /\bread\b/),
+  };
+
+  // Require at least codigo and prioridad columns.
+  if (pos.codigo < 0 || pos.prioridad < 0) return { matricula: null, fecha: null, tasks: [] };
+
+  // Build sorted column boundaries so slicing is O(1) per row.
+  const cols = Object.entries(pos)
+    .filter(([, s]) => s >= 0)
+    .sort(([, a], [, b]) => a - b)
+    .map(([name, start]) => ({ name, start }));
+
+  const slice = (line: string, colName: string): string => {
+    const i = cols.findIndex((c) => c.name === colName);
+    if (i < 0) return "";
+    const from = cols[i].start;
+    const to = i + 1 < cols.length ? cols[i + 1].start : line.length;
+    return line.slice(from, Math.min(to, line.length)).trim();
+  };
+
+  // Notes-section sentinel patterns — anything after these lines is excluded.
+  const NOTES_RE = /^[-—=*]{3,}\s*(notas?|observaciones?|general)/i;
+  const NOTES_START_RE = /^(notas?|observaciones?)\s*generales?/i;
+
+  const tasks: PlannerTask[] = [];
+  const seen = new Set<string>();
+
+  for (let i = hi + 1; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    if (NOTES_RE.test(trimmed) || NOTES_START_RE.test(trimmed)) break;
+
+    const codigoRaw = slice(line, "codigo").toUpperCase().replace(/\//g, "-");
+    if (!codigoRaw || !TASK_CODE.test(codigoRaw)) continue;
+
+    const acRaw       = slice(line, "ac");
+    const matricula   = normalizeRegistration(acRaw) ?? documentMatricula;
+    const dedupKey    = `${matricula ?? ""}|${codigoRaw}`;
+    if (seen.has(dedupKey)) continue;
+    seen.add(dedupKey);
+
+    const tipoRaw  = slice(line, "tipo").toUpperCase();
+    const prioRaw  = slice(line, "prioridad").toUpperCase();
+    const descRaw  = slice(line, "descripcion");
+    const realizRaw = slice(line, "realizado").toUpperCase();
+
+    tasks.push({
+      tipoTarea:     matchLabel(tipoRaw, TASK_TYPES) ?? (tipoRaw || null),
+      codigo:        codigoRaw,
+      prioridad:     matchLabel(prioRaw, PRIORITIES) ?? (prioRaw || null),
+      descripcion:   descRaw || null,
+      matriculaAvion: matricula,
+      fecha:         findDate(line) ?? documentDate,
+      // Realizado column: X / ✓ / ✔ / S / SI / YES / 1 → done.
+      estado:        /^(x|✓|✔|s|si|yes|1)$/i.test(realizRaw) ? 1 : 0,
+    });
+  }
+
+  return { matricula: documentMatricula, fecha: documentDate, tasks };
+}
+
 export const PLANNER_AI_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -300,4 +406,48 @@ if (import.meta.main) {
   assert(ai.tasks[0].fecha === "2025-09-02", "AI task inherits document date");
 
   console.log("planner-parse self-check OK");
+
+  // --- parsePlannerTable ---
+  const tableSheet = [
+    "DAILY PRIORITY - MADBRK",
+    "FECHA: 2026-08-01  A/C: EC-NFP",
+    "Tipo   Codigo    A/C     Prioridad  Descripcion                        Realizado",
+    "MEL    MEL-2201  EC-NFP  NO_GO      Revisar luz de posicion ala izq    X",
+    "CDL    CDL-0340  EC-NFP  CRITICAL   Panel de acceso de servicio suelto",
+    "PRE    PRE-0455  EC-NFP  NORMAL     Inspeccion prevuelo completa       X",
+    "SRV    SRV-0912  EC-OBM  NORMAL     Carga de nitrogeno tren principal",
+    "--- Notas Generales ---",
+    "Confirmar disponibilidad de herramientas antes de iniciar.",
+    "MEL-9999 esta fila esta en notas y NO debe importarse.",
+  ].join("\n");
+
+  const tbl = parsePlannerTable(tableSheet);
+  assert(tbl.tasks.length === 4, `table: expected 4 tasks, got ${tbl.tasks.length}`);
+  assert(tbl.fecha === "2026-08-01", `table: document date got "${tbl.fecha}"`);
+  assert(tbl.matricula === "ECNFP", `table: document matricula got "${tbl.matricula}"`);
+
+  const tMel = tbl.tasks.find((t) => t.codigo === "MEL-2201");
+  assert(tMel, "table: MEL-2201 not found");
+  assert(tMel!.estado === 1, `table: MEL-2201 Realizado=X → estado 1, got ${tMel!.estado}`);
+  assert(tMel!.prioridad === "NO_GO", `table: MEL-2201 prioridad got "${tMel!.prioridad}"`);
+  assert(tMel!.tipoTarea === "MEL", `table: MEL-2201 tipo got "${tMel!.tipoTarea}"`);
+  assert(tMel!.matriculaAvion === "ECNFP", `table: MEL-2201 A/C got "${tMel!.matriculaAvion}"`);
+
+  const tCdl = tbl.tasks.find((t) => t.codigo === "CDL-0340");
+  assert(tCdl, "table: CDL-0340 not found");
+  assert(tCdl!.estado === 0, `table: CDL-0340 no Realizado → estado 0, got ${tCdl!.estado}`);
+  assert(tCdl!.prioridad === "CRITICAL", `table: CDL-0340 prioridad got "${tCdl!.prioridad}"`);
+
+  const tObm = tbl.tasks.find((t) => t.codigo === "SRV-0912");
+  assert(tObm, "table: SRV-0912 not found");
+  assert(tObm!.matriculaAvion === "ECOBM", `table: SRV-0912 A/C EC-OBM → ECOBM, got "${tObm!.matriculaAvion}"`);
+
+  const tBad = tbl.tasks.find((t) => t.codigo === "MEL-9999");
+  assert(!tBad, `table: MEL-9999 in notas must not be imported, got task`);
+
+  // No-header input returns empty (triggers legacy fallback in the caller).
+  const noHdr = parsePlannerTable("MEL-2201 NO GO Revisar luz");
+  assert(noHdr.tasks.length === 0, `table: no-header input must return empty, got ${noHdr.tasks.length}`);
+
+  console.log("parsePlannerTable self-check OK");
 }

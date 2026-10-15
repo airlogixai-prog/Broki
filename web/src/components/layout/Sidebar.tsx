@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   SquaresFour,
@@ -12,24 +13,42 @@ import {
   ChartPieSlice,
   ClipboardText,
   Calendar,
-  AirplaneTilt,
+  Notebook,
   Cylinder,
   Toolbox,
+  X,
 } from "@phosphor-icons/react";
+import { useApp } from "@/context/AppContext";
+import { splitIssues } from "@/lib/equipment/kpis";
 
-const NAV_ITEMS = [
-  { href: "/broki", label: "Dashboard", Icon: SquaresFour },
-  { href: "/broki/mapa", label: "Mapa en Vivo", Icon: MapTrifold },
-  { href: "/broki/furgonetas", label: "Furgonetas", Icon: Van },
-  { href: "/broki/gse", label: "Equipos GSE", Icon: Wrench },
-  { href: "/broki/aviones", label: "Por Avión", Icon: Airplane },
-  { href: "/broki/incidencias", label: "Incidencias", Icon: WarningOctagon },
-  { href: "/broki/analytics", label: "Analítica", Icon: ChartPieSlice },
-  { href: "/broki/planner", label: "Planificador", Icon: ClipboardText },
-  { href: "/broki/roster", label: "Horario", Icon: Calendar },
-  { href: "/broki/fleet", label: "Flota / Relevos", Icon: AirplaneTilt },
-  { href: "/broki/stock", label: "Stock Nitrógeno", Icon: Cylinder },
-  { href: "/broki/tooling", label: "Tooling", Icon: Toolbox },
+const NAV_GROUPS = [
+  {
+    label: "Operación",
+    items: [
+      { href: "/broki", label: "Dashboard", Icon: SquaresFour },
+      { href: "/broki/mapa", label: "Mapa", Icon: MapTrifold },
+      { href: "/broki/furgonetas", label: "Furgonetas", Icon: Van },
+      { href: "/broki/gse", label: "Equipos GSE", Icon: Wrench },
+      { href: "/broki/aviones", label: "Aviones", Icon: Airplane },
+      { href: "/broki/incidencias", label: "Incidencias", Icon: WarningOctagon, badge: "issues" as const },
+    ],
+  },
+  {
+    label: "Planificación",
+    items: [
+      { href: "/broki/planner", label: "Planificador", Icon: ClipboardText },
+      { href: "/broki/roster", label: "Horario", Icon: Calendar },
+      { href: "/broki/fleet", label: "Relevos", Icon: Notebook },
+    ],
+  },
+  {
+    label: "Recursos",
+    items: [
+      { href: "/broki/stock", label: "Stock nitrógeno", Icon: Cylinder },
+      { href: "/broki/tooling", label: "Tooling", Icon: Toolbox },
+      { href: "/broki/analytics", label: "Analítica", Icon: ChartPieSlice },
+    ],
+  },
 ];
 
 interface Props {
@@ -38,65 +57,69 @@ interface Props {
 
 export function Sidebar({ onClose }: Props) {
   const pathname = usePathname();
+  const { syncMode, fetchError, furgonetas, gse, incidentsMemory } = useApp();
+  const issues = splitIssues([...furgonetas, ...gse], incidentsMemory).total;
+
+  const status = fetchError
+    ? { label: "Error de conexión", cls: "text-danger", dot: "bg-danger" }
+    : syncMode === "realtime"
+      ? { label: "Realtime", cls: "text-success", dot: "bg-success" }
+      : syncMode === "polling"
+        ? { label: "Polling 30 s", cls: "text-warning", dot: "bg-warning" }
+        : syncMode === "error"
+          ? { label: "Sin sincronización", cls: "text-danger", dot: "bg-danger" }
+          : { label: "Conectando…", cls: "text-fg-muted", dot: "bg-neutral" };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800">
-      {/* Logo */}
-      <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src="/assets/icon.jpg"
-            alt="BROKI"
-            className="w-10 h-10 rounded-xl object-cover shadow-sm"
-          />
-          <h1 className="font-bold text-xl tracking-tight text-orange-500">BROKI</h1>
-        </div>
+    <div className="broki-sidebar">
+      <div className="broki-sidebar__header">
+        <Link href="/broki" className="broki-sidebar__brand" onClick={onClose}>
+          <Image src="/assets/icon.jpg" alt="" width={36} height={36} className="broki-sidebar__logo" priority />
+          <span>
+            <span className="broki-sidebar__title">BROKI</span>
+            <span className="broki-sidebar__subtitle">Operaciones LEMD</span>
+          </span>
+        </Link>
         {onClose && (
-          <button
-            onClick={onClose}
-            className="text-slate-500 dark:text-slate-400 p-1 md:hidden"
-          >
-            ✕
+          <button type="button" onClick={onClose} className="broki-icon-btn md:hidden" aria-label="Cerrar menú">
+            <X size={18} />
           </button>
         )}
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map(({ href, label, Icon }) => {
-          const isActive =
-            href === "/broki"
-              ? pathname === "/broki"
-              : pathname === href || pathname.startsWith(`${href}/`);
-          return (
-            <Link
-              key={href}
-              href={href}
-              onClick={onClose}
-              className={`
-                flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-colors w-full
-                ${
-                  isActive
-                    ? "text-brand-600 bg-brand-50 dark:bg-slate-700 dark:text-brand-400"
-                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
-                }
-              `}
-            >
-              <Icon size={18} weight={isActive ? "fill" : "regular"} />
-              {label}
-            </Link>
-          );
-        })}
+      <nav className="broki-sidebar__nav broki-scrollbar" aria-label="Navegación principal">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.label} className="broki-nav-group">
+            <p className="broki-nav-group__label">{group.label}</p>
+            {group.items.map(({ href, label, Icon, badge }) => {
+              const isActive = href === "/broki" ? pathname === "/broki" : pathname === href || pathname.startsWith(`${href}/`);
+              const count = badge === "issues" ? issues : 0;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={onClose}
+                  className={`broki-nav-link${isActive ? " broki-nav-link--active" : ""}`}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon size={18} weight={isActive ? "fill" : "regular"} className="broki-nav-link__icon" aria-hidden />
+                  <span className="flex-1 truncate">{label}</span>
+                  {count > 0 && (
+                    <span className="broki-nav-badge" aria-label={`${count} equipos con incidencia`}>
+                      {count}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
-      {/* Status footer */}
-      <div className="p-4 border-t border-slate-100 dark:border-slate-700">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Online</p>
+      <div className="broki-sidebar__footer">
+        <div className="broki-status-pill" role="status" aria-live="polite">
+          <span className={`broki-status-pill__dot ${status.dot}`} aria-hidden />
+          <p className={`broki-status-pill__label ${status.cls}`}>{status.label}</p>
         </div>
       </div>
     </div>

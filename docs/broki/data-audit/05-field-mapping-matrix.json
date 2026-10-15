@@ -1,0 +1,2378 @@
+{
+  "version": "2026-08-04-audit",
+  "migration_id": "fc7cbf8b-7c2c-489f-bd85-72fbd38eca4c",
+  "counts": {
+    "CANONICAL_DIRECT": 146,
+    "CANONICAL_RENAMED": 5,
+    "CANONICAL_DERIVED": 0,
+    "RELATION_NORMALIZED": 10,
+    "RAW_ONLY_INTENTIONAL": 47,
+    "DEPRECATED_APPROVED": 4,
+    "MISSING": 6,
+    "UNKNOWN": 6
+  },
+  "rows": [
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "id",
+      "destino": "legacy_id/external_id",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "createdAt",
+      "destino": "broki_nitro_stock",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "ubicacion",
+      "destino": "broki_nitro_stock.ubicacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_nitro_stock"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "updatedAt",
+      "destino": "broki_nitro_stock",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "cantida_de_botellas_llenas",
+      "destino": "broki_nitro_stock.botellas_llenas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_nitro_stock"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "cantidad_de_botellas_vacias",
+      "destino": "broki_nitro_stock.botellas_vacias",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_nitro_stock"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "id",
+      "destino": "broki_aircraft.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_aircraft"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "msn",
+      "destino": "broki_aircraft.msn",
+      "transformacion": "column exists post-20260802210000; normalize still coalesce into matricula",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "motor",
+      "destino": "broki_aircraft.motor",
+      "transformacion": "column exists; normalize coalesce into modelo",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "modelo",
+      "destino": "broki_aircraft.modelo",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_aircraft"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "compania",
+      "destino": "broki_aircraft",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "matricula",
+      "destino": "broki_aircraft.matricula",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_aircraft"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "raw_payload",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "id",
+      "destino": "broki_assets.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "avion",
+      "destino": "broki_assets.avion_text",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.353,
+      "with_value": 6,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "notas",
+      "destino": "broki_assets.notas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.059,
+      "with_value": 1,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "estado",
+      "destino": "broki_assets.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.824,
+      "with_value": 14,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "plazas",
+      "destino": "broki_assets.plazas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "familia",
+      "destino": "broki_assets.familia",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "parking",
+      "destino": "broki_assets.parking",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.412,
+      "with_value": 7,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "vehiculo",
+      "destino": "no assets.vehiculo column",
+      "transformacion": "UI mapper fallback f.vehiculo from raw/API shape; assets select * has no vehiculo",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "matricula",
+      "destino": "broki_assets.matricula",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "combustible",
+      "destino": "broki_assets.combustible",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.294,
+      "with_value": 5,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "trabajadores",
+      "destino": "broki_assets.current_worker_text",
+      "transformacion": "normalizer only reads trabajador (singular)",
+      "cobertura": 0.824,
+      "with_value": 14,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "identificador",
+      "destino": "broki_assets.legacy_id",
+      "transformacion": "alias → legacy_id",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "CANONICAL_RENAMED",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "id",
+      "destino": "broki_planner_groups.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 30,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "modelo",
+      "destino": "broki_planner_groups.modelo",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "destino",
+      "destino": "broki_planner_groups.destino",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "id_avion",
+      "destino": "broki_planner_groups.id_avion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "vehiculo",
+      "destino": "broki_planner_groups.vehiculo",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "aerolinea",
+      "destino": "broki_planner_groups.aerolinea",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "hora_salida",
+      "destino": "broki_planner_groups.hora_salida",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "responsable",
+      "destino": "broki_planner_groups.responsable",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "hora_llegada",
+      "destino": "broki_planner_groups.hora_llegada",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.167,
+      "with_value": 5,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_1",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.633,
+      "with_value": 19,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_2",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.567,
+      "with_value": 17,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_3",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.467,
+      "with_value": 14,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_4",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.2,
+      "with_value": 6,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_5",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.2,
+      "with_value": 6,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_6",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.133,
+      "with_value": 4,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_7",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.133,
+      "with_value": 4,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_8",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0.033,
+      "with_value": 1,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_9",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "trabajador_10",
+      "destino": "broki_planner_group_members.worker_text",
+      "transformacion": "trabajador_N → members",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RELATION_NORMALIZED",
+      "test": "normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|grupo_trabajo",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "broki_planner_groups.fecha_modificacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.367,
+      "with_value": 11,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_groups"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "id",
+      "destino": "broki_assets.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 77,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "brk",
+      "destino": "identifier/BRK",
+      "transformacion": "often in identificador; brk may stay raw",
+      "cobertura": 1,
+      "with_value": 77,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "avion",
+      "destino": "broki_assets.avion_text",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.091,
+      "with_value": 7,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "notas",
+      "destino": "broki_assets.notas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.117,
+      "with_value": 9,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "estado",
+      "destino": "broki_assets.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.909,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "familia",
+      "destino": "broki_assets.familia",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.727,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "parking",
+      "destino": "broki_assets.parking",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.052,
+      "with_value": 4,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "combustible",
+      "destino": "broki_assets.combustible",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.026,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "descripcion",
+      "destino": "broki_assets.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 77,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "trabajadores",
+      "destino": "broki_assets.current_worker_text",
+      "transformacion": "normalizer only reads trabajador (singular)",
+      "cobertura": 0.364,
+      "with_value": 28,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "ubicacion_habitual",
+      "destino": "broki_assets.ubicacion_habitual",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 77,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "id",
+      "destino": "broki_incidents.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "estado",
+      "destino": "broki_incidents.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "id_objeto",
+      "destino": "broki_incidents.id_objeto",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "trabajador",
+      "destino": "broki_incidents.trabajador_text",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.706,
+      "with_value": 24,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "descripcion",
+      "destino": "broki_incidents.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "id_incidencia",
+      "destino": "broki_incidents.legacy_id",
+      "transformacion": "alias → legacy_id",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_RENAMED",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|incidencias",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "broki_incidents.fecha_modificacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_incidents"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "id",
+      "destino": "broki_assets.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 94,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "avion",
+      "destino": "broki_assets.avion_text",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.085,
+      "with_value": 8,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "notas",
+      "destino": "broki_assets.notas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "adblue",
+      "destino": "broki_assets.adblue",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.553,
+      "with_value": 52,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "estado",
+      "destino": "broki_assets.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 94,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "plazas",
+      "destino": "broki_assets.plazas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.777,
+      "with_value": 73,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "familia",
+      "destino": "broki_assets.familia",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.777,
+      "with_value": 73,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "parking",
+      "destino": "broki_assets.parking",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.106,
+      "with_value": 10,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "matricula",
+      "destino": "broki_assets.matricula",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.755,
+      "with_value": 71,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "trabajador",
+      "destino": "broki_assets.current_worker_text",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "combustible",
+      "destino": "broki_assets.combustible",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.713,
+      "with_value": 67,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "descripcion",
+      "destino": "broki_assets.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 94,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "nitrogeno_1",
+      "destino": "broki_assets.nitrogeno_1",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.745,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "nitrogeno_2",
+      "destino": "broki_assets.nitrogeno_2",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.745,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "nitrogeno_3",
+      "destino": "broki_assets.nitrogeno_3",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.745,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "nitrogeno_4",
+      "destino": "broki_assets.nitrogeno_4",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.745,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "identificador",
+      "destino": "broki_assets.legacy_id",
+      "transformacion": "alias → legacy_id",
+      "cobertura": 1,
+      "with_value": 94,
+      "clasificacion": "CANONICAL_RENAMED",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|inventario",
+      "campo_legacy": "ubicacion_habitual",
+      "destino": "broki_assets.ubicacion_habitual",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 94,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_assets"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|n8n_chat_histories",
+      "campo_legacy": "id",
+      "destino": "broki_chat_histories.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 6906,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_chat_histories"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|n8n_chat_histories",
+      "campo_legacy": "message",
+      "destino": "broki_chat_histories.content",
+      "transformacion": "alias → content",
+      "cobertura": 1,
+      "with_value": 6906,
+      "clasificacion": "CANONICAL_RENAMED",
+      "test": "broki_normalize_chat_histories"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|n8n_chat_histories",
+      "campo_legacy": "session_id",
+      "destino": "broki_chat_histories.session_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 6906,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_chat_histories"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "id",
+      "destino": "broki_unknown_contacts.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "id_chat",
+      "destino": "broki_unknown_contacts.id_chat",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "mensaje",
+      "destino": "broki_unknown_contacts.mensaje",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "telefono",
+      "destino": "broki_unknown_contacts.telefono",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "last_name",
+      "destino": "broki_unknown_contacts.last_name",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.273,
+      "with_value": 6,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "first_name",
+      "destino": "broki_unknown_contacts.first_name",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|no_existe_telefono",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "broki_unknown_contacts.fecha_modificacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 22,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_unknown_contacts"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1",
+      "destino": "broki_personnel.b1",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2",
+      "destino": "broki_personnel.b2",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "id",
+      "destino": "broki_personnel.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "cat_a",
+      "destino": "broki_personnel.cat_a",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "n_bac",
+      "destino": "broki_personnel.n_bac",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.486,
+      "with_value": 34,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "correo",
+      "destino": "broki_personnel.correo",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "estado",
+      "destino": "broki_personnel.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "helper",
+      "destino": "broki_personnel.helper",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "nombre",
+      "destino": "broki_personnel.nombre",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_otros",
+      "destino": "broki_personnel.a_otros",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "id_chat",
+      "destino": "broki_personnel.id_chat",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_otros",
+      "destino": "broki_personnel.b1_otros",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_otros",
+      "destino": "broki_personnel.b2_otros",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "telefono",
+      "destino": "broki_personnel.telefono",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "fecha_alta",
+      "destino": "broki_personnel.fecha_alta",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "fecha_baja",
+      "destino": "broki_personnel.fecha_baja",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_atr_42_72",
+      "destino": "broki_personnel.a_atr_42_72",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_boeing_737",
+      "destino": "broki_personnel.a_boeing_737",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_boeing_777",
+      "destino": "broki_personnel.a_boeing_777",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_boeing_787",
+      "destino": "broki_personnel.a_boeing_787",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_atr_42_72",
+      "destino": "broki_personnel.b1_atr_42_72",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_atr_42_72",
+      "destino": "broki_personnel.b2_atr_42_72",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "certificador",
+      "destino": "broki_personnel.certificador",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_a320_family",
+      "destino": "broki_personnel.a_a320_family",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_airbus_a330",
+      "destino": "broki_personnel.a_airbus_a330",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_airbus_a350",
+      "destino": "broki_personnel.a_airbus_a350",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_boeing_737",
+      "destino": "broki_personnel.b1_boeing_737",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_boeing_777",
+      "destino": "broki_personnel.b1_boeing_777",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_boeing_787",
+      "destino": "broki_personnel.b1_boeing_787",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_boeing_737",
+      "destino": "broki_personnel.b2_boeing_737",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_boeing_777",
+      "destino": "broki_personnel.b2_boeing_777",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_boeing_787",
+      "destino": "broki_personnel.b2_boeing_787",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_a320_family",
+      "destino": "broki_personnel.b1_a320_family",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_airbus_a330",
+      "destino": "broki_personnel.b1_airbus_a330",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_airbus_a350",
+      "destino": "broki_personnel.b1_airbus_a350",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_a320_family",
+      "destino": "broki_personnel.b2_a320_family",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_airbus_a330",
+      "destino": "broki_personnel.b2_airbus_a330",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_airbus_a350",
+      "destino": "broki_personnel.b2_airbus_a350",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_embraer_e_jet",
+      "destino": "broki_personnel.a_embraer_e_jet",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "a_bombardier_crj",
+      "destino": "broki_personnel.a_bombardier_crj",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_embraer_e_jet",
+      "destino": "broki_personnel.b1_embraer_e_jet",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_embraer_e_jet",
+      "destino": "broki_personnel.b2_embraer_e_jet",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b1_bombardier_crj",
+      "destino": "broki_personnel.b1_bombardier_crj",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "b2_bombardier_crj",
+      "destino": "broki_personnel.b2_bombardier_crj",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "cod_empleado_aena",
+      "destino": "broki_personnel.cod_empleado_aena",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|personal",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "broki_personnel.fecha_modificacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 70,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_personnel"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "id",
+      "destino": "broki_communications.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 1476,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "id_chat",
+      "destino": "broki_communications.id_chat",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 1476,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "telefono",
+      "destino": "broki_communications.telefono",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 1476,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "mensaje_in",
+      "destino": "broki_communications.mensaje_in",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 1476,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "respondido",
+      "destino": "broki_communications.respondido",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 1476,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "mensaje_out",
+      "destino": "broki_communications.mensaje_out",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.997,
+      "with_value": 1472,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "fecha_mensaje_in",
+      "destino": "broki_communications.fecha_mensaje_in",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.998,
+      "with_value": 1473,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|registro_comunicaciones",
+      "campo_legacy": "fecha_mensaje_out",
+      "destino": "broki_communications.fecha_mensaje_out",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.997,
+      "with_value": 1471,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_communications"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "id",
+      "destino": "broki_planner_tasks.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 57,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "fecha",
+      "destino": "broki_planner_tasks.fecha",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "notas",
+      "destino": "broki_planner_tasks.notas",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.158,
+      "with_value": 9,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "codigo",
+      "destino": "broki_planner_tasks.codigo",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "estado",
+      "destino": "broki_planner_tasks.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 57,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "prioridad",
+      "destino": "broki_planner_tasks.prioridad",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "tipo_tarea",
+      "destino": "broki_planner_tasks.tipo_tarea",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "descripcion",
+      "destino": "broki_planner_tasks.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "matricula_avion",
+      "destino": "broki_planner_tasks.matricula_avion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.982,
+      "with_value": 56,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "id_grupo_trabajo",
+      "destino": "broki_planner_tasks.grupo_trabajo_external_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.509,
+      "with_value": 29,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tareas",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "broki_planner_tasks.fecha_modificacion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.526,
+      "with_value": 30,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_planner_tasks"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "id",
+      "destino": "broki_tooling_movements.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "avion",
+      "destino": "broki_tooling_movements.avion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "tma_in",
+      "destino": "broki_tooling_movements.tma_in",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.667,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "date_in",
+      "destino": "broki_tooling_movements.date_in",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.667,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "remarks",
+      "destino": "broki_tooling_movements.remarks",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "tma_out",
+      "destino": "broki_tooling_movements.tma_out",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "bac_bact",
+      "destino": "broki_tooling_movements.bac_bact",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "date_out",
+      "destino": "broki_tooling_movements.date_out",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "complete_in",
+      "destino": "broki_tooling_movements.complete_in",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.667,
+      "with_value": 2,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "descripcion",
+      "destino": "broki_tooling_movements.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tool_control",
+      "campo_legacy": "complete_out",
+      "destino": "broki_tooling_movements.complete_out",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 3,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_movements"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "id",
+      "destino": "broki_tooling_catalog.legacy_id",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_catalog"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "tipo",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0.997,
+      "with_value": 343,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "avion",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "DEPRECATED_APPROVED",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "notas",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 0.134,
+      "with_value": 46,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "rango",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 0.456,
+      "with_value": 157,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "estado",
+      "destino": "broki_tooling_catalog.estado",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 0.997,
+      "with_value": 343,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_catalog"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "parking",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "DEPRECATED_APPROVED",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "supplier",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "tipo_tool",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "trabajador",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "DEPRECATED_APPROVED",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "descripcion",
+      "destino": "broki_tooling_catalog.descripcion",
+      "transformacion": "direct jtxt/jint",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "CANONICAL_DIRECT",
+      "test": "broki_normalize_tooling_catalog"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "part_number",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "manufacturer",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0.253,
+      "with_value": 87,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "identificador",
+      "destino": "broki_tooling_catalog.bac_bact",
+      "transformacion": "alias → bac_bact",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "CANONICAL_RENAMED",
+      "test": "broki_normalize_tooling_catalog"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "serial_number",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 0.962,
+      "with_value": 331,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "fecha_calibracion",
+      "destino": "raw_payload",
+      "transformacion": "",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "DEPRECATED_APPROVED",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "ubicacion_habitual",
+      "destino": "raw_payload only",
+      "transformacion": "documented raw_only",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "id",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "avion",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "notas",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.063,
+      "with_value": 1,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "estado",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "plazas",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "parking",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.938,
+      "with_value": 15,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "vehiculo",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "matricula",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "combustible",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "trabajadores",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.063,
+      "with_value": 1,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__furgonetas",
+      "campo_legacy": "identificador",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 16,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "id",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 53,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "brk",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 53,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "avion",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.057,
+      "with_value": 3,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "notas",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.075,
+      "with_value": 4,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "estado",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 53,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "parking",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.038,
+      "with_value": 2,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "combustible",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "descripcion",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.906,
+      "with_value": 48,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "trabajadores",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.038,
+      "with_value": 2,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__gse",
+      "campo_legacy": "ubicacion_habitual",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.943,
+      "with_value": 50,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "id",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 86,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "alias",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "airbus",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.337,
+      "with_value": 29,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "boeing",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.14,
+      "with_value": 12,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "correo",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.07,
+      "with_value": 6,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "nombre",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 86,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "id_chat",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "telefono",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 86,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "registrado",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 86,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "cod_empleado",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0.965,
+      "with_value": 83,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__personal",
+      "campo_legacy": "certificacion",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 86,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "id",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "fecha",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "id_chat",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "telefono",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "mensaje_in",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "respondido",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "mensaje_out",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_public|public|public__registro_comunicaciones",
+      "campo_legacy": "fecha_modificacion",
+      "destino": "RAW_ONLY (public mirror / dual-source)",
+      "transformacion": "not normalized from public__*",
+      "cobertura": 1,
+      "with_value": 11,
+      "clasificacion": "RAW_ONLY_INTENTIONAL",
+      "test": "none"
+    }
+  ],
+  "gaps_p0": [
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "createdAt",
+      "destino": "broki_nitro_stock",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_datatable|n8n|nitro_stock",
+      "campo_legacy": "updatedAt",
+      "destino": "broki_nitro_stock",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 2,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "msn",
+      "destino": "broki_aircraft.msn",
+      "transformacion": "column exists post-20260802210000; normalize still coalesce into matricula",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "motor",
+      "destino": "broki_aircraft.motor",
+      "transformacion": "column exists; normalize coalesce into modelo",
+      "cobertura": 0,
+      "with_value": 0,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|aviones",
+      "campo_legacy": "compania",
+      "destino": "broki_aircraft",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 18,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "vehiculo",
+      "destino": "no assets.vehiculo column",
+      "transformacion": "UI mapper fallback f.vehiculo from raw/API shape; assets select * has no vehiculo",
+      "cobertura": 1,
+      "with_value": 17,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|furgonetas",
+      "campo_legacy": "trabajadores",
+      "destino": "broki_assets.current_worker_text",
+      "transformacion": "normalizer only reads trabajador (singular)",
+      "cobertura": 0.824,
+      "with_value": 14,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "brk",
+      "destino": "identifier/BRK",
+      "transformacion": "often in identificador; brk may stay raw",
+      "cobertura": 1,
+      "with_value": 77,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|gse",
+      "campo_legacy": "trabajadores",
+      "destino": "broki_assets.current_worker_text",
+      "transformacion": "normalizer only reads trabajador (singular)",
+      "cobertura": 0.364,
+      "with_value": 28,
+      "clasificacion": "MISSING",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "tipo",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0.997,
+      "with_value": 343,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "supplier",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 1,
+      "with_value": 344,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    },
+    {
+      "fuente": "n8n_postgres_pro|pro|tooling",
+      "campo_legacy": "manufacturer",
+      "destino": "broki_tooling_catalog",
+      "transformacion": "",
+      "cobertura": 0.253,
+      "with_value": 87,
+      "clasificacion": "UNKNOWN",
+      "test": "none"
+    }
+  ]
+}
